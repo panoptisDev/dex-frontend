@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useGetUserProtocolRewardsQuery } from '~/apollo/generated/graphql-codegen-generated';
+import {
+  useGetUserBribeClaimsLazyQuery,
+  useGetUserProtocolRewardsQuery,
+} from '~/apollo/generated/graphql-codegen-generated';
 import { useGetGaugesQuery } from '~/lib/global/gauges/useGetGaugesQuery';
 import { gaugesDecorator } from '~/lib/services/staking/gauges.decorator';
 import { Gauge, SubgraphGauge } from '~/lib/services/staking/types';
@@ -13,6 +16,10 @@ export function useClaimsData() {
 
   const { isConnected, userAddress } = useUserAccount();
   const { gauges, isLoading: isLoadingGauges, refetchGauges } = useGetGaugesQuery();
+  const [
+    getUserBribeClaims,
+    { loading: isLoadingClaims, data: bribeClaims, refetch: refetchBribeRewards },
+  ] = useGetUserBribeClaimsLazyQuery();
 
   const {
     data: protocolRewardsData,
@@ -40,13 +47,19 @@ export function useClaimsData() {
   }, [isLoadingProtocolRewards]);
 
   useEffect(() => {
+    if (!isLoadingProtocolRewards && protocolRewardsData) {
+      setProtocolData(protocolRewardsData.protocolRewards);
+    }
+  }, [isLoadingProtocolRewards]);
+
+  useEffect(() => {
     if (isConnected && gauges?.length) {
       setGaugeData();
     }
   }, [gauges, isConnected, userAddress]);
 
   useEffect(() => {
-    if (isLoadingProtocolRewards || isLoadingGauges) {
+    if (isLoadingProtocolRewards || isLoadingGauges || isLoadingClaims) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
@@ -62,9 +75,12 @@ export function useClaimsData() {
     gauges,
     rewardGauges,
     protocolData,
+    bribeClaims,
     isLoading,
     refetchGauges,
     refetchClaimsData,
     refetchProtocolRewards,
+    getUserBribeClaims,
+    refetchBribeRewards,
   };
 }
