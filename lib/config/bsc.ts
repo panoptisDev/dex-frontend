@@ -60,8 +60,8 @@ export const bscNetworkConfig: NetworkConfig = {
     bribeRewardClaims: '0x27eDCe99d5aF44318358497fD5Af5C8e312F1721',
   },
   nft: {
-    nftStakingContract: '0xDb52E06a75CAaB7013a0c3127F7AE80De7Be6752',
-    nftAddress: '0xFF068652C5D720B2cd4653B0Cc0AF22c4D668a43',
+    nftStakingContract: '0x73572B049490BDD43a76b88BD19300E788d6a857',
+    nftAddress: '0xb8b332a9960c645904DE7Ce278bbF9F6F56a9C7d',
   },
   beetsPoolOwnerAddress: '0x891eFc56f5CD6580b2fEA416adC960F2A6156494',
   masterChefContractAddress: '',

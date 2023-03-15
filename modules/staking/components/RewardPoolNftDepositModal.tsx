@@ -1,10 +1,4 @@
-import {
-  Box,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  Grid,
-} from '@chakra-ui/react';
+import { Box, ModalHeader, ModalOverlay, Text, Grid } from '@chakra-ui/react';
 import { Modal, ModalBody, ModalCloseButton, ModalContent } from '@chakra-ui/modal';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -45,17 +39,22 @@ export function RewardPoolNftDepositModal({ isOpen, onOpen, onClose, pool }: Pro
   const fetchBalance = useCallback(async () => {
     if (!tokensOfOwner) return;
     let tokenImages = [];
+
     for (let i = 0; i < tokensOfOwner.length; i++) {
       let tokenURI = await earlyLudwigNft.tokenURI(tokensOfOwner[i]);
       tokenURI = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
 
-      let dat = await fetch(tokenURI).then((res) => res.json());
+      let dat = await fetch(tokenURI).then((res) => {
+        return res.json();
+      });
+
       dat =
         dat.image.substring(0, dat.image.length - 6) + dat.image.substring(dat.image.length - 6);
       dat = dat.replace('ipfs://', 'https://nftstorage.link/ipfs/');
 
       tokenImages.push({ token_id: tokensOfOwner[i].toString(), token_uri: dat });
     }
+
     setImages(tokenImages);
   }, [tokensOfOwner]);
 
@@ -91,13 +90,10 @@ export function RewardPoolNftDepositModal({ isOpen, onOpen, onClose, pool }: Pro
 
   useEffect(() => {
     if (!userAddress || !tokensOfOwner) return;
-    earlyLudwigNft.isApprovedForAll(userAddress).then(res=> {
-      setIsApproved(res)
-    })
-    
+    earlyLudwigNft.isApprovedForAll(userAddress).then((res) => {
+      setIsApproved(res);
+    });
   }, [userAddress, tokensOfOwner]);
-
-  
 
   const { approve, ...approveQuery } = useApproveNFT(nftInfo);
 

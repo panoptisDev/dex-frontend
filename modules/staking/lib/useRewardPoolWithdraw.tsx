@@ -1,14 +1,15 @@
 import { parseUnits } from 'ethers/lib/utils';
+import { networkConfig } from '~/lib/config/network-config';
 import { tokenFormatAmount } from '~/lib/services/token/token-util';
 import { useSubmitTransaction } from '~/lib/util/useSubmitTransaction';
 import { useRewardPools } from './useRewardPoolStaking';
 
-export function useRewardPoolWithdraw(address: string) {
-  //const { refetchPools } = useRewardPools();
+export function useRewardPoolWithdraw() {
+  const { refetchStakingPools } = useRewardPools();
 
   const { submitAsync, ...rest } = useSubmitTransaction({
     config: {
-      addressOrName: address,
+      addressOrName: networkConfig.nft.nftStakingContract,
       contractInterface: ['function withdraw(uint _pid, uint _amount) external nonReentrant'],
       functionName: 'withdraw(uint256,uint256)',
     },
@@ -18,11 +19,11 @@ export function useRewardPoolWithdraw(address: string) {
   async function withdrawFromPool(poolId: number, amount: string) {
     await submitAsync({
       args: [poolId, parseUnits(amount, 18)],
-      toastText: `Deposit VRTK into staking pool`,
-      walletText: `Deposit ${tokenFormatAmount(amount)} VRTK into staking pool`,
+      toastText: `Withdraw from staking pool`,
+      walletText: `Withdraw ${tokenFormatAmount(amount)} from staking pool`,
     });
 
-    //  refetchPools();
+    refetchStakingPools();
   }
 
   return {

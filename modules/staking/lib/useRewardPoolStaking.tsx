@@ -1,37 +1,25 @@
 import { createContext, ReactNode, useContext } from 'react';
-import { useGetRewardPoolsQuery } from '~/apollo/generated/graphql-codegen-generated';
+import { useGetRewardPoolsDataQuery } from '~/apollo/generated/graphql-codegen-generated';
 import { useUserAccount } from '~/lib/user/useUserAccount';
-import { COMING_POOLS } from './data';
 
 export interface RewardPoolContextType {}
 
 function _useRewardPools() {
   const { userAddress } = useUserAccount();
+
   const {
-    data,
-    loading,
-    error,
-    networkStatus,
-    refetch: refetchPools,
-  } = useGetRewardPoolsQuery({
+    data: stakingPools,
+    loading: loadingPools,
+    refetch: refetchStakingPools,
+  } = useGetRewardPoolsDataQuery({
     fetchPolicy: 'cache-first',
-    pollInterval: 30000,
-    notifyOnNetworkStatusChange: true,
-    variables: {
-      user: userAddress,
-    },
+    pollInterval: 15000,
   });
 
   return {
-    pools: data?.getRewardPools || [],
-    loading,
-    error,
-    networkStatus,
-    refetchPools,
-  };
-
-  return {
-    pools: COMING_POOLS,
+    loadingPools,
+    stakingPools: stakingPools?.getRewardPoolsData || [],
+    refetchStakingPools,
   };
 }
 

@@ -1,35 +1,16 @@
 import { GridItem, SimpleGrid, Text } from '@chakra-ui/react';
 import { StakingCard } from './StakingCard';
-import { networkConfig } from '~/lib/config/network-config';
+import { useRewardPools } from './lib/useRewardPoolStaking';
+import { useEffect } from 'react';
 
 export function StakingContainer() {
-  // dummy pools
-  const pools = [
-    {
-      __typename: 'RewardPool',
-      address: networkConfig.nft.nftStakingContract.toLowerCase(),
-      poolId: 0,
-      isPartnerPool: false,
-      rewardToken: {
-        address: '0x50d8d7f7ccea28cc1c9ddb996689294dc62569ca',
-        logoURI: 'LSHARE.png',
-        name: 'LSHARE',
-        symbol: 'LSHARE',
-      },
-    },
-    {
-      __typename: 'RewardPool',
-      address: networkConfig.nft.nftStakingContract.toLowerCase(),
-      poolId: 1,
-      isPartnerPool: false,
-      rewardToken: {
-        address: '0x3CC9E655B6c4f530DFc1b1fC51CeEa65c6344716',
-        logoURI: 'LION.png',
-        name: 'LION',
-        symbol: 'LION',
-      },
-    },
-  ];
+  const { stakingPools, loadingPools } = useRewardPools();
+
+  useEffect(() => {
+    if (!loadingPools) {
+      // console.log(stakingPools);
+    }
+  }, [loadingPools]);
 
   return (
     <>
@@ -43,10 +24,11 @@ export function StakingContainer() {
         paddingY={4}
         spacing={35}
       >
-        {pools.length &&
-          pools.map((p) => {
+        {stakingPools.length &&
+          stakingPools.map((p) => {
             return (
               <GridItem
+                key={p?.poolId}
                 className="blk"
                 boxShadow="0 0 10px #5BC0F8, 0 0 20px #4A4AF6"
                 borderRadius="18px"
@@ -54,7 +36,7 @@ export function StakingContainer() {
                 color="white"
                 mb="auto"
               >
-                <StakingCard key={p?.rewardToken.address} pool={p} />
+                <StakingCard pool={p} />
               </GridItem>
             );
           })}

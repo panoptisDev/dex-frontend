@@ -1,8 +1,4 @@
-import {
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { ModalHeader, ModalOverlay, Text } from '@chakra-ui/react';
 import { Modal, ModalBody, ModalCloseButton, ModalContent } from '@chakra-ui/modal';
 import { useEffect, useState } from 'react';
 import {
@@ -32,7 +28,7 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
   const [steps, setSteps] = useState<TransactionStep[] | null>(null);
 
   const { userAddress } = useUserAccount();
-  const { depositToPool, ...depositQuery } = useRewardPoolDeposit(pool);
+  const { depositToPool, ...depositQuery } = useRewardPoolDeposit();
 
   const vrtkAddress = networkConfig.beets.address;
   const vrtkInfo: TokenBase = {
@@ -46,7 +42,7 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
     isLoading: isLoadingAllowances,
     hasApprovalForAmount,
     refetch: refetchAllowances,
-  } = useAllowances(userAddress || null, [vrtkInfo], pool.address);
+  } = useAllowances(userAddress || null, [vrtkInfo], networkConfig.nft.nftStakingContract);
 
   const {
     getUserBalance,
@@ -54,6 +50,7 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
     isRefetching: isRefetchingBalances,
     refetch: refetchTokenBalances,
   } = useUserTokenBalances();
+
   const { approve, ...approveQuery } = useApproveToken(vrtkInfo);
 
   const userVrtkBalance = getUserBalance(vrtkAddress.toLowerCase());
@@ -68,6 +65,8 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
   useEffect(() => {
     if (!loading) {
       const hasApproval = hasApprovalForAmount(vrtkAddress, userVrtkBalance);
+
+      console.log(userVrtkBalance);
 
       setSteps([
         ...(!hasApproval
@@ -104,13 +103,15 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
         depositQuery.reset();
         onClose();
       }}
-      size="xl"  >
+      size="xl"
+    >
       <ModalOverlay />
-      <ModalContent 
-      boxShadow="0 0 10px #5BC0F8, 0 0 20px #4A4AF6"
-      backgroundColor="vertek.slate.900" 
-      padding="12px" 
-      borderRadius="16px">
+      <ModalContent
+        boxShadow="0 0 10px #5BC0F8, 0 0 20px #4A4AF6"
+        backgroundColor="vertek.slate.900"
+        padding="12px"
+        borderRadius="16px"
+      >
         <ModalCloseButton />
         <ModalHeader className="bg">
           <Text color="gray.100" fontSize="md">
@@ -137,7 +138,7 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
             }}
             onSubmit={(id) => {
               if (id === 'approve') {
-                approve(pool.address);
+                approve(networkConfig.nft.nftStakingContract);
               } else if (id === 'stake') {
                 depositToPool(pool.poolId, inputAmount || '0');
               }

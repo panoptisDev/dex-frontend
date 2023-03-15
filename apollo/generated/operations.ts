@@ -977,10 +977,7 @@ export const GetPoolFilters = gql`
 export const GetRewardPools = gql`
   query GetRewardPools($user: String) {
     getRewardPools(user: $user) {
-      address
-      startBlock
-      endBlock
-      blocksRemaining
+      poolId
       daysRemaining
       amountStaked
       amountStakedValue
@@ -989,7 +986,6 @@ export const GetRewardPools = gql`
         address
         name
         symbol
-        rewardPerBlock
         logoURI
       }
       aprs {
@@ -997,7 +993,38 @@ export const GetRewardPools = gql`
         daily
       }
       userInfo {
-        poolAddress
+        poolId
+        amountDeposited
+        amountDepositedFull
+        depositValue
+        hasPendingRewards
+        pendingRewards
+        pendingRewardValue
+        percentageOwned
+      }
+    }
+  }
+`;
+export const GetRewardPoolsData = gql`
+  query GetRewardPoolsData {
+    getRewardPoolsData {
+      poolId
+      daysRemaining
+      amountStaked
+      amountStakedValue
+      isPartnerPool
+      rewardToken {
+        address
+        name
+        symbol
+        logoURI
+      }
+      aprs {
+        apr
+        daily
+      }
+      userInfo {
+        poolId
         amountDeposited
         amountDepositedFull
         depositValue

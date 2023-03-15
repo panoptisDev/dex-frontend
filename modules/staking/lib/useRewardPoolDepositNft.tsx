@@ -2,13 +2,14 @@ import { RewardPool } from '~/apollo/generated/graphql-codegen-generated';
 import { useSubmitTransaction } from '~/lib/util/useSubmitTransaction';
 import { useRewardPools } from './useRewardPoolStaking';
 import StakingNFTPools from '~/lib/abi/StakingNFTPools.json';
+import { networkConfig } from '~/lib/config/network-config';
 
 export function useRewardPoolDepositNft(pool: RewardPool) {
-  const { refetchPools } = useRewardPools();
+  const { refetchStakingPools } = useRewardPools();
 
   const { submitAsync, ...rest } = useSubmitTransaction({
     config: {
-      addressOrName: pool.address,
+      addressOrName: networkConfig.nft.nftStakingContract,
       contractInterface: StakingNFTPools,
       functionName: 'deposit(uint256,uint256,uint256[])',
     },
@@ -22,7 +23,7 @@ export function useRewardPoolDepositNft(pool: RewardPool) {
       walletText: `Deposit ${tokenId} into staking pool`,
     });
 
-    refetchPools && refetchPools();
+    refetchStakingPools();
   }
 
   return {

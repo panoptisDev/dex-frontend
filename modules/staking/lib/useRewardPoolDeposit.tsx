@@ -1,17 +1,17 @@
 import { parseUnits } from 'ethers/lib/utils';
-import { RewardPool } from '~/apollo/generated/graphql-codegen-generated';
+import { networkConfig } from '~/lib/config/network-config';
 import { tokenFormatAmount } from '~/lib/services/token/token-util';
 import { useSubmitTransaction } from '~/lib/util/useSubmitTransaction';
 import { useRewardPools } from './useRewardPoolStaking';
 
-export function useRewardPoolDeposit(pool: RewardPool) {
-  //const { refetchPools } = useRewardPools();
+export function useRewardPoolDeposit() {
+  const { refetchStakingPools } = useRewardPools();
 
   const { submitAsync, ...rest } = useSubmitTransaction({
     config: {
-      addressOrName: pool.address,
-      contractInterface: ['function deposit(uint _pid, uint _amount) external nonReentrant'],
-      functionName: 'deposit(uint256,uint256)',
+      addressOrName: networkConfig.nft.nftStakingContract,
+      contractInterface: ['function deposit(uint256, uint256) external'],
+      functionName: 'deposit',
     },
     transactionType: 'STAKE',
   });
@@ -23,7 +23,7 @@ export function useRewardPoolDeposit(pool: RewardPool) {
       walletText: `Deposit ${tokenFormatAmount(amount)} VRTK into staking pool`,
     });
 
-    // refetchPools();
+    refetchStakingPools();
   }
 
   return {

@@ -1245,6 +1245,7 @@ export interface Query {
   getProtocolPoolData: Array<Maybe<GqlProtocolGaugeInfo>>;
   getProtocolTokenList?: Maybe<Array<Maybe<Scalars['String']>>>;
   getRewardPools: Array<Maybe<RewardPool>>;
+  getRewardPoolsData: Array<Maybe<RewardPool>>;
   getSingleGaugeBribes: Array<Maybe<EpochBribeInfo>>;
   getUserBribeClaims: Array<Maybe<UserBribeClaim>>;
   getUserGaugeStakes: Array<Maybe<LiquidityGauge>>;
@@ -1443,16 +1444,15 @@ export interface QueryUserGetSwapsArgs {
 
 export interface RewardPool {
   __typename: 'RewardPool';
-  address: Scalars['String'];
   amountStaked: Scalars['String'];
   amountStakedValue: Scalars['String'];
   aprs: RewardPoolAprs;
-  blocksRemaining: Scalars['String'];
-  daysRemaining: Scalars['String'];
-  endBlock: Scalars['Int'];
+  daysRemaining: Scalars['Int'];
+  endTime: Scalars['Int'];
   isPartnerPool: Scalars['Boolean'];
-  rewardToken: RewardPoolRewardToken;
-  startBlock: Scalars['Int'];
+  poolId: Scalars['Int'];
+  rewardToken: GqlToken;
+  startTime: Scalars['Int'];
   userInfo?: Maybe<RewardPoolUserInfo>;
 }
 
@@ -1460,16 +1460,6 @@ export interface RewardPoolAprs {
   __typename: 'RewardPoolAprs';
   apr: Scalars['String'];
   daily: Scalars['String'];
-}
-
-export interface RewardPoolRewardToken {
-  __typename: 'RewardPoolRewardToken';
-  address: Scalars['String'];
-  logoURI: Scalars['String'];
-  name: Scalars['String'];
-  price?: Maybe<Scalars['Int']>;
-  rewardPerBlock: Scalars['String'];
-  symbol: Scalars['String'];
 }
 
 export interface RewardPoolUserInfo {
@@ -1481,7 +1471,7 @@ export interface RewardPoolUserInfo {
   pendingRewardValue: Scalars['String'];
   pendingRewards: Scalars['String'];
   percentageOwned: Scalars['String'];
-  poolAddress: Scalars['String'];
+  poolId: Scalars['Int'];
 }
 
 export interface RewardToken {
@@ -4233,26 +4223,55 @@ export type GetRewardPoolsQuery = {
   __typename: 'Query';
   getRewardPools: Array<{
     __typename: 'RewardPool';
-    address: string;
-    startBlock: number;
-    endBlock: number;
-    blocksRemaining: string;
-    daysRemaining: string;
+    poolId: number;
+    daysRemaining: number;
     amountStaked: string;
     amountStakedValue: string;
     isPartnerPool: boolean;
     rewardToken: {
-      __typename: 'RewardPoolRewardToken';
+      __typename: 'GqlToken';
       address: string;
       name: string;
       symbol: string;
-      rewardPerBlock: string;
-      logoURI: string;
+      logoURI?: string | null;
     };
     aprs: { __typename: 'RewardPoolAprs'; apr: string; daily: string };
     userInfo?: {
       __typename: 'RewardPoolUserInfo';
-      poolAddress: string;
+      poolId: number;
+      amountDeposited: string;
+      amountDepositedFull: string;
+      depositValue: string;
+      hasPendingRewards: boolean;
+      pendingRewards: string;
+      pendingRewardValue: string;
+      percentageOwned: string;
+    } | null;
+  } | null>;
+};
+
+export type GetRewardPoolsDataQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetRewardPoolsDataQuery = {
+  __typename: 'Query';
+  getRewardPoolsData: Array<{
+    __typename: 'RewardPool';
+    poolId: number;
+    daysRemaining: number;
+    amountStaked: string;
+    amountStakedValue: string;
+    isPartnerPool: boolean;
+    rewardToken: {
+      __typename: 'GqlToken';
+      address: string;
+      name: string;
+      symbol: string;
+      logoURI?: string | null;
+    };
+    aprs: { __typename: 'RewardPoolAprs'; apr: string; daily: string };
+    userInfo?: {
+      __typename: 'RewardPoolUserInfo';
+      poolId: number;
       amountDeposited: string;
       amountDepositedFull: string;
       depositValue: string;
@@ -6771,10 +6790,7 @@ export type GetPoolFiltersQueryResult = Apollo.QueryResult<
 export const GetRewardPoolsDocument = gql`
   query GetRewardPools($user: String) {
     getRewardPools(user: $user) {
-      address
-      startBlock
-      endBlock
-      blocksRemaining
+      poolId
       daysRemaining
       amountStaked
       amountStakedValue
@@ -6783,7 +6799,6 @@ export const GetRewardPoolsDocument = gql`
         address
         name
         symbol
-        rewardPerBlock
         logoURI
       }
       aprs {
@@ -6791,7 +6806,7 @@ export const GetRewardPoolsDocument = gql`
         daily
       }
       userInfo {
-        poolAddress
+        poolId
         amountDeposited
         amountDepositedFull
         depositValue
@@ -6843,6 +6858,82 @@ export type GetRewardPoolsLazyQueryHookResult = ReturnType<typeof useGetRewardPo
 export type GetRewardPoolsQueryResult = Apollo.QueryResult<
   GetRewardPoolsQuery,
   GetRewardPoolsQueryVariables
+>;
+export const GetRewardPoolsDataDocument = gql`
+  query GetRewardPoolsData {
+    getRewardPoolsData {
+      poolId
+      daysRemaining
+      amountStaked
+      amountStakedValue
+      isPartnerPool
+      rewardToken {
+        address
+        name
+        symbol
+        logoURI
+      }
+      aprs {
+        apr
+        daily
+      }
+      userInfo {
+        poolId
+        amountDeposited
+        amountDepositedFull
+        depositValue
+        hasPendingRewards
+        pendingRewards
+        pendingRewardValue
+        percentageOwned
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetRewardPoolsDataQuery__
+ *
+ * To run a query within a React component, call `useGetRewardPoolsDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRewardPoolsDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRewardPoolsDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetRewardPoolsDataQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetRewardPoolsDataQuery, GetRewardPoolsDataQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetRewardPoolsDataQuery, GetRewardPoolsDataQueryVariables>(
+    GetRewardPoolsDataDocument,
+    options,
+  );
+}
+export function useGetRewardPoolsDataLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetRewardPoolsDataQuery,
+    GetRewardPoolsDataQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetRewardPoolsDataQuery, GetRewardPoolsDataQueryVariables>(
+    GetRewardPoolsDataDocument,
+    options,
+  );
+}
+export type GetRewardPoolsDataQueryHookResult = ReturnType<typeof useGetRewardPoolsDataQuery>;
+export type GetRewardPoolsDataLazyQueryHookResult = ReturnType<
+  typeof useGetRewardPoolsDataLazyQuery
+>;
+export type GetRewardPoolsDataQueryResult = Apollo.QueryResult<
+  GetRewardPoolsDataQuery,
+  GetRewardPoolsDataQueryVariables
 >;
 export const GetTokenRelativePriceChartDataDocument = gql`
   query GetTokenRelativePriceChartData(

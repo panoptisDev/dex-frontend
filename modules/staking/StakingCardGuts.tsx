@@ -9,46 +9,46 @@ import { useRewardPoolWithdraw } from './lib/useRewardPoolWithdraw';
 export function StakingCardGuts(props: {
   pool: any;
   // pool: RewardPool;
-  poolInfo: any;
-  apr: any;
-  aprDaily: any;
-  priceOfToken: any;
-  boostedAprDaily: any;
-  priceOfTokenRewards: any;
-  userInfo: any;
-  userTokens: any;
-  userUnclaimedRewards: any;
+  // poolInfo: any;
+  // apr: any;
+  // aprDaily: any;
+  // priceOfToken: any;
+  // boostedAprDaily: any;
+  // priceOfTokenRewards: any;
+  // userInfo: any;
+  // userTokens: any;
+  // userUnclaimedRewards: any;
 }) {
   const pool = props.pool;
-  const poolInfo = props.poolInfo;
-  const apr = props.apr;
-  const aprDaily = props.aprDaily;
-  const boostedAprDaily = props.boostedAprDaily;
-  const priceOfToken = props.priceOfToken;
-  const priceOfTokenRewards = props.priceOfTokenRewards;
-  const userInfo = props.userInfo;
-  const userTokens = props.userTokens;
-  const userUnclaimedRewards = props.userUnclaimedRewards;
+  // const poolInfo = props.poolInfo;
+  // const apr = props.apr;
+  // const aprDaily = props.aprDaily;
+  // const boostedAprDaily = props.boostedAprDaily;
+  // const priceOfToken = props.priceOfToken;
+  // const priceOfTokenRewards = props.priceOfTokenRewards;
+  // const userInfo = props.userInfo;
+  // const userTokens = props.userTokens;
+  // const userUnclaimedRewards = props.userUnclaimedRewards;
 
   const { isOpen: isDepositOpen, onOpen: onDepositOpen, onClose: onDepositClose } = useDisclosure();
-  const {
-    isOpen: isDepositNftOpen,
-    onOpen: onDepositNftOpen,
-    onClose: onDepositNftClose,
-  } = useDisclosure();
+  // const {
+  //   isOpen: isDepositNftOpen,
+  //   onOpen: onDepositNftOpen,
+  //   onClose: onDepositNftClose,
+  // } = useDisclosure();
   const {
     isOpen: isWithdrawOpen,
     onOpen: onWithdrawOpen,
     onClose: onWithdrawClose,
   } = useDisclosure();
-  const {
-    isOpen: isWithdrawNftOpen,
-    onOpen: onWithdrawNftOpen,
-    onClose: onWithdrawNftClose,
-  } = useDisclosure();
+  // const {
+  //   isOpen: isWithdrawNftOpen,
+  //   onOpen: onWithdrawNftOpen,
+  //   onClose: onWithdrawNftClose,
+  // } = useDisclosure();
 
-  const { depositToPool, ...depositQuery } = useRewardPoolDeposit(pool);
-  const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw(pool.address);
+  const { depositToPool, ...depositQuery } = useRewardPoolDeposit();
+  const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw();
 
   return (
     <>
@@ -66,14 +66,14 @@ export function StakingCardGuts(props: {
         </Text>
         <Flex direction="column">
           <Text textAlign="right" fontWeight="bold">
-            {apr}%
+            {pool.aprs.apr}%
           </Text>
           <Text fontSize="0.7rem" textAlign="right">
-            {aprDaily}% Daily
+            {pool.aprs.daily}% Daily
           </Text>
-          <Text fontSize=".8rem" textAlign="right" style={{ color: 'red' }}>
+          {/* <Text fontSize=".8rem" textAlign="right" style={{ color: 'red' }}>
             +{boostedAprDaily.toFixed(2)}% Daily with NFT
-          </Text>
+          </Text> */}
         </Flex>
 
         <Text textAlign="left" fontWeight="bold">
@@ -81,16 +81,13 @@ export function StakingCardGuts(props: {
         </Text>
         <Flex direction="column" alignItems="flex-end">
           <Text textAlign="right" fontWeight="bold">
-            {userUnclaimedRewards} {pool.rewardToken.symbol}
+            {pool.userInfo.pendingRewards} {pool.rewardToken.symbol}
           </Text>
-          {priceOfTokenRewards && userUnclaimedRewards && (
-            <Text fontSize="0.7rem" textAlign="right">
-              $
-              {(parseFloat(userUnclaimedRewards) ** parseFloat(priceOfTokenRewards))
-                .toFixed(2)
-                .toString()}
-            </Text>
-          )}
+
+          <Text fontSize="0.7rem" textAlign="right">
+            ${pool.userInfo.pendingRewardValue}
+          </Text>
+
           <Button
             variant="verteklight"
             bgColor="vertek.neonpurple.500"
@@ -104,8 +101,7 @@ export function StakingCardGuts(props: {
             width="full"
             height="2em"
             disabled={false}
-            onClick={() => depositToPool(pool.poolId, '0')}
-            // onClick={() => withdrawFromPool(pool.poolId, '0')}
+            // onClick={() => depositToPool(pool.poolId, '0')}
           >
             Claim
           </Button>
@@ -115,16 +111,13 @@ export function StakingCardGuts(props: {
           My Balance
         </Text>
         <Flex direction="column">
-          {userInfo?.amount && (
-            <Text textAlign="right" fontWeight="bold">
-              {userTokens}VRTK
-            </Text>
-          )}
-          {userTokens && priceOfToken && (
-            <Text fontSize="0.7rem" textAlign="right">
-              ${(parseFloat(userTokens) * parseFloat(priceOfToken)).toFixed(2).toString()}
-            </Text>
-          )}
+          <Text textAlign="right" fontWeight="bold">
+            {pool.userInfo.amountDeposited} VRTK
+          </Text>
+
+          <Text fontSize="0.7rem" textAlign="right">
+            ${pool.userInfo.depositValue}
+          </Text>
         </Flex>
         <GridItem
           colSpan={2}
@@ -135,10 +128,10 @@ export function StakingCardGuts(props: {
           display="flex"
           width="full"
         >
-          <Button variant="verteklight" disabled={false} width="full" onClick={onWithdrawOpen}>
+          <Button variant="verteklight" disabled={true} width="full" onClick={onWithdrawOpen}>
             Unstake
           </Button>
-          <Button variant="vertekdark" disabled={false} width="full" onClick={onDepositOpen}>
+          <Button variant="vertekdark" disabled={true} width="full" onClick={onDepositOpen}>
             Stake
           </Button>
         </GridItem>
@@ -151,10 +144,10 @@ export function StakingCardGuts(props: {
           display="flex"
           width="full"
         >
-          <Button variant="verteklight" disabled={false} width="full" onClick={onWithdrawNftOpen}>
+          <Button variant="verteklight" disabled={true} width="full">
             Unstake NFT
           </Button>
-          <Button variant="vertekdark" disabled={false} width="full" onClick={onDepositNftOpen}>
+          <Button variant="vertekdark" disabled={true} width="full">
             Stake NFT
           </Button>
         </GridItem>
@@ -166,12 +159,12 @@ export function StakingCardGuts(props: {
         onClose={onDepositClose}
         pool={pool}
       />
-      <RewardPoolNftDepositModal
+      {/* <RewardPoolNftDepositModal
         isOpen={isDepositNftOpen}
         onOpen={onDepositNftOpen}
         onClose={onDepositNftClose}
         pool={pool}
-      />
+      /> */}
 
       <RewardPoolWithdrawModal
         isOpen={isWithdrawOpen}
@@ -179,12 +172,12 @@ export function StakingCardGuts(props: {
         onClose={onWithdrawClose}
         pool={pool}
       />
-      <RewardPoolNftWithdrawModal
+      {/* <RewardPoolNftWithdrawModal
         isOpen={isWithdrawNftOpen}
         onOpen={onWithdrawNftOpen}
         onClose={onWithdrawNftClose}
         pool={pool}
-      />
+      /> */}
     </>
   );
 }

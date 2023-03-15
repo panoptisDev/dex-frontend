@@ -10,11 +10,8 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { RewardPool } from '~/apollo/generated/graphql-codegen-generated';
 import { formatUnits } from 'ethers/lib/utils';
 
-export function StakingAccordion(props: { pool: any; poolInfo: any; priceOfToken: any }) {
-  // export function StakingAccordion(props: { pool: RewardPool; poolInfo: any; priceOfToken: any }) {
+export function StakingAccordion(props: { pool: any }) {
   const pool = props.pool;
-  const poolInfo = props.poolInfo;
-  const priceOfToken = props.priceOfToken;
 
   return (
     <Accordion allowToggle padding={4}>
@@ -27,73 +24,35 @@ export function StakingAccordion(props: { pool: any; poolInfo: any; priceOfToken
         </AccordionButton>
 
         <AccordionPanel>
-          <SimpleGrid
-            style={{ minWidth: '100%' }}
-            bg=""
-            borderRadius="20px"
-            columns={2}
-            spacing={5}
-            padding="4"
-          >
+          <Flex justifyContent="space-between">
             <Text textAlign="left" fontWeight="bold">
               Total Staked
             </Text>
-            <Flex direction="column">
-              {/* <Text textAlign="right" fontWeight="bold">
-                ${pool.amountStakedValue || '0'}
-              </Text> */}
-              <Flex direction="column">
-                <Text textAlign="right" fontWeight="bold">
-                  $
-                  {poolInfo && priceOfToken
-                    ? parseInt((poolInfo.xBooStakedAmount * priceOfToken/1e18).toString()).toFixed(2)
-                    : '0'}
-                </Text>
 
-                <Text fontSize="0.7rem" textAlign="right">
-                  {poolInfo && parseInt(formatUnits(poolInfo.xBooStakedAmount.toString(), 18)).toString()} VRTK
-                </Text>
-                <Text fontSize="0.7rem" textAlign="right">
-                  {poolInfo && poolInfo.mpStakedAmount.toString()} Staked NFTS
-                </Text>
-              </Flex>
+            <Text textAlign="right" fontWeight="bold">
+              {pool.amountStakedValue}%
+            </Text>
+          </Flex>
 
-              {/* <Text textAlign="left" fontWeight="bold">
-                Your total share
-              </Text>
-              <Flex direction="column">
-                <Text textAlign="right" fontWeight="bold">
-                  {pool.userInfo?.percentageOwned}%
-                </Text>
-              </Flex> */}
-              {/* <Text textAlign="left" fontWeight="bold">
-                Ends in...
-              </Text>
-              <Flex direction="column">
-                <Text textAlign="right" fontWeight="bold">
-                  {pool.blocksRemaining} blocks
-                </Text>
-                <Text fontSize="0.7rem" textAlign="right">
-                  ~{pool.daysRemaining} days
-                </Text>
-              </Flex> */}
-            </Flex>
-            <div />
-            {/* <HStack justify="end">
-              <Text fontSize="1rem" textAlign="right">
-                Project Info
-              </Text>
-              <ExternalLinkIcon />
-            </HStack> */}
+          <Flex justifyContent="space-between" mt={2}>
+            <Text textAlign="left" fontWeight="bold">
+              Your total share
+            </Text>
 
-            <div />
-            {/* <HStack justify="end">
-              <Text fontSize="1rem" textAlign="right">
-                Contract
-              </Text>
-              <ExternalLinkIcon />
-            </HStack> */}
-          </SimpleGrid>
+            <Text textAlign="right" fontWeight="bold">
+              {pool.userInfo.percentageOwned}%
+            </Text>
+          </Flex>
+
+          <Flex justifyContent="space-between" mt={2}>
+            <Text textAlign="left" fontWeight="bold">
+              Ends in
+            </Text>
+
+            <Text textAlign="right" fontWeight="bold">
+              {pool.daysRemaining} days
+            </Text>
+          </Flex>
         </AccordionPanel>
       </AccordionItem>
     </Accordion>
