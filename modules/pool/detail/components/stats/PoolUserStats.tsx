@@ -6,10 +6,17 @@ import { usePoolUserDepositBalance } from '~/modules/pool/lib/usePoolUserDeposit
 import { Skeleton } from '@chakra-ui/react';
 import { PoolUserStakedStats } from '~/modules/pool/detail/components/stats/PoolUserStakedStats';
 import { usePool } from '~/modules/pool/lib/usePool';
+import { useUserData } from '~/lib/user/useUserData';
+import { getAprValues } from '~/lib/util/apr-utils';
 
 export default function PoolUserStats() {
   const { pool, totalApr } = usePool();
   const { userPoolBalanceUSD, isLoading } = usePoolUserDepositBalance();
+
+  const { boostForPool } = useUserData();
+
+  const boost = boostForPool(pool.id);
+  const { boostedTotalAPR } = getAprValues(pool.dynamicData.apr, boost);
 
   return (
     <>
@@ -63,7 +70,7 @@ export default function PoolUserStats() {
             <Text textAlign="right" fontWeight="bold" fontSize="1.3rem" color="#ccc">
               My APR
             </Text>
-            <div className="apr-stripes">{numeral(pool.dynamicData.apr.total).format('0.00%')}</div>
+            <div className="apr-stripes">{numeral(boostedTotalAPR).format('0.00%')}</div>
           </Box>
         </Box>
       </Box>
