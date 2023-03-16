@@ -30,7 +30,7 @@ export function GaugeRewardsInfo({ gauge }: Props) {
   return (
     <>
       {hasBribes ? (
-        <Popover>
+        <Popover trigger="hover">
           <PopoverTrigger>
             <Flex width="50%" justifyContent="space-between">
               <Flex className="cursor-pointer" justifyContent="center" alignContent="center">
@@ -48,9 +48,14 @@ export function GaugeRewardsInfo({ gauge }: Props) {
             </Flex>
           </PopoverTrigger>
 
-          <PopoverContent backgroundColor="">
-            <PopoverArrow />
-            <PopoverCloseButton />
+          <PopoverContent
+            padding="4"
+            borderRadius="16px"
+            bgColor="vertek.slatepurple.900"
+            boxShadow="0 0 12px #000"
+          >
+            {/* <PopoverArrow /> */}
+            {/* <PopoverCloseButton /> */}
             <PopoverHeader bgColor="vertek.slatepurple.900">
               <Text fontSize="1.3rem"> Bribes</Text>
             </PopoverHeader>
