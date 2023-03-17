@@ -9,7 +9,7 @@ export function useRewardPoolDeposit(pool: RewardPool) {
 
   const { submitAsync, ...rest } = useSubmitTransaction({
     config: {
-      addressOrName: pool.address,
+      addressOrName: '',
       contractInterface: ['function deposit(uint256) external'],
       functionName: 'deposit(uint256)',
     },

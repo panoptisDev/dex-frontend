@@ -40,7 +40,7 @@ export function ClaimContainer() {
       await getUserBribeClaims({
         variables: {
           user: userAddress || '',
-          epoch: 1677715200, // TODO: Dynamic update
+          epoch: 1678320000, // TODO: Dynamic update
         },
       });
     };

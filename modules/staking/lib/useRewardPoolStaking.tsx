@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext } from 'react';
-import { useGetRewardPoolsQuery } from '~/apollo/generated/graphql-codegen-generated';
+// import { useGetRewardPoolsQuery } from '~/apollo/generated/graphql-codegen-generated';
 import { useUserAccount } from '~/lib/user/useUserAccount';
 import { COMING_POOLS } from './data';
 

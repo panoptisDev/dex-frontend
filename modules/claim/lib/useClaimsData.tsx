@@ -18,7 +18,12 @@ export function useClaimsData() {
   const { gauges, isLoading: isLoadingGauges, refetchGauges } = useGetGaugesQuery();
   const [
     getUserBribeClaims,
-    { loading: isLoadingClaims, data: bribeClaims, refetch: refetchBribeRewards },
+    {
+      loading: isLoadingClaims,
+      error: bribeError,
+      data: bribeClaims,
+      refetch: refetchBribeRewards,
+    },
   ] = useGetUserBribeClaimsLazyQuery();
 
   const {

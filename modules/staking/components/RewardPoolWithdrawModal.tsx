@@ -22,7 +22,7 @@ export function RewardPoolWithdrawModal({ isOpen, onOpen, onClose, pool }: Props
   const [withdrawAmount, setWithdrawAmount] = useState('0');
   const [steps, setSteps] = useState<TransactionStep[] | null>(null);
 
-  const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw(pool.address);
+  const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw('');
 
   const vrtkAddress = networkConfig.beets.address;
   const vrtkInfo: TokenBase = {

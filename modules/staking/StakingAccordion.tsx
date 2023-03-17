@@ -57,7 +57,7 @@ export function StakingAccordion(props: { pool: RewardPool }) {
             </Text>
             <Flex direction="column">
               <Text textAlign="right" fontWeight="bold">
-                {pool.blocksRemaining || '0'} blocks
+                {/* {pool.blocksRemaining || '0'} blocks */}
               </Text>
               <Text fontSize="0.7rem" textAlign="right">
                 ~{pool.daysRemaining || '0'} days

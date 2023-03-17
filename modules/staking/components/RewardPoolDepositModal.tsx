@@ -55,7 +55,7 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
     isLoading: isLoadingAllowances,
     hasApprovalForAmount,
     refetch: refetchAllowances,
-  } = useAllowances(userAddress || null, [vrtkInfo], pool.address);
+  } = useAllowances(userAddress || null, [vrtkInfo], '');
 
   const {
     getUserBalance,
@@ -113,13 +113,15 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
         depositQuery.reset();
         onClose();
       }}
-      size="xl"  >
+      size="xl"
+    >
       <ModalOverlay />
-      <ModalContent 
-      boxShadow="0 0 10px #5BC0F8, 0 0 20px #4A4AF6"
-      backgroundColor="vertek.slate.900" 
-      padding="12px" 
-      borderRadius="16px">
+      <ModalContent
+        boxShadow="0 0 10px #5BC0F8, 0 0 20px #4A4AF6"
+        backgroundColor="vertek.slate.900"
+        padding="12px"
+        borderRadius="16px"
+      >
         <ModalCloseButton />
         <ModalHeader className="bg">
           <Text color="gray.100" fontSize="md">
@@ -146,7 +148,7 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
             }}
             onSubmit={(id) => {
               if (id === 'approve') {
-                approve(pool.address);
+                approve('');
               } else if (id === 'stake') {
                 depositToPool(inputAmount || '0');
               }
