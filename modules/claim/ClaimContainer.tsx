@@ -19,7 +19,6 @@ export function ClaimContainer() {
   const [gaugesWithRewards, setGaugesWithRewards] = useState<Gauge[]>([]);
   const [hasGaugeRewards, sethasGaugeRewards] = useState<boolean>(false);
   const [hasProtocolRewards, sethasProtocolRewards] = useState<boolean>(false);
-  const [hasBribeRewards, sethasBribeRewards] = useState<boolean>(false);
   const [claiming, setClaiming] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -41,7 +40,7 @@ export function ClaimContainer() {
       await getUserBribeClaims({
         variables: {
           user: userAddress || '',
-          epoch: 1677715200, // TODO: Dynamic update
+          epoch: 1678320000, // TODO: Dynamic update
         },
       });
     };
@@ -50,16 +49,6 @@ export function ClaimContainer() {
       getClaims();
     }
   }, [isConnected, userAddress]);
-
-  useEffect(() => {
-    if (bribeClaims?.getUserBribeClaims) {
-      if (bribeClaims.getUserBribeClaims.length) {
-        sethasBribeRewards(true);
-      } else {
-        sethasBribeRewards(false);
-      }
-    }
-  }, [bribeClaims]);
 
   useEffect(() => {
     if (txState.error) {

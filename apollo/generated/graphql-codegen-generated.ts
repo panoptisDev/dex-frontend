@@ -1507,7 +1507,6 @@ export interface User {
 export interface UserBribeClaim {
   __typename: 'UserBribeClaim';
   amountOwed: Scalars['String'];
-  amountOwedBN: Scalars['String'];
   briber: Scalars['String'];
   distributionId: Scalars['String'];
   gauge: Scalars['String'];
@@ -1845,7 +1844,6 @@ export type GetUserBribeClaimsQuery = {
     __typename: 'UserBribeClaim';
     distributionId: string;
     amountOwed: string;
-    amountOwedBN: string;
     briber: string;
     gauge: string;
     token: string;
@@ -5745,7 +5743,6 @@ export const GetUserBribeClaimsDocument = gql`
     getUserBribeClaims(user: $user, epoch: $epoch) {
       distributionId
       amountOwed
-      amountOwedBN
       briber
       gauge
       token

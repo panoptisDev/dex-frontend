@@ -3,7 +3,7 @@ import { useRewardPools } from './useRewardPoolStaking';
 import StakingNFTPools from '~/lib/abi/StakingNFTPools.json';
 
 export function useRewardPoolWithdrawNft(address: string) {
-  const { refetchPools } = useRewardPools();
+  const { refetchStakingPools } = useRewardPools();
 
   const { submitAsync, ...rest } = useSubmitTransaction({
     config: {
@@ -21,7 +21,7 @@ export function useRewardPoolWithdrawNft(address: string) {
       walletText: `Withdraw ${tokenId} VRTK from staking pool`,
     });
 
-    refetchPools && refetchPools();
+    refetchStakingPools();
   }
 
   return {

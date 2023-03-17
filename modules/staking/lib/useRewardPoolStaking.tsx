@@ -1,5 +1,8 @@
 import { createContext, ReactNode, useContext } from 'react';
-import { useGetRewardPoolsDataQuery } from '~/apollo/generated/graphql-codegen-generated';
+import {
+  useGetRewardPoolsDataQuery,
+  useGetRewardPoolsQuery,
+} from '~/apollo/generated/graphql-codegen-generated';
 import { useUserAccount } from '~/lib/user/useUserAccount';
 
 export interface RewardPoolContextType {}
@@ -11,14 +14,17 @@ function _useRewardPools() {
     data: stakingPools,
     loading: loadingPools,
     refetch: refetchStakingPools,
-  } = useGetRewardPoolsDataQuery({
+  } = useGetRewardPoolsQuery({
     fetchPolicy: 'cache-first',
     pollInterval: 15000,
+    variables: {
+      user: userAddress || '',
+    },
   });
 
   return {
     loadingPools,
-    stakingPools: stakingPools?.getRewardPoolsData || [],
+    stakingPools: stakingPools?.getRewardPools || [],
     refetchStakingPools,
   };
 }

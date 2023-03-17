@@ -18,7 +18,12 @@ export function useClaimsData() {
   const { gauges, isLoading: isLoadingGauges, refetchGauges } = useGetGaugesQuery();
   const [
     getUserBribeClaims,
-    { loading: isLoadingClaims, data: bribeClaims, refetch: refetchBribeRewards },
+    {
+      loading: isLoadingClaims,
+      error: bribeError,
+      data: bribeClaims,
+      refetch: refetchBribeRewards,
+    },
   ] = useGetUserBribeClaimsLazyQuery();
 
   const {
@@ -39,6 +44,12 @@ export function useClaimsData() {
       setRewardGauges(decoratedGauges as Gauge[]);
     }
   };
+
+  useEffect(() => {
+    if (bribeError) {
+      console.log(bribeError);
+    }
+  }, [bribeError]);
 
   useEffect(() => {
     if (!isLoadingProtocolRewards && protocolRewardsData) {
@@ -69,6 +80,7 @@ export function useClaimsData() {
   async function refetchClaimsData() {
     refetchGauges();
     refetchProtocolRewards();
+    refetchBribeRewards();
   }
 
   return {

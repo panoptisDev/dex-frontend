@@ -27,7 +27,7 @@ export function RewardPoolWithdrawModal({ isOpen, onOpen, onClose, pool }: Props
   const [steps, setSteps] = useState<TransactionStep[] | null>(null);
   const [userTokens, setUserTokens] = useState<string>();
 
-  const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw(pool.address);
+  const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw();
   const account = getAccount();
   const vrtkAddress = networkConfig.beets.address;
   const vrtkInfo: TokenBase = {
@@ -46,7 +46,7 @@ export function RewardPoolWithdrawModal({ isOpen, onOpen, onClose, pool }: Props
       functionName: 'userInfo',
       args: [pool.poolId, account.address],
     }).then((res) => {
-      const units = formatUnits(res.amount, 18)
+      const units = formatUnits(res.amount, 18);
       setUserTokens(units.toString());
     });
   }, [account]);

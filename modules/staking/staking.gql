@@ -1,9 +1,6 @@
 query GetRewardPools($user: String) {
   getRewardPools(user: $user) {
     poolId
-    # startBlock
-    # endBlock
-    # blocksRemaining
     daysRemaining
     amountStaked
     amountStakedValue
@@ -12,7 +9,6 @@ query GetRewardPools($user: String) {
       address
       name
       symbol
-      # rewardPerBlock
       logoURI
     }
 

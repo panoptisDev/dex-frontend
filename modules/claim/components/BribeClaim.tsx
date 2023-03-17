@@ -8,6 +8,7 @@ import { numberFormatUSDValue } from '~/lib/util/number-formats';
 import { useBribeClaim } from '../lib/useClaimBribes';
 import { StatGridItemRight } from './ClaimTableUtils';
 import { useClaimsData } from '../lib/useClaimsData';
+import { parseUnits } from 'ethers/lib/utils';
 
 type Props = {
   bribeRewards: any[];
@@ -47,7 +48,13 @@ export function BribeClaim({ bribeRewards }: Props) {
       const merkleProof = bribe.proof;
 
       tokens.push(bribe.token);
-      claims.push([bribe.distributionId, bribe.amountOwedBN, distributor, tokenIndex, merkleProof]);
+      claims.push([
+        bribe.distributionId,
+        parseUnits(bribe.amountOwed),
+        distributor,
+        tokenIndex,
+        merkleProof,
+      ]);
     });
 
     await claimBribes(claimer, claims, tokens);
@@ -159,7 +166,7 @@ export function BribeClaim({ bribeRewards }: Props) {
       </Box>
       <Box>
         <Flex
-          display={{ base: 'none', lg: 'grid' }}
+          display={{ base: 'grid', lg: 'grid' }}
           p="3"
           borderLeftWidth="1px"
           borderRightWidth="1px"
@@ -180,7 +187,7 @@ export function BribeClaim({ bribeRewards }: Props) {
             alignItems="center"
             height="2em"
             disabled={false}
-            width={{ base: '200px', lg: '125px' }}
+            width={{ base: 'none', lg: '125px' }}
             isDisabled={txState.isPending}
             onClick={doBribeClaims}
           >

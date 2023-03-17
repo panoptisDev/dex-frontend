@@ -1368,7 +1368,6 @@ type User {
 
 type UserBribeClaim {
   amountOwed: String!
-  amountOwedBN: String!
   briber: String!
   distributionId: String!
   gauge: String!

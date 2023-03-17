@@ -6,9 +6,7 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from '@chakra-ui/react';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { RewardPool } from '~/apollo/generated/graphql-codegen-generated';
-import { formatUnits } from 'ethers/lib/utils';
+import { numberFormatUSDValue } from '~/lib/util/number-formats';
 
 export function StakingAccordion(props: { pool: any }) {
   const pool = props.pool;
@@ -29,9 +27,14 @@ export function StakingAccordion(props: { pool: any }) {
               Total Staked
             </Text>
 
-            <Text textAlign="right" fontWeight="bold">
-              {pool.amountStakedValue}%
-            </Text>
+            <Flex direction="column">
+              <Text textAlign="right" fontWeight="bold">
+                {pool.amountStaked}
+              </Text>
+              <Text textAlign="right" fontSize="0.8rem">
+                {numberFormatUSDValue(pool.amountStakedValue)}
+              </Text>
+            </Flex>
           </Flex>
 
           <Flex justifyContent="space-between" mt={2}>

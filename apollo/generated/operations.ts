@@ -578,7 +578,6 @@ export const GetUserBribeClaims = gql`
     getUserBribeClaims(user: $user, epoch: $epoch) {
       distributionId
       amountOwed
-      amountOwedBN
       briber
       gauge
       token

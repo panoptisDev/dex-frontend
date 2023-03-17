@@ -5,6 +5,8 @@ import { RewardPoolWithdrawModal } from './components/RewardPoolWithdrawModal';
 import { RewardPoolNftWithdrawModal } from './components/RewardPoolNftWithdrawModal';
 import { useRewardPoolDeposit } from './lib/useRewardPoolDeposit';
 import { useRewardPoolWithdraw } from './lib/useRewardPoolWithdraw';
+import { numberFormatUSDValue } from '~/lib/util/number-formats';
+import { tokenFormatAmount } from '~/lib/services/token/token-util';
 
 export function StakingCardGuts(props: {
   pool: any;
@@ -50,6 +52,8 @@ export function StakingCardGuts(props: {
   const { depositToPool, ...depositQuery } = useRewardPoolDeposit();
   const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw();
 
+  console.log(pool);
+
   return (
     <>
       <SimpleGrid
@@ -81,11 +85,11 @@ export function StakingCardGuts(props: {
         </Text>
         <Flex direction="column" alignItems="flex-end">
           <Text textAlign="right" fontWeight="bold">
-            {pool.userInfo.pendingRewards} {pool.rewardToken.symbol}
+            {tokenFormatAmount(pool.userInfo.pendingRewards)} {pool.rewardToken.symbol}
           </Text>
 
           <Text fontSize="0.7rem" textAlign="right">
-            ${pool.userInfo.pendingRewardValue}
+            {numberFormatUSDValue(pool.userInfo.pendingRewardValue)}
           </Text>
 
           <Button
@@ -100,7 +104,7 @@ export function StakingCardGuts(props: {
             alignItems="center"
             width="full"
             height="2em"
-            disabled={false}
+            disabled={!pool.userInfo.hasPendingRewards}
             // onClick={() => depositToPool(pool.poolId, '0')}
           >
             Claim
@@ -128,10 +132,15 @@ export function StakingCardGuts(props: {
           display="flex"
           width="full"
         >
-          <Button variant="verteklight" disabled={true} width="full" onClick={onWithdrawOpen}>
+          <Button
+            variant="verteklight"
+            width="full"
+            onClick={onWithdrawOpen}
+            disabled={Number(pool.userInfo.amountDeposited) == 0}
+          >
             Unstake
           </Button>
-          <Button variant="vertekdark" disabled={true} width="full" onClick={onDepositOpen}>
+          <Button variant="vertekdark" width="full" onClick={onDepositOpen}>
             Stake
           </Button>
         </GridItem>
