@@ -973,41 +973,6 @@ export const GetPoolFilters = gql`
     }
   }
 `;
-export const GetRewardPools = gql`
-  query GetRewardPools($user: String) {
-    getRewardPools(user: $user) {
-      address
-      startBlock
-      endBlock
-      blocksRemaining
-      daysRemaining
-      amountStaked
-      amountStakedValue
-      isPartnerPool
-      rewardToken {
-        address
-        name
-        symbol
-        rewardPerBlock
-        logoURI
-      }
-      aprs {
-        apr
-        daily
-      }
-      userInfo {
-        poolAddress
-        amountDeposited
-        amountDepositedFull
-        depositValue
-        hasPendingRewards
-        pendingRewards
-        pendingRewardValue
-        percentageOwned
-      }
-    }
-  }
-`;
 export const GetTokenRelativePriceChartData = gql`
   query GetTokenRelativePriceChartData(
     $tokenIn: String!

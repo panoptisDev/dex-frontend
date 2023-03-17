@@ -1202,6 +1202,7 @@ type Query {
   getProtocolPoolData: [GqlProtocolGaugeInfo]!
   getProtocolTokenList: [String]
   getRewardPools(user: String): [RewardPool]!
+  getRewardPoolsData: [RewardPool]!
   getSingleGaugeBribes(epoch: Int!, gauge: String!): [EpochBribeInfo]!
   getUserBribeClaims(epoch: Int!, user: String!): [UserBribeClaim]!
   getUserGaugeStakes(poolIds: [String!]!, user: String!): [LiquidityGauge]!
@@ -1281,31 +1282,21 @@ type Query {
 }
 
 type RewardPool {
-  address: String!
   amountStaked: String!
   amountStakedValue: String!
   aprs: RewardPoolAprs!
-  blocksRemaining: String!
-  daysRemaining: String!
-  endBlock: Int!
+  daysRemaining: Int!
+  endTime: Int!
   isPartnerPool: Boolean!
-  rewardToken: RewardPoolRewardToken!
-  startBlock: Int!
+  poolId: Int!
+  rewardToken: GqlToken!
+  startTime: Int!
   userInfo: RewardPoolUserInfo
 }
 
 type RewardPoolAprs {
   apr: String!
   daily: String!
-}
-
-type RewardPoolRewardToken {
-  address: String!
-  logoURI: String!
-  name: String!
-  price: Int
-  rewardPerBlock: String!
-  symbol: String!
 }
 
 type RewardPoolUserInfo {
@@ -1316,7 +1307,7 @@ type RewardPoolUserInfo {
   pendingRewardValue: String!
   pendingRewards: String!
   percentageOwned: String!
-  poolAddress: String!
+  poolId: Int!
 }
 
 type RewardToken {

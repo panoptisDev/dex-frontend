@@ -1245,6 +1245,7 @@ export interface Query {
   getProtocolPoolData: Array<Maybe<GqlProtocolGaugeInfo>>;
   getProtocolTokenList?: Maybe<Array<Maybe<Scalars['String']>>>;
   getRewardPools: Array<Maybe<RewardPool>>;
+  getRewardPoolsData: Array<Maybe<RewardPool>>;
   getSingleGaugeBribes: Array<Maybe<EpochBribeInfo>>;
   getUserBribeClaims: Array<Maybe<UserBribeClaim>>;
   getUserGaugeStakes: Array<Maybe<LiquidityGauge>>;
@@ -1443,16 +1444,15 @@ export interface QueryUserGetSwapsArgs {
 
 export interface RewardPool {
   __typename: 'RewardPool';
-  address: Scalars['String'];
   amountStaked: Scalars['String'];
   amountStakedValue: Scalars['String'];
   aprs: RewardPoolAprs;
-  blocksRemaining: Scalars['String'];
-  daysRemaining: Scalars['String'];
-  endBlock: Scalars['Int'];
+  daysRemaining: Scalars['Int'];
+  endTime: Scalars['Int'];
   isPartnerPool: Scalars['Boolean'];
-  rewardToken: RewardPoolRewardToken;
-  startBlock: Scalars['Int'];
+  poolId: Scalars['Int'];
+  rewardToken: GqlToken;
+  startTime: Scalars['Int'];
   userInfo?: Maybe<RewardPoolUserInfo>;
 }
 
@@ -1460,16 +1460,6 @@ export interface RewardPoolAprs {
   __typename: 'RewardPoolAprs';
   apr: Scalars['String'];
   daily: Scalars['String'];
-}
-
-export interface RewardPoolRewardToken {
-  __typename: 'RewardPoolRewardToken';
-  address: Scalars['String'];
-  logoURI: Scalars['String'];
-  name: Scalars['String'];
-  price?: Maybe<Scalars['Int']>;
-  rewardPerBlock: Scalars['String'];
-  symbol: Scalars['String'];
 }
 
 export interface RewardPoolUserInfo {
@@ -1481,7 +1471,7 @@ export interface RewardPoolUserInfo {
   pendingRewardValue: Scalars['String'];
   pendingRewards: Scalars['String'];
   percentageOwned: Scalars['String'];
-  poolAddress: Scalars['String'];
+  poolId: Scalars['Int'];
 }
 
 export interface RewardToken {
@@ -4223,45 +4213,6 @@ export type GqlPoolMinimalFragment = {
   } | null;
 };
 
-export type GetRewardPoolsQueryVariables = Exact<{
-  user?: InputMaybe<Scalars['String']>;
-}>;
-
-export type GetRewardPoolsQuery = {
-  __typename: 'Query';
-  getRewardPools: Array<{
-    __typename: 'RewardPool';
-    address: string;
-    startBlock: number;
-    endBlock: number;
-    blocksRemaining: string;
-    daysRemaining: string;
-    amountStaked: string;
-    amountStakedValue: string;
-    isPartnerPool: boolean;
-    rewardToken: {
-      __typename: 'RewardPoolRewardToken';
-      address: string;
-      name: string;
-      symbol: string;
-      rewardPerBlock: string;
-      logoURI: string;
-    };
-    aprs: { __typename: 'RewardPoolAprs'; apr: string; daily: string };
-    userInfo?: {
-      __typename: 'RewardPoolUserInfo';
-      poolAddress: string;
-      amountDeposited: string;
-      amountDepositedFull: string;
-      depositValue: string;
-      hasPendingRewards: boolean;
-      pendingRewards: string;
-      pendingRewardValue: string;
-      percentageOwned: string;
-    } | null;
-  } | null>;
-};
-
 export type GetTokenRelativePriceChartDataQueryVariables = Exact<{
   tokenIn: Scalars['String'];
   tokenOut: Scalars['String'];
@@ -6764,82 +6715,6 @@ export type GetPoolFiltersLazyQueryHookResult = ReturnType<typeof useGetPoolFilt
 export type GetPoolFiltersQueryResult = Apollo.QueryResult<
   GetPoolFiltersQuery,
   GetPoolFiltersQueryVariables
->;
-export const GetRewardPoolsDocument = gql`
-  query GetRewardPools($user: String) {
-    getRewardPools(user: $user) {
-      address
-      startBlock
-      endBlock
-      blocksRemaining
-      daysRemaining
-      amountStaked
-      amountStakedValue
-      isPartnerPool
-      rewardToken {
-        address
-        name
-        symbol
-        rewardPerBlock
-        logoURI
-      }
-      aprs {
-        apr
-        daily
-      }
-      userInfo {
-        poolAddress
-        amountDeposited
-        amountDepositedFull
-        depositValue
-        hasPendingRewards
-        pendingRewards
-        pendingRewardValue
-        percentageOwned
-      }
-    }
-  }
-`;
-
-/**
- * __useGetRewardPoolsQuery__
- *
- * To run a query within a React component, call `useGetRewardPoolsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRewardPoolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetRewardPoolsQuery({
- *   variables: {
- *      user: // value for 'user'
- *   },
- * });
- */
-export function useGetRewardPoolsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetRewardPoolsQuery, GetRewardPoolsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetRewardPoolsQuery, GetRewardPoolsQueryVariables>(
-    GetRewardPoolsDocument,
-    options,
-  );
-}
-export function useGetRewardPoolsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetRewardPoolsQuery, GetRewardPoolsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetRewardPoolsQuery, GetRewardPoolsQueryVariables>(
-    GetRewardPoolsDocument,
-    options,
-  );
-}
-export type GetRewardPoolsQueryHookResult = ReturnType<typeof useGetRewardPoolsQuery>;
-export type GetRewardPoolsLazyQueryHookResult = ReturnType<typeof useGetRewardPoolsLazyQuery>;
-export type GetRewardPoolsQueryResult = Apollo.QueryResult<
-  GetRewardPoolsQuery,
-  GetRewardPoolsQueryVariables
 >;
 export const GetTokenRelativePriceChartDataDocument = gql`
   query GetTokenRelativePriceChartData(
