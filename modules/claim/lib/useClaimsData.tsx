@@ -41,6 +41,12 @@ export function useClaimsData() {
   };
 
   useEffect(() => {
+    if (bribeError) {
+      console.log(bribeError);
+    }
+  }, [bribeError]);
+
+  useEffect(() => {
     if (!isLoadingProtocolRewards && protocolRewardsData) {
       setProtocolData(protocolRewardsData.protocolRewards);
     }
@@ -69,6 +75,7 @@ export function useClaimsData() {
   async function refetchClaimsData() {
     refetchGauges();
     refetchProtocolRewards();
+    refetchBribeRewards();
   }
 
   return {
