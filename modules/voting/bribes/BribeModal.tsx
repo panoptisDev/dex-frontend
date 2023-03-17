@@ -14,7 +14,12 @@ import {
   Select,
   Text,
 } from '@chakra-ui/react';
-import { Modal, ModalBody, ModalCloseButton, ModalContent } from '@chakra-ui/modal';
+import {
+  BeetsModalBody,
+  BeetsModalContent,
+  BeetsModalHeader,
+} from '~/components/modal/BeetsModal';
+import { Modal, ModalCloseButton } from '@chakra-ui/modal';
 import { useEffect, useRef, useState } from 'react';
 import { TokenSelectModal } from '~/components/token-select/TokenSelectModal';
 import { PoolSelectModal } from '~/components/pool-select/PoolSelectModal';
@@ -118,13 +123,18 @@ export function BribeModal({ isOpen, onClose, poolsWithGauges }: Props) {
       initialFocusRef={tokenListRef}
       finalFocusRef={tokenListRef}
     >
-      <ModalOverlay bg="blackAlpha.800" />
-      <ModalContent borderWidth={1} borderColor="vertek.neonpurple.500">
+      <ModalOverlay
+        display={{ base: 'none', md: 'block' }}
+        bg={`radial-gradient(circle at center, #4132D0 0%, rgba(0,0,0, 0.85) 55% )`}
+      />
+      <BeetsModalContent bgColor="vertek.slate.900">
         <Box bg="vertek.slatepurple.900">
           <Box className="bg">
             <ModalCloseButton />
-            <ModalHeader>Add Bribe</ModalHeader>
-            <ModalBody p="0" position="relative">
+            <BeetsModalHeader>Add Bribe</BeetsModalHeader>
+            <BeetsModalBody
+              p="0" position="relative"
+            >
               <Flex
                 p={10}
                 gap={10}
@@ -261,10 +271,10 @@ export function BribeModal({ isOpen, onClose, poolsWithGauges }: Props) {
                   </>
                 )}
               </Flex>
-            </ModalBody>
+            </BeetsModalBody>
           </Box>
         </Box>
-      </ModalContent>
+      </BeetsModalContent>
     </Modal>
   );
 }
