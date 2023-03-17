@@ -29,8 +29,6 @@ export function StakingCard(props: { pool: any | null }) {
 
   // const { data: pricesResponse } = useGetTokenPricesQuery();
 
-  console.log(pool);
-
   // const priceOfToken =
   //   pricesResponse &&
   //   pricesResponse.tokenPrices

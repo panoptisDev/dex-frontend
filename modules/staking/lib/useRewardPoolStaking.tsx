@@ -15,7 +15,7 @@ function _useRewardPools() {
     loading: loadingPools,
     refetch: refetchStakingPools,
   } = useGetRewardPoolsQuery({
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'network-only',
     pollInterval: 15000,
     variables: {
       user: userAddress || '',

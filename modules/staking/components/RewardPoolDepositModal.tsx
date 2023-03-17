@@ -20,9 +20,10 @@ interface Props {
   onOpen(): void;
   onClose(): void;
   pool: any;
+  userVrtkBalance: string;
 }
 
-export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props) {
+export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool, userVrtkBalance }: Props) {
   const [inputAmount, setInputAmount] = useState('');
   const [percent, setPercent] = useState(100);
   const [steps, setSteps] = useState<TransactionStep[] | null>(null);
@@ -53,7 +54,6 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
 
   const { approve, ...approveQuery } = useApproveToken(vrtkInfo);
 
-  const userVrtkBalance = getUserBalance(vrtkAddress.toLowerCase());
   const userAmount = oldBnumToHumanReadable(
     oldBnumScaleAmount(getUserBalance(userVrtkBalance)).times(percent).div(100),
   );
@@ -65,8 +65,6 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool }: Props)
   useEffect(() => {
     if (!loading) {
       const hasApproval = hasApprovalForAmount(vrtkAddress, userVrtkBalance);
-
-      console.log(userVrtkBalance);
 
       setSteps([
         ...(!hasApproval

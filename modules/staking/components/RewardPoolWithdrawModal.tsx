@@ -13,22 +13,28 @@ import { useRewardPoolWithdraw } from '../lib/useRewardPoolWithdraw';
 import StakingNFTPools from '../../../lib/abi/StakingNFTPools.json';
 import { readContract, getAccount } from '@wagmi/core';
 import { formatUnits } from 'ethers/lib/utils';
+import { useUserAccount } from '~/lib/user/useUserAccount';
+import { useUserTokenBalances } from '~/lib/user/useUserTokenBalances';
+import { useRewardPools } from '../lib/useRewardPoolStaking';
 
 interface Props {
   isOpen: boolean;
   onOpen(): void;
   onClose(): void;
-  // pool: RewardPool;
-  pool: any;
+  pool: RewardPool;
 }
 
 export function RewardPoolWithdrawModal({ isOpen, onOpen, onClose, pool }: Props) {
   const [withdrawAmount, setWithdrawAmount] = useState('0');
   const [steps, setSteps] = useState<TransactionStep[] | null>(null);
-  const [userTokens, setUserTokens] = useState<string>();
+  // const [userTokens, setUserTokens] = useState<string>();
 
   const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw();
-  const account = getAccount();
+  const { refetch: refetchTokenBalances } = useUserTokenBalances();
+  const { refetchStakingPools } = useRewardPools();
+
+  const { userAddress } = useUserAccount();
+
   const vrtkAddress = networkConfig.beets.address;
   const vrtkInfo: TokenBase = {
     address: vrtkAddress,
@@ -38,18 +44,21 @@ export function RewardPoolWithdrawModal({ isOpen, onOpen, onClose, pool }: Props
   };
 
   useEffect(() => {
-    if (!account.address) return;
-    readContract({
-      addressOrName: networkConfig.nft.nftStakingContract.toLowerCase(),
-      contractInterface: StakingNFTPools,
-      chainId: 56,
-      functionName: 'userInfo',
-      args: [pool.poolId, account.address],
-    }).then((res) => {
-      const units = formatUnits(res.amount, 18);
-      setUserTokens(units.toString());
-    });
-  }, [account]);
+    if (!userAddress) {
+      return;
+    }
+
+    // readContract({
+    //   addressOrName: networkConfig.nft.nftStakingContract.toLowerCase(),
+    //   contractInterface: StakingNFTPools,
+    //   chainId: 56,
+    //   functionName: 'userInfo',
+    //   args: [pool.poolId, account.address],
+    // }).then((res) => {
+    //   const units = formatUnits(res.amount, 18);
+    //   setUserTokens(units.toString());
+    // });
+  }, [userAddress]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -85,7 +94,7 @@ export function RewardPoolWithdrawModal({ isOpen, onOpen, onClose, pool }: Props
           <BeetsTokenInputWithSlider
             tokenOptions={[]}
             selectedTokenOption={vrtkInfo}
-            balance={userTokens || '0'}
+            balance={pool.userInfo?.amountDepositedFull || '0'}
             setInputAmount={(amount) => setWithdrawAmount(amount)}
             value={withdrawAmount}
             setSelectedTokenOption={() => null}
@@ -102,7 +111,10 @@ export function RewardPoolWithdrawModal({ isOpen, onOpen, onClose, pool }: Props
             onSubmit={(id) => {
               withdrawFromPool(pool.poolId, withdrawAmount);
             }}
-            onConfirmed={async (id) => {}}
+            onConfirmed={async (id) => {
+              refetchStakingPools();
+              refetchTokenBalances();
+            }}
             steps={steps || []}
             queries={[{ ...withdrawQuery, id: 'unstake' }]}
             isDisabled={false}

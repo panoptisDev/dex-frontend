@@ -3,10 +3,12 @@ import { RewardPoolDepositModal } from './components/RewardPoolDepositModal';
 import { RewardPoolNftDepositModal } from './components/RewardPoolNftDepositModal';
 import { RewardPoolWithdrawModal } from './components/RewardPoolWithdrawModal';
 import { RewardPoolNftWithdrawModal } from './components/RewardPoolNftWithdrawModal';
-import { useRewardPoolDeposit } from './lib/useRewardPoolDeposit';
-import { useRewardPoolWithdraw } from './lib/useRewardPoolWithdraw';
 import { numberFormatUSDValue } from '~/lib/util/number-formats';
 import { tokenFormatAmount } from '~/lib/services/token/token-util';
+import { useUserTokenBalances } from '~/lib/user/useUserTokenBalances';
+import { networkConfig } from '~/lib/config/network-config';
+import { useRewardPools } from './lib/useRewardPoolStaking';
+import { useRewardPoolDeposit } from './lib/useRewardPoolDeposit';
 
 export function StakingCardGuts(props: {
   pool: any;
@@ -49,10 +51,32 @@ export function StakingCardGuts(props: {
   //   onClose: onWithdrawNftClose,
   // } = useDisclosure();
 
-  const { depositToPool, ...depositQuery } = useRewardPoolDeposit();
-  const { withdrawFromPool, ...withdrawQuery } = useRewardPoolWithdraw();
+  const {
+    getUserBalance,
+    isLoading: isLoadingBalances,
+    isRefetching: isRefetchingBalances,
+    refetch: refetchTokenBalances,
+  } = useUserTokenBalances();
 
-  console.log(pool);
+  const { refetchStakingPools } = useRewardPools();
+  const { depositToPool, ...depositQuery } = useRewardPoolDeposit();
+
+  const userVrtkBalance = getUserBalance(networkConfig.beets.address.toLowerCase());
+
+  function handleClose() {
+    refetchData();
+    onDepositClose();
+  }
+
+  function refetchData() {
+    refetchStakingPools();
+    refetchTokenBalances();
+  }
+
+  async function handleClaim() {
+    await depositToPool(pool.poolId, '0');
+    refetchData();
+  }
 
   return (
     <>
@@ -104,8 +128,8 @@ export function StakingCardGuts(props: {
             alignItems="center"
             width="full"
             height="2em"
-            disabled={!pool.userInfo.hasPendingRewards}
-            // onClick={() => depositToPool(pool.poolId, '0')}
+            disabled={!pool.userInfo.hasPendingRewards || depositQuery.isPending}
+            onClick={handleClaim}
           >
             Claim
           </Button>
@@ -165,8 +189,9 @@ export function StakingCardGuts(props: {
       <RewardPoolDepositModal
         isOpen={isDepositOpen}
         onOpen={onDepositOpen}
-        onClose={onDepositClose}
+        onClose={handleClose}
         pool={pool}
+        userVrtkBalance={userVrtkBalance}
       />
       {/* <RewardPoolNftDepositModal
         isOpen={isDepositNftOpen}
@@ -178,7 +203,7 @@ export function StakingCardGuts(props: {
       <RewardPoolWithdrawModal
         isOpen={isWithdrawOpen}
         onOpen={onWithdrawOpen}
-        onClose={onWithdrawClose}
+        onClose={handleClose}
         pool={pool}
       />
       {/* <RewardPoolNftWithdrawModal
