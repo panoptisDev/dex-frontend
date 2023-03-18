@@ -1198,7 +1198,7 @@ type Query {
   contentGetNewsItems: [GqlContentNewsItem]!
   get24HourGaugeFees(hoursInPast: Int): [String]
   getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
-  getLiquidityGauges(epoch: Int): [LiquidityGauge]!
+  getLiquidityGauges(epoch: Int!): [LiquidityGauge]!
   getProtocolPoolData: [GqlProtocolGaugeInfo]!
   getProtocolTokenList: [String]
   getRewardPools(user: String): [RewardPool]!
