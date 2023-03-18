@@ -9,6 +9,7 @@ import { useUserTokenBalances } from '~/lib/user/useUserTokenBalances';
 import { networkConfig } from '~/lib/config/network-config';
 import { useRewardPools } from './lib/useRewardPoolStaking';
 import { useRewardPoolDeposit } from './lib/useRewardPoolDeposit';
+import { StakingClaimModal } from './components/StakingClaimModal';
 
 export function StakingCardGuts(props: {
   pool: any;
@@ -34,29 +35,27 @@ export function StakingCardGuts(props: {
   // const userTokens = props.userTokens;
   // const userUnclaimedRewards = props.userUnclaimedRewards;
 
-  const { isOpen: isDepositOpen, onOpen: onDepositOpen, onClose: onDepositClose } = useDisclosure();
   // const {
   //   isOpen: isDepositNftOpen,
   //   onOpen: onDepositNftOpen,
   //   onClose: onDepositNftClose,
   // } = useDisclosure();
-  const {
-    isOpen: isWithdrawOpen,
-    onOpen: onWithdrawOpen,
-    onClose: onWithdrawClose,
-  } = useDisclosure();
+
   // const {
   //   isOpen: isWithdrawNftOpen,
   //   onOpen: onWithdrawNftOpen,
   //   onClose: onWithdrawNftClose,
   // } = useDisclosure();
 
+  const { isOpen: isDepositOpen, onOpen: onDepositOpen, onClose: onDepositClose } = useDisclosure();
   const {
-    getUserBalance,
-    isLoading: isLoadingBalances,
-    isRefetching: isRefetchingBalances,
-    refetch: refetchTokenBalances,
-  } = useUserTokenBalances();
+    isOpen: isWithdrawOpen,
+    onOpen: onWithdrawOpen,
+    onClose: onWithdrawClose,
+  } = useDisclosure();
+  const { isOpen: isClaimOpen, onOpen: onClaimOpen, onClose: onClaimClose } = useDisclosure();
+
+  const { getUserBalance, refetch: refetchTokenBalances } = useUserTokenBalances();
 
   const { refetchStakingPools } = useRewardPools();
   const { depositToPool, ...depositQuery } = useRewardPoolDeposit();
@@ -66,6 +65,8 @@ export function StakingCardGuts(props: {
   function handleClose() {
     refetchData();
     onDepositClose();
+    onWithdrawClose();
+    onClaimClose();
   }
 
   function refetchData() {
@@ -132,7 +133,7 @@ export function StakingCardGuts(props: {
             width="full"
             height="2em"
             disabled={!pool.userInfo.hasPendingRewards || depositQuery.isPending}
-            onClick={handleClaim}
+            onClick={onClaimOpen}
           >
             Claim
           </Button>
@@ -215,6 +216,13 @@ export function StakingCardGuts(props: {
         onClose={onWithdrawNftClose}
         pool={pool}
       /> */}
+
+      <StakingClaimModal
+        isOpen={isClaimOpen}
+        onOpen={onClaimOpen}
+        onClose={handleClose}
+        pool={pool}
+      />
     </>
   );
 }

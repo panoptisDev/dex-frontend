@@ -48,7 +48,6 @@ export function RewardPoolDepositModal({ isOpen, onOpen, onClose, pool, userVrtk
   const {
     getUserBalance,
     isLoading: isLoadingBalances,
-    isRefetching: isRefetchingBalances,
     refetch: refetchTokenBalances,
   } = useUserTokenBalances();
 

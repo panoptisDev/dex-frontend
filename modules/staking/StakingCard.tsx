@@ -34,12 +34,6 @@ export function StakingCard(props: { pool: any | null }) {
 
   const { getToken, tokens } = useGetTokens();
 
-  let displayTokens = [];
-  if (pool.rewardIsBPT) {
-    const poolToken = getToken(pool.rewardToken.address);
-    console.log(pool.rewardToken.address);
-  }
-
   // const { data: pricesResponse } = useGetTokenPricesQuery();
 
   // const priceOfToken =
