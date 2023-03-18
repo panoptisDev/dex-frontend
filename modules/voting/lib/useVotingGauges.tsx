@@ -4,7 +4,7 @@ import { useGetLiquidityGaugesQuery } from '~/apollo/generated/graphql-codegen-g
 import { gaugeControllerDecorator } from '~/lib/services/staking/gauge-controller.decorator';
 import { VotingGauge } from '~/lib/services/staking/types';
 import { useUserAccount } from '~/lib/user/useUserAccount';
-import { getVotePeriodEndTime } from '~/lib/util/epoch-utils';
+import { CURRENT_EPOCH, getVotePeriodEndTime } from '~/lib/util/epoch-utils';
 
 /**
  * Gets the list of current gauges and provides a countdown timer for epoch end
@@ -25,6 +25,9 @@ export function _useGauges() {
   } = useGetLiquidityGaugesQuery({
     pollInterval: 30000,
     notifyOnNetworkStatusChange: true,
+    variables: {
+      epoch: CURRENT_EPOCH,
+    },
   });
 
   function setUserVotes(gauges: any[]) {

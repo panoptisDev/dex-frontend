@@ -1197,8 +1197,8 @@ type Query {
   blocksGetBlocksPerYear: Float!
   contentGetNewsItems: [GqlContentNewsItem]!
   get24HourGaugeFees(hoursInPast: Int): [String]
-  getAllGaugeBribes(epoch: Int): [EpochBribeInfo]!
-  getLiquidityGauges: [LiquidityGauge]!
+  getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
+  getLiquidityGauges(epoch: Int): [LiquidityGauge]!
   getProtocolPoolData: [GqlProtocolGaugeInfo]!
   getProtocolTokenList: [String]
   getRewardPools(user: String): [RewardPool]!

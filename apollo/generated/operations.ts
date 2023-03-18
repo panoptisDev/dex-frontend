@@ -1034,8 +1034,8 @@ export const GetTradeSelectedTokenData = gql`
   ${GqlTokenDynamicData}
 `;
 export const GetLiquidityGauges = gql`
-  query GetLiquidityGauges {
-    getLiquidityGauges {
+  query GetLiquidityGauges($epoch: Int!) {
+    getLiquidityGauges(epoch: $epoch) {
       id
       address
       symbol
