@@ -1,5 +1,5 @@
-query GetLiquidityGauges {
-  getLiquidityGauges {
+query GetLiquidityGauges($epoch: Int!) {
+  getLiquidityGauges(epoch: $epoch) {
     id
     address
     symbol

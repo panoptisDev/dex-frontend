@@ -1295,6 +1295,10 @@ export interface QueryGet24HourGaugeFeesArgs {
 }
 
 export interface QueryGetAllGaugeBribesArgs {
+  epoch: Scalars['Int'];
+}
+
+export interface QueryGetLiquidityGaugesArgs {
   epoch?: InputMaybe<Scalars['Int']>;
 }
 
@@ -4538,7 +4542,9 @@ export type GqlTokenDynamicDataFragment = {
   updatedAt: string;
 };
 
-export type GetLiquidityGaugesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetLiquidityGaugesQueryVariables = Exact<{
+  epoch: Scalars['Int'];
+}>;
 
 export type GetLiquidityGaugesQuery = {
   __typename: 'Query';
@@ -7046,8 +7052,8 @@ export type GetTradeSelectedTokenDataQueryResult = Apollo.QueryResult<
   GetTradeSelectedTokenDataQueryVariables
 >;
 export const GetLiquidityGaugesDocument = gql`
-  query GetLiquidityGauges {
-    getLiquidityGauges {
+  query GetLiquidityGauges($epoch: Int!) {
+    getLiquidityGauges(epoch: $epoch) {
       id
       address
       symbol
@@ -7101,11 +7107,12 @@ export const GetLiquidityGaugesDocument = gql`
  * @example
  * const { data, loading, error } = useGetLiquidityGaugesQuery({
  *   variables: {
+ *      epoch: // value for 'epoch'
  *   },
  * });
  */
 export function useGetLiquidityGaugesQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetLiquidityGaugesQuery, GetLiquidityGaugesQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetLiquidityGaugesQuery, GetLiquidityGaugesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<GetLiquidityGaugesQuery, GetLiquidityGaugesQueryVariables>(

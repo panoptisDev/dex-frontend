@@ -9,3 +9,5 @@ export function getVotePeriodEndTime(): number {
   const epochEndTime = Date.UTC(n.getFullYear(), n.getMonth(), n.getDate(), 0, 0, 0);
   return epochEndTime;
 }
+
+export const CURRENT_EPOCH = 1678320000;
