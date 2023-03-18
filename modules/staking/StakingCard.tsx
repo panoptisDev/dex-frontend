@@ -1,4 +1,6 @@
 import { Flex, Text, Box, GridItem } from '@chakra-ui/react';
+import { TokenAvatarSetInList } from '~/components/token/TokenAvatarSetInList';
+
 import { StakingCardGuts } from './StakingCardGuts';
 import StakingNFTPools from '../../lib/abi/StakingNFTPools.json';
 import NextImage from 'next/image';
@@ -8,9 +10,12 @@ import Vertek from '~/assets/svg/vertektransparent.svg';
 import { readContract } from '@wagmi/core';
 import { useAccount } from 'wagmi';
 import { formatUnits } from 'ethers/lib/utils';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { networkConfig } from '~/lib/config/network-config';
 import TokenAvatarSet from '~/components/token/TokenAvatarSet';
+import { useGetTokens } from '~/lib/global/useToken';
+
+const MemoizedTokenAvatarSetInList = memo(TokenAvatarSetInList);
 
 export function StakingCard(props: { pool: any | null }) {
   const pool = props.pool;
@@ -26,6 +31,14 @@ export function StakingCard(props: { pool: any | null }) {
   const [userUnclaimedRewards, setUserUnclaimedRewards] = useState<string>();
 
   const basePath = '/images/stakingPools/';
+
+  const { getToken, tokens } = useGetTokens();
+
+  let displayTokens = [];
+  if (pool.rewardIsBPT) {
+    const poolToken = getToken(pool.rewardToken.address);
+    console.log(pool.rewardToken.address);
+  }
 
   // const { data: pricesResponse } = useGetTokenPricesQuery();
 
@@ -141,7 +154,15 @@ export function StakingCard(props: { pool: any | null }) {
             <Text fontSize="1rem">Earn</Text>
           </Box>
           <Box>
-            <TokenAvatarSet width={32} tokenData={[{ address: pool.rewardToken.address }]} />
+            {!pool.rewardIsBPT ? (
+              <TokenAvatarSet width={32} tokenData={[{ address: pool.rewardToken.address }]} />
+            ) : (
+              <MemoizedTokenAvatarSetInList
+                imageSize={32}
+                width={98}
+                tokens={pool.poolDisplayTokens}
+              />
+            )}
           </Box>
         </Flex>
         <StakingCardGuts pool={pool} />

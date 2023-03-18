@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, Button, Text } from '@chakra-ui/react';
+import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
 import { TokenAvatarSetInList } from '~/components/token/TokenAvatarSetInList';
 import { memo, useEffect } from 'react';
 import { Gauge } from '~/lib/services/staking/types';
@@ -6,7 +6,7 @@ import { useGetTokens } from '~/lib/global/useToken';
 import { networkConfig } from '~/lib/config/network-config';
 import { useVrtkClaim } from '../lib/useVrtkClaim';
 import { useClaimsData } from '../lib/useClaimsData';
-import { MobileLabelLeft, StatGridItemRight, MobileLabelRight, ClaimGrid } from './ClaimTableUtils';
+import { MobileLabelLeft, StatGridItemRight, MobileLabelRight } from './ClaimTableUtils';
 
 const MemoizedTokenAvatarSetInList = memo(TokenAvatarSetInList);
 
@@ -93,27 +93,6 @@ export function ClaimListItem(props: { gauge: Gauge }) {
             })}
           </Text>
         </StatGridItemRight>
-        {/* 
-        <ClaimGrid area="claim">
-          <Box display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-            <Button
-              variant="verteklight"
-              padding="1em"
-              borderRadius="10px"
-              mt="1"
-              ml="4"
-              borderWidth="1px"
-              alignItems="center"
-              height="2em"
-              disabled={false}
-              width={{ base: '75%', lg: '125px' }}
-              isDisabled={txState.isPending}
-              onClick={claim}
-            >
-              Claim
-            </Button>
-          </Box>
-        </ClaimGrid> */}
       </Grid>
     </Box>
   );

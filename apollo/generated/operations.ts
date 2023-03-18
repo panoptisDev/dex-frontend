@@ -981,37 +981,13 @@ export const GetRewardPools = gql`
       amountStaked
       amountStakedValue
       isPartnerPool
-      rewardToken {
+      rewardIsBPT
+      poolDisplayTokens {
         address
-        name
+        weight
         symbol
         logoURI
       }
-      aprs {
-        apr
-        daily
-      }
-      userInfo {
-        poolId
-        amountDeposited
-        amountDepositedFull
-        depositValue
-        hasPendingRewards
-        pendingRewards
-        pendingRewardValue
-        percentageOwned
-      }
-    }
-  }
-`;
-export const GetRewardPoolsData = gql`
-  query GetRewardPoolsData {
-    getRewardPoolsData {
-      poolId
-      daysRemaining
-      amountStaked
-      amountStakedValue
-      isPartnerPool
       rewardToken {
         address
         name

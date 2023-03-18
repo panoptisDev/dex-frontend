@@ -1286,11 +1286,11 @@ type RewardPool {
   amountStakedValue: String!
   aprs: RewardPoolAprs!
   daysRemaining: Int!
-  endTime: Int!
   isPartnerPool: Boolean!
+  poolDisplayTokens: [GqlPoolToken]!
   poolId: Int!
+  rewardIsBPT: Boolean!
   rewardToken: GqlToken!
-  startTime: Int!
   userInfo: RewardPoolUserInfo
 }
 
