@@ -25,12 +25,14 @@ export function GaugeListItem(props: Props) {
     maximumFractionDigits: 2,
   });
 
-  // Making assumption that total ve- liquidity is about 95% of total liquidity of VRTK-BNB pool.
-  const totalVeLiquidity = bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 0).times(0.95);
+  // Making assumption that total ve- liquidity is about 90% of total liquidity of VRTK-BNB pool.
+  const guessedTotalVeLiquidity = bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 0).times(0.9);
+  const totalVe = bnum(useUserVeData().currentVeBalance || 1).times(100).div(useUserVeData().percentOwned || 100)
+  const totalVeLiquidity = totalVe.times(bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 1).div(bnum(useUserVeData().lockablePool?.dynamicData.totalShares || 1)))
   let bribeValue = 0;
   props.gauge.currentEpochBribes?.forEach((b) => (bribeValue += b?.valueUSD || 0));
   const gaugeVotes = scale(bnum(props.gauge.votes), -18);
-  const votedValue = totalVeLiquidity.times(gaugeVotes).times(100).div(35);
+  const votedValue = (!totalVe.isNaN() ? totalVeLiquidity : guessedTotalVeLiquidity).times(gaugeVotes).times(100).div(35);
   const bribeAPR = fNum2(bnum(bribeValue * 52).div(votedValue).toString(), {
     style: 'percent',
     // maximumFractionDigits: 2,
