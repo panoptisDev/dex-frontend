@@ -1299,7 +1299,7 @@ export interface QueryGetAllGaugeBribesArgs {
 }
 
 export interface QueryGetLiquidityGaugesArgs {
-  epoch?: InputMaybe<Scalars['Int']>;
+  epoch: Scalars['Int'];
 }
 
 export interface QueryGetRewardPoolsArgs {
