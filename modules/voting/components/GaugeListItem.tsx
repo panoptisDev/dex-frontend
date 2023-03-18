@@ -2,12 +2,13 @@ import { Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { TokenAvatarSetInList } from '~/components/token/TokenAvatarSetInList';
 import { VotingGaugeWithVotes } from '~/lib/services/staking/types';
-import { scale } from '~/lib/util/big-number.utils';
+import { bnum, scale } from '~/lib/util/big-number.utils';
 import { fNum2 } from '~/lib/util/useNumber';
 
 import { memo } from 'react';
 import { GaugeRewardsInfo } from './GaugeRewardsInfo';
 import { formatVotesAsPercent } from '../lib/utils';
+import { useUserVeData } from '../lib/useUserVeData';
 import { VotingStatsPopover } from './VotingStatsPopover';
 
 const MemoizedTokenAvatarSetInList = memo(TokenAvatarSetInList);
@@ -24,6 +25,17 @@ export function GaugeListItem(props: Props) {
     maximumFractionDigits: 2,
   });
 
+  // Making assumption that total ve- liquidity is about 95% of total liquidity of VRTK-BNB pool.
+  const totalVeLiquidity = bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 0).times(0.95);
+  let bribeValue = 0;
+  props.gauge.currentEpochBribes?.forEach((b) => (bribeValue += b?.valueUSD || 0));
+  const gaugeVotes = scale(bnum(props.gauge.votes), -18);
+  const votedValue = totalVeLiquidity.times(gaugeVotes).times(100).div(35);
+  const bribeAPR = fNum2(bnum(bribeValue * 52).div(votedValue).toString(), {
+    style: 'percent',
+    // maximumFractionDigits: 2,
+  });
+
   // function redirectToPool(gauge: VotingGaugeWithVotes) {
   //   window.location.href = poolURLFor(gauge.pool.id, gauge.network, gauge.pool.poolType);
   // }
@@ -35,18 +47,19 @@ export function GaugeListItem(props: Props) {
       borderRadius={{ base: '12px', lg: '' }}
       templateColumns={{
         base: 'repeat(1fr 1fr)',
-        lg: '150px 1fr 200px 200px 200px 200px',
+        lg: '150px 1fr 150px 200px 200px 200px 200px',
       }}
       gap={{ base: '4', lg: '0' }}
       mb={{ base: '4', lg: '0' }}
       templateAreas={{
         base: `
         "name name"
-        "icons icons" 
+        "icons icons"
+        "bribeapr bribeapr"
         "nextvote myvote"
         "bribes bribes"
         "votebutton votebutton" `,
-        lg: `"icons name nextvote myvote bribes votebutton"`,
+        lg: `"icons name bribeapr nextvote myvote bribes votebutton"`,
       }}
     >
       <GridItem
@@ -67,6 +80,17 @@ export function GaugeListItem(props: Props) {
         fontSize="1.2rem"
       >
         {props.gauge.pool.name}
+      </GridItem>
+
+      <GridItem
+        area="bribeapr"
+        display={{ base: 'block', lg: 'flex' }}
+        alignItems="center"
+        justifyContent={{ base: 'center', lg: 'center' }}
+        textAlign={{ base: 'center', lg: 'right' }}
+      >
+        <MobileLabel text="Bribe APR" />
+        {bribeValue > 0 ? bribeAPR : ''}
       </GridItem>
 
       <GridItem
