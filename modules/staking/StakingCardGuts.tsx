@@ -108,8 +108,11 @@ export function StakingCardGuts(props: {
           Earning
         </Text>
         <Flex direction="column" alignItems="flex-end">
-          <Text textAlign="right" fontWeight="bold">
-            {tokenFormatAmount(pool.userInfo.pendingRewards)} {pool.rewardToken.symbol}
+          <Text textAlign="right" fontWeight="bold" width="100%">
+            {tokenFormatAmount(pool.userInfo.pendingRewards)}
+          </Text>
+          <Text textAlign="right" fontWeight="bold" width="100%">
+            {pool.rewardToken.symbol}
           </Text>
 
           <Text fontSize="0.7rem" textAlign="right">
