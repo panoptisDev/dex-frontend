@@ -10,4 +10,4 @@ export function getVotePeriodEndTime(): number {
   return epochEndTime;
 }
 
-export const CURRENT_EPOCH = 1679529600;
+export const CURRENT_EPOCH = 1678924800;
