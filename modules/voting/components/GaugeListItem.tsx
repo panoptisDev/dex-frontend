@@ -31,7 +31,7 @@ export function GaugeListItem(props: Props) {
   const totalVeLiquidity = totalVe.times(bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 1).div(bnum(useUserVeData().lockablePool?.dynamicData.totalShares || 1)))
   let bribeValue = 0;
   props.gauge.currentEpochBribes?.forEach((b) => (bribeValue += b?.valueUSD || 0));
-  const gaugeVotes = scale(bnum(props.gauge.votes), -18);
+  const gaugeVotes = scale(bnum(props.gauge.votesNextPeriod), -18);
   const votedValue = (!totalVe.isNaN() ? totalVeLiquidity : guessedTotalVeLiquidity).times(gaugeVotes).times(100).div(35);
   const bribeAPR = fNum2(bnum(bribeValue * 52).div(votedValue).toString(), {
     style: 'percent',
