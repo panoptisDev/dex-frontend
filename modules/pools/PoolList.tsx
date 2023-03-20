@@ -100,6 +100,7 @@ function PoolList() {
                 logoURI: getToken(token.address)?.logoURI || undefined,
               }))}
             rewardTokens={item.staking?.gauge?.rewards
+              .filter((token) => Number(token.rewardPerSecond) > 0)
               .map((token) => ({
                 ...token,
                 address: token.tokenAddress,
