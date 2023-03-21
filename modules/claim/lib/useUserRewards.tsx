@@ -6,20 +6,34 @@ import {
 } from '~/apollo/generated/graphql-codegen-generated';
 import { useUserAccount } from '~/lib/user/useUserAccount';
 
+const pollInterval = 15000;
+
 function _useUserRewards() {
   const [isRewardsLoading, setIsRewardsLoading] = useState<boolean>(true);
   const { isConnected, userAddress } = useUserAccount();
 
   const [
     getUserBribeClaims,
-    { loading: isLoadingClaims, error: bribeError, data: bribeData, refetch: refetchBribeRewards },
-  ] = useGetUserBribeClaimsLazyQuery({
-    pollInterval: 15000,
-  });
+    {
+      loading: isLoadingClaims,
+      error: bribeError,
+      data: bribeData,
+      startPolling: startPollingBribes,
+      stopPolling: stopPollingBribes,
+      refetch: refetchBribeRewards,
+    },
+  ] = useGetUserBribeClaimsLazyQuery();
 
   const [
     getUserGaugeRewards,
-    { loading: loadingRewards, data, error: rewardsError, refetch: refetchAllRewards },
+    {
+      loading: loadingRewards,
+      data,
+      error: rewardsError,
+      startPolling: startPollingRewards,
+      stopPolling: stopPollingRewards,
+      refetch: refetchAllRewards,
+    },
   ] = useGetUserGaugeRewardsLazyQuery();
 
   useEffect(() => {
@@ -29,13 +43,21 @@ function _useUserRewards() {
           user: userAddress || '',
         },
       });
+      startPollingRewards(pollInterval);
 
       getUserBribeClaims({
         variables: {
           user: userAddress || '',
         },
       });
+
+      startPollingBribes(pollInterval);
     }
+
+    return () => {
+      stopPollingRewards();
+      stopPollingBribes();
+    };
   }, [isConnected, userAddress]);
 
   useEffect(() => {
@@ -61,7 +83,7 @@ function _useUserRewards() {
   const protocolRewards = data?.userGetUserPendingGaugeRewards.protocolRewards || [];
   const userBribeClaims = bribeData?.getUserBribeClaims || [];
 
-  console.log(stakingRewards);
+  console.log(protocolRewards);
 
   function refetchAll() {
     refetchBribes();
