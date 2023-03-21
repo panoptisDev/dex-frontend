@@ -4,11 +4,11 @@ import { GqlBaseTokenReward } from '~/apollo/generated/graphql-codegen-generated
 import { useVrtkClaimAll } from '../lib/useVrtkClaimAll';
 import { ClaimListItem } from './ClaimListItem';
 
-interface ClaimTableProps {
+interface Props {
   stakingRewards: GqlBaseTokenReward[];
 }
 
-export function ClaimTable({ stakingRewards }: ClaimTableProps) {
+export function ClaimTable({ stakingRewards }: Props) {
   const [claiming, setClaiming] = useState<boolean>(false);
 
   // const { refetchGauges } = useClaimsData();

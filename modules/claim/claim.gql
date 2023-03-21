@@ -22,6 +22,12 @@ query GetUserGaugeRewards($user: String!) {
       pool {
         name
         address
+        allTokens {
+          token {
+            address
+            logoURI
+          }
+        }
       }
       amount
       valueUSD

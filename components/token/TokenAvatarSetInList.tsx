@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import numeral from 'numeral';
-import { GqlPoolToken } from '~/apollo/generated/graphql-codegen-generated';
+import { GqlPoolToken, GqlToken } from '~/apollo/generated/graphql-codegen-generated';
 
 export interface TokenAvatarSetInListTokenData {
   address: string;
@@ -21,7 +21,7 @@ export interface TokenAvatarSetInListTokenData {
 }
 
 interface Props extends FlexProps {
-  tokens: TokenAvatarSetInListTokenData[] | GqlPoolToken[];
+  tokens: TokenAvatarSetInListTokenData[] | GqlPoolToken[] | (GqlToken & { weight?: string })[];
   imageSize?: number;
   maxAssetsPerLine?: number;
   width: number;
@@ -85,7 +85,7 @@ export function TokenAvatarSetInList({
         bgColor="rgba(10, 10, 10, .6) "
         backdropFilter="blur(24px)"
         color="white"
-        fontWeight="extrabold" 
+        fontWeight="extrabold"
         boxShadow="0 0 12px #000"
       >
         {tokens?.map((token, index) => (

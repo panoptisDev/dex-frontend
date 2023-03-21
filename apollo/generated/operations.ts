@@ -581,6 +581,12 @@ export const GetUserGaugeRewards = gql`
         pool {
           name
           address
+          allTokens {
+            token {
+              address
+              logoURI
+            }
+          }
         }
         amount
         valueUSD

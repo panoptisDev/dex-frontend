@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import {
+  GqlBaseTokenReward,
   useGetUserBribeClaimsLazyQuery,
   useGetUserGaugeRewardsLazyQuery,
 } from '~/apollo/generated/graphql-codegen-generated';
@@ -43,7 +44,8 @@ function _useUserRewards() {
     }
   }, [loadingRewards, isLoadingClaims]);
 
-  const stakingRewards = data?.userGetUserPendingGaugeRewards.stakingRewards || [];
+  const stakingRewards = (data?.userGetUserPendingGaugeRewards.stakingRewards ||
+    []) as GqlBaseTokenReward[];
   const protocolRewards = data?.userGetUserPendingGaugeRewards.protocolRewards || [];
   const userBribeClaims = bribeData?.getUserBribeClaims || [];
 

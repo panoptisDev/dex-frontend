@@ -84,7 +84,11 @@ export function ClaimContainer() {
               <Text fontSize="1.3rem">Vertek (VRTK) Earnings</Text>
             </Box>
 
-            <NoRewardsBox label="No gauge staking rewards to claim" />
+            {stakingRewards.length ? (
+              <ClaimTable stakingRewards={stakingRewards} />
+            ) : (
+              <NoRewardsBox label="No gauge staking rewards to claim" />
+            )}
           </GridItem>
 
           <GridItem display="flex" flexDirection="column" paddingY="0">

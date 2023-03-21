@@ -112,7 +112,7 @@ export interface GqlBaseTokenReward {
   __typename: 'GqlBaseTokenReward';
   amount: Scalars['String'];
   isBPT: Scalars['Boolean'];
-  pool: GqlPoolMinimal;
+  pool: GqlPoolWeighted;
   token: GqlPoolToken;
   tokenList: Array<GqlPoolToken>;
   valueUSD: Scalars['Float'];
@@ -752,6 +752,7 @@ export interface GqlPoolTokenDisplay {
   name: Scalars['String'];
   nestedTokens?: Maybe<Array<GqlPoolTokenDisplay>>;
   symbol: Scalars['String'];
+  token?: Maybe<GqlToken>;
   weight?: Maybe<Scalars['BigDecimal']>;
 }
 
@@ -765,6 +766,7 @@ export interface GqlPoolTokenExpanded {
   isPhantomBpt: Scalars['Boolean'];
   name: Scalars['String'];
   symbol: Scalars['String'];
+  token: GqlToken;
   weight?: Maybe<Scalars['String']>;
 }
 
@@ -1067,7 +1069,7 @@ export interface GqlUserGaugeBoost {
 
 export interface GqlUserGaugeRewardInfo {
   __typename: 'GqlUserGaugeRewardInfo';
-  pool: GqlPoolMinimal;
+  pool: GqlPoolWeighted;
   rewards: Array<GqlBaseTokenReward>;
 }
 
@@ -1116,7 +1118,7 @@ export interface GqlUserPortfolioSnapshot {
 export interface GqlUserProtocolReward {
   __typename: 'GqlUserProtocolReward';
   isBPT: Scalars['Boolean'];
-  pool: GqlPoolMinimal;
+  pool: GqlPoolWeighted;
   token: GqlBaseTokenReward;
   tokenList: Array<GqlPoolToken>;
 }
@@ -1882,12 +1884,20 @@ export type GetUserGaugeRewardsQuery = {
       __typename: 'GqlBaseTokenReward';
       amount: string;
       valueUSD: number;
-      pool: { __typename: 'GqlPoolMinimal'; name: string; address: string };
+      pool: {
+        __typename: 'GqlPoolWeighted';
+        name: string;
+        address: string;
+        allTokens: Array<{
+          __typename: 'GqlPoolTokenExpanded';
+          token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
+        }>;
+      };
       token: { __typename: 'GqlPoolToken'; address: string; logoURI?: string | null };
     } | null>;
     protocolRewards: Array<{
       __typename: 'GqlBaseTokenReward';
-      pool: { __typename: 'GqlPoolMinimal'; name: string };
+      pool: { __typename: 'GqlPoolWeighted'; name: string };
       tokenList: Array<{ __typename: 'GqlPoolToken'; address: string }>;
     } | null>;
   };
@@ -5759,6 +5769,12 @@ export const GetUserGaugeRewardsDocument = gql`
         pool {
           name
           address
+          allTokens {
+            token {
+              address
+              logoURI
+            }
+          }
         }
         amount
         valueUSD

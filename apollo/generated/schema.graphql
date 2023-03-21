@@ -110,7 +110,7 @@ type GqlBalancePoolAprSubItem {
 type GqlBaseTokenReward {
   amount: String!
   isBPT: Boolean!
-  pool: GqlPoolMinimal!
+  pool: GqlPoolWeighted!
   token: GqlPoolToken!
   tokenList: [GqlPoolToken!]!
   valueUSD: Float!
@@ -739,6 +739,7 @@ type GqlPoolTokenDisplay {
   name: String!
   nestedTokens: [GqlPoolTokenDisplay!]
   symbol: String!
+  token: GqlToken
   weight: BigDecimal
 }
 
@@ -751,6 +752,7 @@ type GqlPoolTokenExpanded {
   isPhantomBpt: Boolean!
   name: String!
   symbol: String!
+  token: GqlToken!
   weight: String
 }
 
@@ -1038,7 +1040,7 @@ type GqlUserGaugeBoost {
 }
 
 type GqlUserGaugeRewardInfo {
-  pool: GqlPoolMinimal!
+  pool: GqlPoolWeighted!
   rewards: [GqlBaseTokenReward!]!
 }
 
@@ -1082,7 +1084,7 @@ type GqlUserPortfolioSnapshot {
 
 type GqlUserProtocolReward {
   isBPT: Boolean!
-  pool: GqlPoolMinimal!
+  pool: GqlPoolWeighted!
   token: GqlBaseTokenReward!
   tokenList: [GqlPoolToken!]!
 }

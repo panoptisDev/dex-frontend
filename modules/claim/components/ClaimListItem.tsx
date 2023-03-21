@@ -28,6 +28,8 @@ export function ClaimListItem({ reward }: Props) {
   //   }
   // }, [txState]);
 
+  console.log(reward);
+
   return (
     <Box
       borderTopColor="#4A4AF6"
@@ -60,7 +62,11 @@ export function ClaimListItem({ reward }: Props) {
       >
         <GridItem area="icons" mb={{ base: '6', lg: '0' }}>
           <Box display="flex" justifyContent={{ base: 'center', lg: 'flex-start' }}>
-            <MemoizedTokenAvatarSetInList imageSize={32} width={98} tokens={reward.tokenList} />
+            <MemoizedTokenAvatarSetInList
+              imageSize={32}
+              width={98}
+              tokens={reward.pool.allTokens.map((at) => at.token)}
+            />
           </Box>
         </GridItem>
         <GridItem
