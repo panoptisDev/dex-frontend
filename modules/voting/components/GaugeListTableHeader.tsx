@@ -19,8 +19,8 @@ export function GaugeListTableHeader() {
             borderColor="vertek.slate.600"
             mb={{ base: '4', lg: '0' }}
             templateColumns={{
-              base: '150px 1fr 150px 200px 200px 200px',
-              lg: '150px 1fr 200px 200px 200px 200px',
+              base: '150px 1fr 100px 150px 200px 200px 200px',
+              lg: '150px 1fr 150px 200px 200px 200px 200px',
             }}
             gap="0"
             pl="4"
@@ -33,6 +33,10 @@ export function GaugeListTableHeader() {
 
             <GridItem textAlign="left">
               <Text fontSize="md">Pool Name</Text>
+            </GridItem>
+
+            <GridItem textAlign="center">
+              <Text fontSize="md">Bribe APR</Text>
             </GridItem>
 
             <GridItem textAlign="center">
