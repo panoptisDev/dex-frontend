@@ -17,8 +17,10 @@ function _useUserRewards() {
     pollInterval: 15000,
   });
 
-  const [getUserGaugeRewards, { loading: loadingRewards, data, error, refetch: refetchRewards }] =
-    useGetUserGaugeRewardsLazyQuery();
+  const [
+    getUserGaugeRewards,
+    { loading: loadingRewards, data, error: rewardsError, refetch: refetchAllRewards },
+  ] = useGetUserGaugeRewardsLazyQuery();
 
   useEffect(() => {
     if (userAddress && isConnected) {
@@ -44,6 +46,16 @@ function _useUserRewards() {
     }
   }, [loadingRewards, isLoadingClaims]);
 
+  useEffect(() => {
+    if (bribeError) {
+      console.log(bribeError);
+    }
+
+    if (rewardsError) {
+      console.log(rewardsError);
+    }
+  }, [bribeError, rewardsError]);
+
   const stakingRewards = (data?.userGetUserPendingGaugeRewards.stakingRewards ||
     []) as GqlBaseTokenReward[];
   const protocolRewards = data?.userGetUserPendingGaugeRewards.protocolRewards || [];
@@ -52,11 +64,20 @@ function _useUserRewards() {
   console.log(stakingRewards);
 
   function refetchAll() {
+    refetchBribes();
+    refetchRewards();
+  }
+
+  function refetchBribes() {
+    console.log('Refetching bribes...');
     refetchBribeRewards({
       user: userAddress,
     });
+  }
 
-    refetchRewards({
+  function refetchRewards() {
+    console.log('Refetching rewards...');
+    refetchAllRewards({
       user: userAddress,
     });
   }
@@ -67,6 +88,8 @@ function _useUserRewards() {
     protocolRewards,
     isRewardsLoading,
 
+    refetchRewards,
+    refetchBribes,
     refetchAll,
     refetchBribeRewards,
   };

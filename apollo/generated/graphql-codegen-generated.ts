@@ -1892,14 +1892,49 @@ export type GetUserGaugeRewardsQuery = {
           __typename: 'GqlPoolTokenExpanded';
           token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
         }>;
+        staking?: {
+          __typename: 'GqlPoolStaking';
+          gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
+        } | null;
       };
-      token: { __typename: 'GqlPoolToken'; address: string; logoURI?: string | null };
     } | null>;
     protocolRewards: Array<{
       __typename: 'GqlBaseTokenReward';
-      pool: { __typename: 'GqlPoolWeighted'; name: string };
-      tokenList: Array<{ __typename: 'GqlPoolToken'; address: string }>;
+      amount: string;
+      valueUSD: number;
+      pool: {
+        __typename: 'GqlPoolWeighted';
+        name: string;
+        address: string;
+        allTokens: Array<{
+          __typename: 'GqlPoolTokenExpanded';
+          token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
+        }>;
+        staking?: {
+          __typename: 'GqlPoolStaking';
+          gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
+        } | null;
+      };
     } | null>;
+  };
+};
+
+export type UserRewardFragmentFragment = {
+  __typename: 'GqlBaseTokenReward';
+  amount: string;
+  valueUSD: number;
+  pool: {
+    __typename: 'GqlPoolWeighted';
+    name: string;
+    address: string;
+    allTokens: Array<{
+      __typename: 'GqlPoolTokenExpanded';
+      token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
+    }>;
+    staking?: {
+      __typename: 'GqlPoolStaking';
+      gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
+    } | null;
   };
 };
 
@@ -4730,6 +4765,27 @@ export const GqlPoolBatchSwapFragmentDoc = gql`
   }
   ${GqlPoolBatchSwapSwapFragmentDoc}
 `;
+export const UserRewardFragmentFragmentDoc = gql`
+  fragment UserRewardFragment on GqlBaseTokenReward {
+    pool {
+      name
+      address
+      allTokens {
+        token {
+          address
+          logoURI
+        }
+      }
+      staking {
+        gauge {
+          gaugeAddress
+        }
+      }
+    }
+    amount
+    valueUSD
+  }
+`;
 export const GqlPoolCardDataFragmentDoc = gql`
   fragment GqlPoolCardData on GqlPoolMinimal {
     id
@@ -5766,33 +5822,14 @@ export const GetUserGaugeRewardsDocument = gql`
   query GetUserGaugeRewards($user: String!) {
     userGetUserPendingGaugeRewards(user: $user) {
       stakingRewards {
-        pool {
-          name
-          address
-          allTokens {
-            token {
-              address
-              logoURI
-            }
-          }
-        }
-        amount
-        valueUSD
-        token {
-          address
-          logoURI
-        }
+        ...UserRewardFragment
       }
       protocolRewards {
-        pool {
-          name
-        }
-        tokenList {
-          address
-        }
+        ...UserRewardFragment
       }
     }
   }
+  ${UserRewardFragmentFragmentDoc}
 `;
 
 /**

@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { GqlBaseTokenReward } from '~/apollo/generated/graphql-codegen-generated';
+import { useUserPendingRewards } from '../lib/useUserRewards';
 import { useVrtkClaimAll } from '../lib/useVrtkClaimAll';
 import { ClaimListItem } from './ClaimListItem';
 
@@ -9,32 +10,26 @@ interface Props {
 }
 
 export function ClaimTable({ stakingRewards }: Props) {
-  const [claiming, setClaiming] = useState<boolean>(false);
-
-  // const { refetchGauges } = useClaimsData();
-  const { claimAll, txState } = useVrtkClaimAll();
+  const { claimAll, txState: claimTxState } = useVrtkClaimAll();
+  const { refetchRewards } = useUserPendingRewards();
 
   useEffect(() => {
-    if (txState.isSubmitting || txState.isPending) {
-      setClaiming(true);
-    } else {
-      setClaiming(false);
+    if (claimTxState.error) {
+      console.error(claimTxState.error);
     }
 
-    if (txState.error) {
-      console.error(txState.error);
-      setClaiming(false);
+    if (claimTxState.isConfirmed) {
+      claimTxState.reset();
+      refetchRewards();
     }
-
-    if (txState.isConfirmed) {
-      // refetchGauges();
-    }
-  }, [txState]);
+  }, [claimTxState]);
 
   async function handleUserClaimAll() {
     if (!stakingRewards.length) return;
 
-    await claimAll(stakingRewards.map((reward) => reward.pool.staking?.gauge?.gaugeAddress || ''));
+    const gauges = stakingRewards.map((reward) => reward.pool.staking?.gauge?.gaugeAddress || '');
+    console.log(gauges);
+    claimAll(gauges);
   }
 
   return (
@@ -89,57 +84,22 @@ export function ClaimTable({ stakingRewards }: Props) {
           bg={{ base: 'none', lg: 'vertek.slatepurple.900' }}
           justifyContent={{ base: 'center', lg: 'flex-end' }}
         >
-          {!txState.isPending ? (
-            <>
-              <Button
-                display={{ base: 'none', lg: 'flex' }}
-                variant="verteklight"
-                padding="1em"
-                borderRadius="10px"
-                mt="1"
-                ml="4"
-                borderWidth="1px"
-                alignItems="center"
-                height="2em"
-                disabled={claiming}
-                width={{ base: '200px', lg: '125px' }}
-                onClick={handleUserClaimAll}
-              >
-                Claim All
-              </Button>
-              <Button
-                display={{ base: 'flex', lg: 'none' }}
-                variant="verteklight"
-                padding="1em"
-                borderRadius="10px"
-                mt="1"
-                borderWidth="1px"
-                alignItems="center"
-                height="2em"
-                width={{ base: '200px', lg: 'none' }}
-                disabled={claiming}
-                onClick={handleUserClaimAll}
-              >
-                Claim All
-              </Button>
-            </>
-          ) : (
-            <Button
-              display={{ base: 'none', lg: 'flex' }}
-              variant="vertekdark"
-              padding="1em"
-              borderRadius="10px"
-              mt="1"
-              ml="4"
-              borderWidth="1px"
-              alignItems="center"
-              height="2em"
-              disabled={true}
-              width={{ base: '75%', lg: '125px' }}
-            >
-              Pending...
-            </Button>
-          )}
+          <Button
+            display={{ base: 'none', lg: 'flex' }}
+            variant={claimTxState.isPending ? 'vertekdark' : 'verteklight'}
+            padding="1em"
+            borderRadius="10px"
+            mt="1"
+            ml="4"
+            borderWidth="1px"
+            alignItems="center"
+            height="2em"
+            disabled={!stakingRewards.length || claimTxState.isPending}
+            width={{ base: '200px', lg: '125px' }}
+            onClick={handleUserClaimAll}
+          >
+            Claim All
+          </Button>
         </Flex>
       </Box>
     </>

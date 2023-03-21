@@ -19,33 +19,32 @@ query GetUserBribeClaims($user: String!) {
 query GetUserGaugeRewards($user: String!) {
   userGetUserPendingGaugeRewards(user: $user) {
     stakingRewards {
-      pool {
-        name
-        address
-        allTokens {
-          token {
-            address
-            logoURI
-          }
-        }
-      }
-      amount
-      valueUSD
+      ...UserRewardFragment
+    }
 
+    protocolRewards {
+      ...UserRewardFragment
+    }
+  }
+}
+
+fragment UserRewardFragment on GqlBaseTokenReward {
+  pool {
+    name
+    address
+    allTokens {
       token {
         address
         logoURI
       }
     }
 
-    protocolRewards {
-      pool {
-        name
-      }
-
-      tokenList {
-        address
+    staking {
+      gauge {
+        gaugeAddress
       }
     }
   }
+  amount
+  valueUSD
 }

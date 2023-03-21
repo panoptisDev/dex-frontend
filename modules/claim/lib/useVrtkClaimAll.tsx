@@ -4,7 +4,7 @@ import { useSubmitTransaction } from '~/lib/util/useSubmitTransaction';
 export function useVrtkClaimAll() {
   const networkConfig = useNetworkConfig();
 
-  const { submitAsync, ...rest } = useSubmitTransaction({
+  const { submit, ...rest } = useSubmitTransaction({
     config: {
       addressOrName: networkConfig.balancer.balMinter,
       contractInterface: ['function mintMany(address[]) external'],
@@ -14,7 +14,7 @@ export function useVrtkClaimAll() {
   });
 
   function claimAll(gaugeAddresses: string[]) {
-    return submitAsync({
+    return submit({
       args: [gaugeAddresses],
       toastText: 'Claim pending gauge rewards',
     });

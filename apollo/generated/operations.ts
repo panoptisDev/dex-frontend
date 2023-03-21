@@ -41,6 +41,27 @@ export const GqlPoolBatchSwap = gql`
   }
   ${GqlPoolBatchSwapSwap}
 `;
+export const UserRewardFragment = gql`
+  fragment UserRewardFragment on GqlBaseTokenReward {
+    pool {
+      name
+      address
+      allTokens {
+        token {
+          address
+          logoURI
+        }
+      }
+      staking {
+        gauge {
+          gaugeAddress
+        }
+      }
+    }
+    amount
+    valueUSD
+  }
+`;
 export const GqlPoolCardData = gql`
   fragment GqlPoolCardData on GqlPoolMinimal {
     id
@@ -578,33 +599,14 @@ export const GetUserGaugeRewards = gql`
   query GetUserGaugeRewards($user: String!) {
     userGetUserPendingGaugeRewards(user: $user) {
       stakingRewards {
-        pool {
-          name
-          address
-          allTokens {
-            token {
-              address
-              logoURI
-            }
-          }
-        }
-        amount
-        valueUSD
-        token {
-          address
-          logoURI
-        }
+        ...UserRewardFragment
       }
       protocolRewards {
-        pool {
-          name
-        }
-        tokenList {
-          address
-        }
+        ...UserRewardFragment
       }
     }
   }
+  ${UserRewardFragment}
 `;
 export const GetHomeData = gql`
   query GetHomeData {

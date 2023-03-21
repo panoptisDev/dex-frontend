@@ -1,11 +1,6 @@
 import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
 import { TokenAvatarSetInList } from '~/components/token/TokenAvatarSetInList';
-import { memo, useEffect } from 'react';
-import { Gauge } from '~/lib/services/staking/types';
-import { useGetTokens } from '~/lib/global/useToken';
-import { networkConfig } from '~/lib/config/network-config';
-import { useVrtkClaim } from '../lib/useVrtkClaim';
-import { useClaimsData } from '../lib/useClaimsData';
+import { memo } from 'react';
 import { MobileLabelLeft, StatGridItemRight, MobileLabelRight } from './ClaimTableUtils';
 import { GqlBaseTokenReward } from '~/apollo/generated/graphql-codegen-generated';
 import { tokenFormatAmount } from '~/lib/services/token/token-util';
@@ -18,18 +13,6 @@ type Props = {
 };
 
 export function ClaimListItem({ reward }: Props) {
-  const { formattedPrice } = useGetTokens();
-  // const { claim, txState } = useVrtkClaim(props.gauge.address);
-  // const { refetchClaimsData } = useClaimsData();
-
-  // useEffect(() => {
-  //   if (txState.isConfirmed) {
-  //     // refetchClaimsData;
-  //   }
-  // }, [txState]);
-
-  console.log(reward);
-
   return (
     <Box
       borderTopColor="#4A4AF6"
@@ -74,11 +57,7 @@ export function ClaimListItem({ reward }: Props) {
           textAlign={{ base: 'center', lg: 'left' }}
           mb={{ base: '1', lg: '0' }}
         >
-          <Text
-            color="white"
-            fontSize={{ base: 'xl', lg: 'md' }}
-            fontWeight={{ base: 'bold', lg: 'bold' }}
-          >
+          <Text color="white" fontSize={{ base: 'xl', lg: 'md' }}>
             {reward.pool.name}
           </Text>
         </GridItem>
