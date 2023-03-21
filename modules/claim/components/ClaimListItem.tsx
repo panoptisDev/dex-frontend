@@ -7,19 +7,26 @@ import { networkConfig } from '~/lib/config/network-config';
 import { useVrtkClaim } from '../lib/useVrtkClaim';
 import { useClaimsData } from '../lib/useClaimsData';
 import { MobileLabelLeft, StatGridItemRight, MobileLabelRight } from './ClaimTableUtils';
+import { GqlBaseTokenReward } from '~/apollo/generated/graphql-codegen-generated';
+import { tokenFormatAmount } from '~/lib/services/token/token-util';
+import { numberFormatUSDValue } from '~/lib/util/number-formats';
 
 const MemoizedTokenAvatarSetInList = memo(TokenAvatarSetInList);
 
-export function ClaimListItem(props: { gauge: Gauge }) {
-  const { formattedPrice } = useGetTokens();
-  const { claim, txState } = useVrtkClaim(props.gauge.address);
-  const { refetchClaimsData } = useClaimsData();
+type Props = {
+  reward: GqlBaseTokenReward;
+};
 
-  useEffect(() => {
-    if (txState.isConfirmed) {
-      refetchClaimsData;
-    }
-  }, [txState]);
+export function ClaimListItem({ reward }: Props) {
+  const { formattedPrice } = useGetTokens();
+  // const { claim, txState } = useVrtkClaim(props.gauge.address);
+  // const { refetchClaimsData } = useClaimsData();
+
+  // useEffect(() => {
+  //   if (txState.isConfirmed) {
+  //     // refetchClaimsData;
+  //   }
+  // }, [txState]);
 
   return (
     <Box
@@ -53,11 +60,7 @@ export function ClaimListItem(props: { gauge: Gauge }) {
       >
         <GridItem area="icons" mb={{ base: '6', lg: '0' }}>
           <Box display="flex" justifyContent={{ base: 'center', lg: 'flex-start' }}>
-            <MemoizedTokenAvatarSetInList
-              imageSize={32}
-              width={98}
-              tokens={props.gauge.pool.tokens}
-            />
+            <MemoizedTokenAvatarSetInList imageSize={32} width={98} tokens={reward.tokenList} />
           </Box>
         </GridItem>
         <GridItem
@@ -70,7 +73,7 @@ export function ClaimListItem(props: { gauge: Gauge }) {
             fontSize={{ base: 'xl', lg: 'md' }}
             fontWeight={{ base: 'bold', lg: 'bold' }}
           >
-            {props.gauge.pool.name}
+            {reward.pool.name}
           </Text>
         </GridItem>
         <GridItem area="shares" textAlign="left">
@@ -80,17 +83,14 @@ export function ClaimListItem(props: { gauge: Gauge }) {
             fontWeight={{ base: 'bold', lg: 'normal' }}
             textAlign="left"
           >
-            {props.gauge.claimableTokens}
+            {tokenFormatAmount(reward.amount)}
           </Text>
         </GridItem>
 
         <StatGridItemRight area="value">
           <MobileLabelRight text="Value" />
           <Text fontSize={{ base: '1rem', lg: 'md' }} fontWeight={{ base: 'bold', lg: 'normal' }}>
-            {formattedPrice({
-              address: networkConfig.beets.address,
-              amount: props.gauge.claimableTokens,
-            })}
+            {numberFormatUSDValue(reward.valueUSD)}
           </Text>
         </StatGridItemRight>
       </Grid>

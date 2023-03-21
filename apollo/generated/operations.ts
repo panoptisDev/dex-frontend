@@ -550,32 +550,14 @@ export const GetUserData = gql`
     }
   }
 `;
-export const GetUserProtocolRewards = gql`
-  query GetUserProtocolRewards {
-    protocolRewards: userGetProtocolRewardInfo {
-      poolId
-      token
-      tokenInfo {
-        logoURI
-        valueUSD
-      }
-      amount
-      isBPT
-      tokenList {
-        address
-        logoURI
-      }
-    }
-  }
-`;
 export const UserSyncBalance = gql`
   mutation UserSyncBalance($poolId: String!) {
     userSyncBalance(poolId: $poolId)
   }
 `;
 export const GetUserBribeClaims = gql`
-  query GetUserBribeClaims($user: String!, $epoch: Int!) {
-    getUserBribeClaims(user: $user, epoch: $epoch) {
+  query GetUserBribeClaims($user: String!) {
+    getUserBribeClaims(user: $user) {
       distributionId
       amountOwed
       briber
@@ -588,6 +570,32 @@ export const GetUserBribeClaims = gql`
       }
       pool {
         name
+      }
+    }
+  }
+`;
+export const GetUserGaugeRewards = gql`
+  query GetUserGaugeRewards($user: String!) {
+    userGetUserPendingGaugeRewards(user: $user) {
+      stakingRewards {
+        pool {
+          name
+          address
+        }
+        amount
+        valueUSD
+        token {
+          address
+          logoURI
+        }
+      }
+      protocolRewards {
+        pool {
+          name
+        }
+        tokenList {
+          address
+        }
       }
     }
   }

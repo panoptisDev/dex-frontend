@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  useGetUserBribeClaimsLazyQuery,
-  useGetUserProtocolRewardsQuery,
-} from '~/apollo/generated/graphql-codegen-generated';
+import { useGetUserBribeClaimsLazyQuery } from '~/apollo/generated/graphql-codegen-generated';
 import { useGetGaugesQuery } from '~/lib/global/gauges/useGetGaugesQuery';
 import { gaugesDecorator } from '~/lib/services/staking/gauges.decorator';
 import { Gauge, SubgraphGauge } from '~/lib/services/staking/types';
@@ -15,6 +12,7 @@ export function useClaimsData() {
   const [protocolData, setProtocolData] = useState<any[]>([]);
 
   const { isConnected, userAddress } = useUserAccount();
+  // Shouldn't need to fetch all gauge data for this
   const { gauges, isLoading: isLoadingGauges, refetchGauges } = useGetGaugesQuery();
   const [
     getUserBribeClaims,
@@ -26,13 +24,13 @@ export function useClaimsData() {
     },
   ] = useGetUserBribeClaimsLazyQuery();
 
-  const {
-    data: protocolRewardsData,
-    loading: isLoadingProtocolRewards,
-    refetch: refetchProtocolRewards,
-  } = useGetUserProtocolRewardsQuery({
-    pollInterval: 15000,
-  });
+  // const {
+  //   data: protocolRewardsData,
+  //   loading: isLoadingProtocolRewards,
+  //   refetch: refetchProtocolRewards,
+  // } = useGetUserProtocolRewardsQuery({
+  //   pollInterval: 15000,
+  // });
 
   const setGaugeData = async () => {
     if (userAddress) {
@@ -52,34 +50,21 @@ export function useClaimsData() {
   }, [bribeError]);
 
   useEffect(() => {
-    if (!isLoadingProtocolRewards && protocolRewardsData) {
-      setProtocolData(protocolRewardsData.protocolRewards);
-    }
-  }, [isLoadingProtocolRewards]);
-
-  useEffect(() => {
-    if (!isLoadingProtocolRewards && protocolRewardsData) {
-      setProtocolData(protocolRewardsData.protocolRewards);
-    }
-  }, [isLoadingProtocolRewards]);
-
-  useEffect(() => {
     if (isConnected && gauges?.length) {
       setGaugeData();
     }
   }, [gauges, isConnected, userAddress]);
 
   useEffect(() => {
-    if (isLoadingProtocolRewards || isLoadingGauges || isLoadingClaims) {
+    if (isLoadingGauges || isLoadingClaims) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
     }
-  }, [isLoadingGauges, isLoadingProtocolRewards]);
+  }, [isLoadingGauges]);
 
   async function refetchClaimsData() {
     refetchGauges();
-    refetchProtocolRewards();
     refetchBribeRewards();
   }
 
@@ -91,7 +76,6 @@ export function useClaimsData() {
     isLoading,
     refetchGauges,
     refetchClaimsData,
-    refetchProtocolRewards,
     getUserBribeClaims,
     refetchBribeRewards,
   };

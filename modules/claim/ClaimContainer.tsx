@@ -14,6 +14,7 @@ import { FadeInOutBox } from '~/components/animation/FadeInOutBox';
 import { TableHeading } from './components/TableHeading';
 import { useUserAccount } from '~/lib/user/useUserAccount';
 import { BribeClaim } from './components/BribeClaim';
+import { useUserPendingRewards } from './lib/useUserRewards';
 
 export function ClaimContainer() {
   const [gaugesWithRewards, setGaugesWithRewards] = useState<Gauge[]>([]);
@@ -24,90 +25,48 @@ export function ClaimContainer() {
 
   const { isConnected, userAddress } = useUserAccount();
 
+  // const {
+  //   rewardGauges,
+  //   isLoading: isClaimsLoading,
+  //   refetchClaimsData,
+  //   protocolData,
+  //   bribeClaims,
+  //   getUserBribeClaims,
+  // } = useClaimsData();
+
+  // const { claimProtocolRewards, txState } = useProtocolRewardClaim();
+
   const {
-    rewardGauges,
-    isLoading: isClaimsLoading,
-    refetchClaimsData,
-    protocolData,
-    bribeClaims,
-    getUserBribeClaims,
-  } = useClaimsData();
+    userBribeClaims,
+    stakingRewards,
+    protocolRewards,
+    isRewardsLoading,
 
-  const { claimProtocolRewards, txState } = useProtocolRewardClaim();
+    refetchAll,
+    refetchBribeRewards,
+  } = useUserPendingRewards();
 
-  useEffect(() => {
-    const getClaims = async () => {
-      await getUserBribeClaims({
-        variables: {
-          user: userAddress || '',
-          epoch: 1678320000, // TODO: Dynamic update
-        },
-      });
-    };
+  // useEffect(() => {
+  //   if (txState.error) {
+  //     console.error(txState.error);
+  //     setClaiming(false);
+  //   }
 
-    if (isConnected && userAddress) {
-      getClaims();
-    }
-  }, [isConnected, userAddress]);
+  //   if (txState.isPending) {
+  //     setClaiming(true);
+  //   } else {
+  //     setClaiming(false);
+  //   }
 
-  useEffect(() => {
-    if (txState.error) {
-      console.error(txState.error);
-      setClaiming(false);
-    }
-
-    if (txState.isPending) {
-      setClaiming(true);
-    } else {
-      setClaiming(false);
-    }
-
-    if (txState.isConfirmed) {
-      setClaiming(false);
-    }
-  }, [txState]);
-
-  useEffect(() => {
-    if (!isClaimsLoading && rewardGauges?.length) {
-      setGaugesWithRewards(rewardGauges.filter((g) => parseFloat(g.claimableTokens) > 0));
-
-      let hasRewardsToClaim = false;
-      rewardGauges.forEach((g) => {
-        if (Object.keys(g.claimableRewards).length > 0) {
-          hasRewardsToClaim = true;
-        }
-      });
-
-      sethasGaugeRewards(hasRewardsToClaim);
-
-      setTimeout(() => setLoading(false), 100);
-    }
-  }, [rewardGauges, isClaimsLoading]);
-
-  useEffect(() => {
-    if (!isClaimsLoading && protocolData) {
-      if (!(parseFloat(protocolData[0]?.amount) > 0)) {
-        sethasProtocolRewards(false);
-      } else {
-        sethasProtocolRewards(true);
-      }
-    }
-  }, [isClaimsLoading, protocolData]);
-
-  function handleUserRewardsClaim() {
-    refetchClaimsData();
-  }
-
-  async function handleProtocolClaim() {
-    setClaiming(true);
-    await claimProtocolRewards();
-    refetchClaimsData();
-    setClaiming(false);
-  }
+  //   if (txState.isConfirmed) {
+  //     //refetchClaimsData();
+  //     setClaiming(false);
+  //   }
+  // }, [txState]);
 
   return (
     <>
-      {loading ? (
+      {isRewardsLoading ? (
         <Loading loading={loading} />
       ) : (
         <SimpleGrid columns={1} paddingX={0} spacing={6} borderRadius="12px">
@@ -125,13 +84,7 @@ export function ClaimContainer() {
               <Text fontSize="1.3rem">Vertek (VRTK) Earnings</Text>
             </Box>
 
-            {hasGaugeRewards ? (
-              <FadeInOutBox isVisible={!loading}>
-                <ClaimTable gaugesWithRewards={gaugesWithRewards} />
-              </FadeInOutBox>
-            ) : (
-              <NoRewardsBox label="No gauge staking rewards to claim" />
-            )}
+            <NoRewardsBox label="No gauge staking rewards to claim" />
           </GridItem>
 
           <GridItem display="flex" flexDirection="column" paddingY="0">
@@ -141,17 +94,7 @@ export function ClaimContainer() {
             />
 
             <Box>
-              {hasProtocolRewards ? (
-                <FadeInOutBox isVisible={!loading}>
-                  <ProtocolRewardsList
-                    protocolRewards={protocolData}
-                    onClaim={handleProtocolClaim}
-                    disabled={claiming}
-                  />
-                </FadeInOutBox>
-              ) : (
-                <NoRewardsBox label="No veVRTK protocol rewards to claim" />
-              )}
+              <NoRewardsBox label="No veVRTK protocol rewards to claim" />
             </Box>
           </GridItem>
 
@@ -159,13 +102,7 @@ export function ClaimContainer() {
             <TableHeading text="Bribe Earnings" />
 
             <Box>
-              {bribeClaims?.getUserBribeClaims.length ? (
-                <FadeInOutBox isVisible={!loading}>
-                  <BribeClaim bribeRewards={bribeClaims.getUserBribeClaims} />
-                </FadeInOutBox>
-              ) : (
-                <NoRewardsBox label="No bribe rewards to claim" />
-              )}
+              <NoRewardsBox label="No bribe rewards to claim" />
             </Box>
           </GridItem>
 
@@ -173,25 +110,7 @@ export function ClaimContainer() {
             <TableHeading text="Other Gauge Earnings" />
 
             <Box>
-              {isClaimsLoading ? (
-                <Skeleton isLoaded={!isClaimsLoading} />
-              ) : (
-                <>
-                  {hasGaugeRewards ? (
-                    <GaugeRewardsContainer
-                      gauges={rewardGauges}
-                      isLoading={isClaimsLoading}
-                      onSuccessfulClaim={handleUserRewardsClaim}
-                    />
-                  ) : (
-                    <>
-                      {!loading && !hasGaugeRewards && (
-                        <NoRewardsBox label="No additional staking rewards to claim" />
-                      )}
-                    </>
-                  )}
-                </>
-              )}
+              <NoRewardsBox label="No additional staking rewards to claim" />
             </Box>
           </GridItem>
         </SimpleGrid>

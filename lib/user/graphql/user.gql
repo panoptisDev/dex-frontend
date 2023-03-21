@@ -31,22 +31,22 @@ query GetUserData {
   }
 }
 
-query GetUserProtocolRewards {
-  protocolRewards: userGetProtocolRewardInfo {
-    poolId
-    token
-    tokenInfo {
-      logoURI
-      valueUSD
-    }
-    amount
-    isBPT
-    tokenList {
-      address
-      logoURI
-    }
-  }
-}
+# query GetUserProtocolRewards {
+#   protocolRewards: userGetProtocolRewardInfo {
+#     poolId
+#     token
+#     tokenInfo {
+#       logoURI
+#       valueUSD
+#     }
+#     amount
+#     isBPT
+#     tokenList {
+#       address
+#       logoURI
+#     }
+#   }
+# }
 
 mutation UserSyncBalance($poolId: String!) {
   userSyncBalance(poolId: $poolId)

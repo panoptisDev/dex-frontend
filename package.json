@@ -22,6 +22,7 @@
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/fragment-matcher": "^3.2.1",
     "@graphql-codegen/schema-ast": "^2.4.1",
+    "@graphql-codegen/typescript": "^3.0.2",
     "@graphql-codegen/typescript-document-nodes": "^2.2.10",
     "@graphql-codegen/typescript-operations": "^2.3.7",
     "@graphql-codegen/typescript-react-apollo": "^3.2.13",

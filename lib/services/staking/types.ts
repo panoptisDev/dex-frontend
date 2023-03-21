@@ -1,6 +1,12 @@
 import { AmountHumanReadable } from '~/lib/services/token/token-types';
 import { BigNumber } from '@ethersproject/bignumber';
-import { GqlPoolUnion, LiquidityGauge } from '~/apollo/generated/graphql-codegen-generated';
+import {
+  GqlPoolMinimal,
+  GqlPoolToken,
+  GqlPoolUnion,
+  GqlToken,
+  LiquidityGauge,
+} from '~/apollo/generated/graphql-codegen-generated';
 
 export interface StakingPendingRewardAmount {
   id: string;

@@ -107,6 +107,15 @@ type GqlBalancePoolAprSubItem {
   title: String!
 }
 
+type GqlBaseTokenReward {
+  amount: String!
+  isBPT: Boolean!
+  pool: GqlPoolMinimal!
+  token: GqlPoolToken!
+  tokenList: [GqlPoolToken!]!
+  valueUSD: Float!
+}
+
 scalar GqlBigNumber
 
 type GqlContentNewsItem {
@@ -1011,6 +1020,10 @@ enum GqlTokenType {
   WHITE_LISTED
 }
 
+type GqlUser {
+  pendingRewards: GqlUserPendingRewards!
+}
+
 type GqlUserFbeetsBalance {
   id: String!
   stakedBalance: AmountHumanReadable!
@@ -1022,6 +1035,17 @@ type GqlUserGaugeBoost {
   boost: String!
   gaugeAddress: String!
   poolId: String!
+}
+
+type GqlUserGaugeRewardInfo {
+  pool: GqlPoolMinimal!
+  rewards: [GqlBaseTokenReward!]!
+}
+
+type GqlUserPendingRewards {
+  gaugeRewards: [GqlUserGaugeRewardInfo]!
+  protocolRewards: [GqlBaseTokenReward]!
+  stakingRewards: [GqlBaseTokenReward]!
 }
 
 type GqlUserPoolBalance {
@@ -1057,12 +1081,10 @@ type GqlUserPortfolioSnapshot {
 }
 
 type GqlUserProtocolReward {
-  amount: String!
   isBPT: Boolean!
-  poolId: String!
-  token: String!
-  tokenInfo: GqlProtocolRewardTokenInfo!
-  tokenList: [GqlToken!]!
+  pool: GqlPoolMinimal!
+  token: GqlBaseTokenReward!
+  tokenList: [GqlPoolToken!]!
 }
 
 enum GqlUserSnapshotDataRange {
@@ -1204,7 +1226,7 @@ type Query {
   getRewardPools(user: String): [RewardPool]!
   getRewardPoolsData: [RewardPool]!
   getSingleGaugeBribes(epoch: Int!, gauge: String!): [EpochBribeInfo]!
-  getUserBribeClaims(epoch: Int!, user: String!): [UserBribeClaim]!
+  getUserBribeClaims(user: String!): [UserBribeClaim]!
   getUserGaugeStakes(poolIds: [String!]!, user: String!): [LiquidityGauge]!
   latestSyncedBlocks: GqlLatestSyncedBlocks!
   poolGetAllPoolsSnapshots(range: GqlPoolSnapshotDataRange!): [GqlPoolSnapshot!]!
@@ -1278,6 +1300,7 @@ type Query {
   userGetProtocolRewardInfo: [GqlUserProtocolReward]!
   userGetStaking: [GqlPoolStaking!]!
   userGetSwaps(first: Int!, poolId: String!, skip: Int!): [GqlPoolSwap!]!
+  userGetUserPendingGaugeRewards(user: String): GqlUserPendingRewards!
   userGetVeLockInfo: GqlUserVoteEscrowInfo!
 }
 

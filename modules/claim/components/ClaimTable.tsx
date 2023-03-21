@@ -1,18 +1,17 @@
 import { Box, Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { Gauge } from '~/lib/services/staking/types';
-import { useClaimsData } from '../lib/useClaimsData';
+import { GqlBaseTokenReward } from '~/apollo/generated/graphql-codegen-generated';
 import { useVrtkClaimAll } from '../lib/useVrtkClaimAll';
 import { ClaimListItem } from './ClaimListItem';
 
 interface ClaimTableProps {
-  gaugesWithRewards: Gauge[];
+  stakingRewards: GqlBaseTokenReward[];
 }
 
-export function ClaimTable({ gaugesWithRewards }: ClaimTableProps) {
+export function ClaimTable({ stakingRewards }: ClaimTableProps) {
   const [claiming, setClaiming] = useState<boolean>(false);
 
-  const { refetchGauges } = useClaimsData();
+  // const { refetchGauges } = useClaimsData();
   const { claimAll, txState } = useVrtkClaimAll();
 
   useEffect(() => {
@@ -28,15 +27,14 @@ export function ClaimTable({ gaugesWithRewards }: ClaimTableProps) {
     }
 
     if (txState.isConfirmed) {
-      refetchGauges();
+      // refetchGauges();
     }
   }, [txState]);
 
   async function handleUserClaimAll() {
-    if (!gaugesWithRewards.length) return;
+    if (!stakingRewards.length) return;
 
-    await claimAll(gaugesWithRewards.map((g) => g.address));
-    refetchGauges();
+    await claimAll(stakingRewards.map((reward) => reward.pool.staking?.gauge?.gaugeAddress || ''));
   }
 
   return (
@@ -75,8 +73,8 @@ export function ClaimTable({ gaugesWithRewards }: ClaimTableProps) {
           </GridItem>
         </Grid>
 
-        {gaugesWithRewards.map((gauge) => {
-          return <ClaimListItem key={gauge.address} gauge={gauge} />;
+        {stakingRewards.map((reward) => {
+          return <ClaimListItem key={reward.pool.address} reward={reward} />;
         })}
 
         <Flex

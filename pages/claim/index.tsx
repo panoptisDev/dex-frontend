@@ -6,6 +6,7 @@ import SwapMastheadImage from '~/assets/images/swap-masthead-image.png';
 import SwapMastheadOpImage from '~/assets/images/swap-masthead-image-OP.png';
 import { ClaimContainer } from '~/modules/claim/ClaimContainer';
 import { GaugeListProvider } from '~/lib/global/gauges/useVotingGauges';
+import { UserPendingRewardsProvider } from '~/modules/claim/lib/useUserRewards';
 
 function ClaimPage() {
   const { chainId } = useNetworkConfig();
@@ -25,8 +26,11 @@ function ClaimPage() {
           />
         }
       />
+
       <GaugeListProvider>
-        <ClaimContainer />
+        <UserPendingRewardsProvider>
+          <ClaimContainer />
+        </UserPendingRewardsProvider>
       </GaugeListProvider>
     </>
   );

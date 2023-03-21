@@ -1,5 +1,5 @@
-query GetUserBribeClaims($user: String!, $epoch: Int!) {
-  getUserBribeClaims(user: $user, epoch: $epoch) {
+query GetUserBribeClaims($user: String!) {
+  getUserBribeClaims(user: $user) {
     distributionId
     amountOwed
     briber
@@ -12,6 +12,34 @@ query GetUserBribeClaims($user: String!, $epoch: Int!) {
     }
     pool {
       name
+    }
+  }
+}
+
+query GetUserGaugeRewards($user: String!) {
+  userGetUserPendingGaugeRewards(user: $user) {
+    stakingRewards {
+      pool {
+        name
+        address
+      }
+      amount
+      valueUSD
+
+      token {
+        address
+        logoURI
+      }
+    }
+
+    protocolRewards {
+      pool {
+        name
+      }
+
+      tokenList {
+        address
+      }
     }
   }
 }
