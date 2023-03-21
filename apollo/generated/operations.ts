@@ -58,8 +58,13 @@ export const UserRewardFragment = gql`
         }
       }
     }
+    isRewardBPT
     amount
     valueUSD
+    tokenList {
+      address
+      logoURI
+    }
   }
 `;
 export const GqlPoolCardData = gql`

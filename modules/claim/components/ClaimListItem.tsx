@@ -45,11 +45,7 @@ export function ClaimListItem({ reward }: Props) {
       >
         <GridItem area="icons" mb={{ base: '6', lg: '0' }}>
           <Box display="flex" justifyContent={{ base: 'center', lg: 'flex-start' }}>
-            <MemoizedTokenAvatarSetInList
-              imageSize={32}
-              width={98}
-              tokens={reward.pool.allTokens.map((at) => at.token)}
-            />
+            <MemoizedTokenAvatarSetInList imageSize={32} width={98} tokens={reward.tokenList} />
           </Box>
         </GridItem>
         <GridItem

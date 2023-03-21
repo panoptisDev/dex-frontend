@@ -9,7 +9,6 @@ import { useUserAccount } from '~/lib/user/useUserAccount';
 const pollInterval = 15000;
 
 function _useUserRewards() {
-  const [isRewardsLoading, setIsRewardsLoading] = useState<boolean>(true);
   const { isConnected, userAddress } = useUserAccount();
 
   const [
@@ -61,14 +60,6 @@ function _useUserRewards() {
   }, [isConnected, userAddress]);
 
   useEffect(() => {
-    if (isLoadingClaims || loadingRewards) {
-      setIsRewardsLoading(true);
-    } else {
-      setIsRewardsLoading(false);
-    }
-  }, [loadingRewards, isLoadingClaims]);
-
-  useEffect(() => {
     if (bribeError) {
       console.log(bribeError);
     }
@@ -80,7 +71,8 @@ function _useUserRewards() {
 
   const stakingRewards = (data?.userGetUserPendingGaugeRewards.stakingRewards ||
     []) as GqlBaseTokenReward[];
-  const protocolRewards = data?.userGetUserPendingGaugeRewards.protocolRewards || [];
+  const protocolRewards = (data?.userGetUserPendingGaugeRewards.protocolRewards ||
+    []) as GqlBaseTokenReward[];
   const userBribeClaims = bribeData?.getUserBribeClaims || [];
 
   console.log(protocolRewards);
@@ -108,7 +100,7 @@ function _useUserRewards() {
     userBribeClaims,
     stakingRewards,
     protocolRewards,
-    isRewardsLoading,
+    isRewardsLoading: isLoadingClaims || loadingRewards,
 
     refetchRewards,
     refetchBribes,

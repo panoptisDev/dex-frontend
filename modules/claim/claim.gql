@@ -32,6 +32,7 @@ fragment UserRewardFragment on GqlBaseTokenReward {
   pool {
     name
     address
+
     allTokens {
       token {
         address
@@ -45,6 +46,13 @@ fragment UserRewardFragment on GqlBaseTokenReward {
       }
     }
   }
+
+  isRewardBPT
   amount
   valueUSD
+
+  tokenList {
+    address
+    logoURI
+  }
 }

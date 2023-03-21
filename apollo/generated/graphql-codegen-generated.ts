@@ -111,10 +111,10 @@ export interface GqlBalancePoolAprSubItem {
 export interface GqlBaseTokenReward {
   __typename: 'GqlBaseTokenReward';
   amount: Scalars['String'];
-  isBPT: Scalars['Boolean'];
+  isRewardBPT: Scalars['Boolean'];
   pool: GqlPoolWeighted;
   token: GqlPoolToken;
-  tokenList: Array<GqlPoolToken>;
+  tokenList: Array<GqlToken>;
   valueUSD: Scalars['Float'];
 }
 
@@ -893,12 +893,6 @@ export interface GqlProtocolPendingGaugeFee {
   valueUSD: Scalars['Float'];
 }
 
-export interface GqlProtocolRewardTokenInfo {
-  __typename: 'GqlProtocolRewardTokenInfo';
-  logoURI?: Maybe<Scalars['String']>;
-  valueUSD: Scalars['String'];
-}
-
 export interface GqlSorGetBatchSwapForTokensInResponse {
   __typename: 'GqlSorGetBatchSwapForTokensInResponse';
   assets: Array<Scalars['String']>;
@@ -1115,14 +1109,6 @@ export interface GqlUserPortfolioSnapshot {
   walletBalance: Scalars['AmountHumanReadable'];
 }
 
-export interface GqlUserProtocolReward {
-  __typename: 'GqlUserProtocolReward';
-  isBPT: Scalars['Boolean'];
-  pool: GqlPoolWeighted;
-  token: GqlBaseTokenReward;
-  tokenList: Array<GqlPoolToken>;
-}
-
 export type GqlUserSnapshotDataRange =
   | 'ALL_TIME'
   | 'NINETY_DAYS'
@@ -1308,7 +1294,6 @@ export interface Query {
   userGetPoolBalances: Array<GqlUserPoolBalance>;
   userGetPoolJoinExits: Array<GqlPoolJoinExit>;
   userGetPortfolioSnapshots: Array<GqlUserPortfolioSnapshot>;
-  userGetProtocolRewardInfo: Array<Maybe<GqlUserProtocolReward>>;
   userGetStaking: Array<GqlPoolStaking>;
   userGetSwaps: Array<GqlPoolSwap>;
   userGetUserPendingGaugeRewards: GqlUserPendingRewards;
@@ -1882,6 +1867,7 @@ export type GetUserGaugeRewardsQuery = {
     __typename: 'GqlUserPendingRewards';
     stakingRewards: Array<{
       __typename: 'GqlBaseTokenReward';
+      isRewardBPT: boolean;
       amount: string;
       valueUSD: number;
       pool: {
@@ -1897,9 +1883,11 @@ export type GetUserGaugeRewardsQuery = {
           gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
         } | null;
       };
+      tokenList: Array<{ __typename: 'GqlToken'; address: string; logoURI?: string | null }>;
     } | null>;
     protocolRewards: Array<{
       __typename: 'GqlBaseTokenReward';
+      isRewardBPT: boolean;
       amount: string;
       valueUSD: number;
       pool: {
@@ -1915,12 +1903,14 @@ export type GetUserGaugeRewardsQuery = {
           gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
         } | null;
       };
+      tokenList: Array<{ __typename: 'GqlToken'; address: string; logoURI?: string | null }>;
     } | null>;
   };
 };
 
 export type UserRewardFragmentFragment = {
   __typename: 'GqlBaseTokenReward';
+  isRewardBPT: boolean;
   amount: string;
   valueUSD: number;
   pool: {
@@ -1936,6 +1926,7 @@ export type UserRewardFragmentFragment = {
       gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
     } | null;
   };
+  tokenList: Array<{ __typename: 'GqlToken'; address: string; logoURI?: string | null }>;
 };
 
 export type GetHomeDataQueryVariables = Exact<{ [key: string]: never }>;
@@ -4782,8 +4773,13 @@ export const UserRewardFragmentFragmentDoc = gql`
         }
       }
     }
+    isRewardBPT
     amount
     valueUSD
+    tokenList {
+      address
+      logoURI
+    }
   }
 `;
 export const GqlPoolCardDataFragmentDoc = gql`

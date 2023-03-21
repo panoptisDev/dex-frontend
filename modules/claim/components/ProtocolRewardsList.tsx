@@ -1,19 +1,34 @@
 import { Box, Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
+import { GqlBaseTokenReward } from '~/apollo/generated/graphql-codegen-generated';
 import { TokenAvatarSetInList } from '~/components/token/TokenAvatarSetInList';
 import { tokenFormatAmount } from '~/lib/services/token/token-util';
 import { numberFormatUSDValue } from '~/lib/util/number-formats';
+import { useProtocolRewardClaim } from '../lib/useProtocolRewardsClaim';
+import { useUserPendingRewards } from '../lib/useUserRewards';
 import { MobileLabelLeft, StatGridItemRight, MobileLabelRight } from './ClaimTableUtils';
 
 const MemoizedTokenAvatarSetInList = memo(TokenAvatarSetInList);
 
 type Props = {
-  protocolRewards: any[];
-  disabled: boolean;
-  onClaim: () => void;
+  rewards: GqlBaseTokenReward[];
 };
 
-export function ProtocolRewardsList(props: Props) {
+export function ProtocolRewardsList({ rewards }: Props) {
+  const { claimProtocolRewards, claimTxState } = useProtocolRewardClaim();
+  const { refetchAll } = useUserPendingRewards();
+
+  useEffect(() => {
+    if (claimTxState.isConfirmed) {
+      refetchAll();
+      claimTxState.reset();
+    }
+  }, [claimTxState]);
+
+  function handleUserClaim() {
+    claimProtocolRewards(rewards.map((rw) => rw.token.address));
+  }
+
   return (
     <>
       <Box
@@ -38,20 +53,23 @@ export function ProtocolRewardsList(props: Props) {
           <GridItem>
             <Text fontWeight="bold">Reward</Text>
           </GridItem>
+
           <GridItem>
             <Text fontWeight="bold"></Text>
           </GridItem>
+
           <GridItem>
             <Text fontWeight="bold" textAlign="left">
               Amount
             </Text>
           </GridItem>
+
           <GridItem justifyContent="center" display="flex">
             <Text fontWeight="bold">Value</Text>
           </GridItem>
         </Grid>
 
-        {props.protocolRewards.map((reward) => {
+        {rewards.map((reward) => {
           return (
             <Box
               borderTopColor="#4A4AF6"
@@ -70,8 +88,8 @@ export function ProtocolRewardsList(props: Props) {
                 alignItems="center"
                 templateAreas={{
                   base: `
-                  "name name"
                   "icons icons"
+                  "name name"
                   "shares value"
                   "claim claim" `,
                   lg: `"icons name shares value claim"`,
@@ -85,6 +103,11 @@ export function ProtocolRewardsList(props: Props) {
                       tokens={reward.tokenList}
                     />
                   </Box>
+                </GridItem>
+
+                <GridItem area="name">
+                  <MobileLabelLeft text="Pool" />
+                  <Text textAlign="left">{reward.pool.name}</Text>
                 </GridItem>
 
                 <GridItem area="shares" textAlign="left">
@@ -104,28 +127,9 @@ export function ProtocolRewardsList(props: Props) {
                     fontSize={{ base: '1rem', lg: 'md' }}
                     fontWeight={{ base: 'bold', lg: 'normal' }}
                   >
-                    {numberFormatUSDValue(reward.tokenInfo.valueUSD)}
+                    {numberFormatUSDValue(reward.valueUSD)}
                   </Text>
                 </StatGridItemRight>
-
-                <GridItem area="claim">
-                  <Button
-                    display={{ base: 'flex', lg: 'none' }}
-                    variant="verteklight"
-                    padding="1em"
-                    borderRadius="10px"
-                    mt="1"
-                    borderWidth="1px"
-                    alignItems="center"
-                    height="2em"
-                    disabled={false}
-                    width={{ base: '200px', lg: 'none' }}
-                    isDisabled={props.disabled}
-                    onClick={props.onClaim}
-                  >
-                    Claim
-                  </Button>
-                </GridItem>
               </Grid>
             </Box>
           );
@@ -145,7 +149,7 @@ export function ProtocolRewardsList(props: Props) {
           >
             <Button
               display={{ base: 'none', lg: 'flex' }}
-              variant="verteklight"
+              variant={claimTxState.isPending ? 'vertekdark' : 'verteklight'}
               padding="1em"
               borderRadius="10px"
               mt="1"
@@ -155,8 +159,8 @@ export function ProtocolRewardsList(props: Props) {
               height="2em"
               disabled={false}
               width={{ base: '200px', lg: '125px' }}
-              isDisabled={props.disabled}
-              onClick={props.onClaim}
+              isDisabled={!rewards.length || claimTxState.isPending}
+              onClick={handleUserClaim}
             >
               Claim
             </Button>

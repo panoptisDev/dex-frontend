@@ -8,7 +8,6 @@ import { Gauge } from '~/lib/services/staking/types';
 import { NoRewardsBox } from './components/NoRewardsBox';
 import { GaugeRewardsContainer } from './components/GaugeRewardsContainer';
 import { ProtocolRewardsList } from './components/ProtocolRewardsList';
-import { useProtocolRewardClaim } from './lib/useProtocolRewardsClaim';
 import { Loading } from '~/components/loading/Loading';
 import { FadeInOutBox } from '~/components/animation/FadeInOutBox';
 import { TableHeading } from './components/TableHeading';
@@ -85,7 +84,9 @@ export function ClaimContainer() {
             </Box>
 
             {stakingRewards.length ? (
-              <ClaimTable stakingRewards={stakingRewards} />
+              <FadeInOutBox isVisible={true}>
+                <ClaimTable stakingRewards={stakingRewards} />
+              </FadeInOutBox>
             ) : (
               <NoRewardsBox label="No gauge staking rewards to claim" />
             )}
@@ -97,9 +98,13 @@ export function ClaimContainer() {
               tooltipText="Protocol fee distribution is based on your percentage ownership of veVRTK at the start of the previous weeks epoch."
             />
 
-            <Box>
+            {protocolRewards.length ? (
+              <FadeInOutBox isVisible={true}>
+                <ProtocolRewardsList rewards={protocolRewards} />
+              </FadeInOutBox>
+            ) : (
               <NoRewardsBox label="No veVRTK protocol rewards to claim" />
-            </Box>
+            )}
           </GridItem>
 
           <GridItem display="flex" flexDirection="column">
