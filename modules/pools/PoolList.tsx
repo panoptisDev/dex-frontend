@@ -99,6 +99,13 @@ function PoolList() {
                 ...token,
                 logoURI: getToken(token.address)?.logoURI || undefined,
               }))}
+            rewardTokens={item.staking?.gauge?.rewards
+              .filter((token) => Number(token.rewardPerSecond) > 0)
+              .map((token) => ({
+                ...token,
+                address: token.tokenAddress,
+                logoURI: getToken(token.tokenAddress)?.logoURI || undefined,
+              }))}
             hasUnstakedBpt={
               item.dynamicData.apr.hasRewardApr && hasBptInWalletForPool(item.id)
             }

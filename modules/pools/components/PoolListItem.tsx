@@ -1,5 +1,6 @@
 import { GqlPoolMinimalFragment } from '~/apollo/generated/graphql-codegen-generated';
-import { Box, Grid, GridItem, GridItemProps, Text } from '@chakra-ui/react';
+import { Avatar, Box, Circle, Flex, Grid, GridItem, GridItemProps, Text } from '@chakra-ui/react';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import Link from 'next/link';
 import numeral from 'numeral';
 import AprTooltip from '~/components/apr-tooltip/AprTooltip';
@@ -17,6 +18,7 @@ interface Props extends BoxProps {
   userBalance?: AmountHumanReadable;
   showUserBalance: boolean;
   tokens: TokenAvatarSetInListTokenData[];
+  rewardTokens?: TokenAvatarSetInListTokenData[];
   hasUnstakedBpt?: boolean;
 }
 
@@ -28,6 +30,7 @@ export function PoolListItem({
   userBalance,
   showUserBalance,
   tokens,
+  rewardTokens,
   hasUnstakedBpt,
 }: Props) {
   return (
@@ -59,11 +62,11 @@ export function PoolListItem({
               templateColumns={{
                 base: '1fr',
                 lg: showUserBalance
-                  ? '90px 1fr 150px 200px 0px 200px'
-                  : '90px 1fr 200px 200px 250px',
+                  ? '90px 1fr 200px 150px 200px 0px 200px'
+                  : '90px 1fr 200px 200px 200px 250px',
                 xl: showUserBalance
-                  ? '90px 1fr 150px 200px 200px 200px'
-                  : '90px 1fr 200px 200px 250px',
+                  ? '90px 1fr 200px 150px 200px 200px 200px'
+                  : '90px 1fr 200px 200px 200px 250px',
               }}
               gap={{ base: '4', md: '0' }}
               templateAreas={
@@ -71,19 +74,21 @@ export function PoolListItem({
                   ? {
                       base: `"icons icons"
                         "name name"
+                        "rewardIcons rewardIcons"
                         "userBalance userBalance"
                         "apr tvl"
                         "fees volume"
                         `,
-                      lg: `"icons name userBalance tvl volume apr"`,
+                      lg: `"icons name rewardIcons userBalance tvl volume apr"`,
                     }
                   : {
                       base: `
                         "icons icons"
                         "name name"
+                        "rewardIcons rewardIcons"
                         "apr tvl"
                         "fees volume" `,
-                      lg: `"icons name tvl volume apr"`,
+                      lg: `"icons name rewardIcons tvl volume apr"`,
                     }
               }
             >
@@ -102,6 +107,36 @@ export function PoolListItem({
                 </Text>
               </GridItem>
 
+              <StatGridItem area="rewardIcons">
+                {rewardTokens && rewardTokens.length > 0 &&
+                  <Text
+                    marginRight="1rem"
+                    fontSize="md"
+                    color="gray.200"
+                    display={{ base: 'block', lg: 'none' }}
+                  >
+                    Additional rewards
+                  </Text>
+                }
+                <Flex alignItems="center" p="1">
+                  {rewardTokens?.map((token, index) => (
+                    <Avatar
+                      key={index}
+                      mr="2"
+                      size="xs"
+                      src={token?.logoURI || undefined}
+                      icon={
+                        token?.logoURI ? (
+                          <Circle size="30px" backgroundColor="whiteAlpha.200" />
+                        ) : (
+                          <Jazzicon diameter={30} seed={jsNumberForAddress(token.address)} />
+                        )
+                      }
+                      // title={token.symbol}
+                    />
+                  ))}
+                </Flex>
+              </StatGridItem>
 
               {showUserBalance && (
                 <GridItem
