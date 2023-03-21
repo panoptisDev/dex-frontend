@@ -14,27 +14,27 @@ class BeetsDocument extends Document {
           />
 
           <meta property="og:type" content="website" />
-          <meta property="og:url" content={`${process.env.VERCEL_URL}`} />
-          <meta property="og:title" content="Vertek" />
+          {/* <meta property="og:url" content="https://vertek.exchange" /> */}
+          <meta property="og:title" content="Vertek DEX - Advanced Decentralized Exchange on BNB Chain." />
           <meta
             property="og:description"
-            content="The future of DeFi re-imagineered. Your next generation Decentralised Exchange."
+            content="Vertek is the primary Balancer-style DEX on BNB Chain, supporting multi-token pools, rewards, and weighted token compositions."
           />
           <meta
             property="og:image"
-            content="https://github.com/vertekfi/token-list/blob/0a6d274a23eb54249e0ed0cb88877546bc6095ef/images/vertek_meta.png"
+            content="/images/social-share.jpg"
           />
 
           <meta property="twitter:card" content="summary_large_image" />
-          <meta property="twitter:url" content={`${process.env.VERCEL_URL}`} />
-          <meta property="twitter:title" content="Vertek" />
+          {/* <meta property="twitter:url" content="https://vertek.exchange" /> */}
+          <meta property="twitter:title" content="Vertek DEX - Advanced Decentralized Exchange on BNB Chain." />
           <meta
             property="twitter:description"
-            content="The future of DeFi re-imagineered. Your next generation Decentralised Exchange."
+            content="Vertek is the primary Balancer-style DEX on BNB Chain, supporting multi-token pools, rewards, and weighted token compositions."
           />
           <meta
             property="twitter:image"
-            content="https://github.com/vertekfi/token-list/blob/0a6d274a23eb54249e0ed0cb88877546bc6095ef/images/vertek_meta.png"
+            content="/images/social-share.jpg"
           />
 
           {/* <script
