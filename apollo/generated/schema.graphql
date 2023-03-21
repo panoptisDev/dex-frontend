@@ -1370,8 +1370,10 @@ type UserBribeClaim {
   amountOwed: String!
   briber: String!
   distributionId: String!
+  epochStartTime: Int!
   gauge: String!
   gaugeRecord: LiquidityGauge!
+  pool: GqlPoolMinimal!
   proof: [String!]!
   token: String!
   valueUSD: Float!

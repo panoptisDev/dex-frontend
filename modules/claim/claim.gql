@@ -10,5 +10,8 @@ query GetUserBribeClaims($user: String!, $epoch: Int!) {
     gaugeRecord {
       symbol
     }
+    pool {
+      name
+    }
   }
 }

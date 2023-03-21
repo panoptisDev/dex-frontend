@@ -137,7 +137,7 @@ export function BribeClaim({ bribeRewards }: Props) {
                     fontSize={{ base: '1rem', lg: 'md' }}
                     fontWeight={{ base: 'bold', lg: 'normal' }}
                   >
-                    {bribe.gaugeRecord.symbol}
+                    {bribe.pool.name}
                   </Text>
                 </GridItem>
                 <GridItem area="shares" textAlign="left">

@@ -586,6 +586,9 @@ export const GetUserBribeClaims = gql`
       gaugeRecord {
         symbol
       }
+      pool {
+        name
+      }
     }
   }
 `;

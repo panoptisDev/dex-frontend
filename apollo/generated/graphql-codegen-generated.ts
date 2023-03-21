@@ -1513,8 +1513,10 @@ export interface UserBribeClaim {
   amountOwed: Scalars['String'];
   briber: Scalars['String'];
   distributionId: Scalars['String'];
+  epochStartTime: Scalars['Int'];
   gauge: Scalars['String'];
   gaugeRecord: LiquidityGauge;
+  pool: GqlPoolMinimal;
   proof: Array<Scalars['String']>;
   token: Scalars['String'];
   valueUSD: Scalars['Float'];
@@ -1854,6 +1856,7 @@ export type GetUserBribeClaimsQuery = {
     proof: Array<string>;
     valueUSD: number;
     gaugeRecord: { __typename: 'LiquidityGauge'; symbol: string };
+    pool: { __typename: 'GqlPoolMinimal'; name: string };
   } | null>;
 };
 
@@ -5731,6 +5734,9 @@ export const GetUserBribeClaimsDocument = gql`
       valueUSD
       gaugeRecord {
         symbol
+      }
+      pool {
+        name
       }
     }
   }
