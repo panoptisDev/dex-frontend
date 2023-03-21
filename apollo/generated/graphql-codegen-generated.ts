@@ -1883,6 +1883,7 @@ export type GetUserGaugeRewardsQuery = {
           gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
         } | null;
       };
+      token: { __typename: 'GqlPoolToken'; address: string; symbol: string };
       tokenList: Array<{ __typename: 'GqlToken'; address: string; logoURI?: string | null }>;
     } | null>;
     protocolRewards: Array<{
@@ -1903,6 +1904,7 @@ export type GetUserGaugeRewardsQuery = {
           gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
         } | null;
       };
+      token: { __typename: 'GqlPoolToken'; address: string; symbol: string };
       tokenList: Array<{ __typename: 'GqlToken'; address: string; logoURI?: string | null }>;
     } | null>;
   };
@@ -1926,6 +1928,7 @@ export type UserRewardFragmentFragment = {
       gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
     } | null;
   };
+  token: { __typename: 'GqlPoolToken'; address: string; symbol: string };
   tokenList: Array<{ __typename: 'GqlToken'; address: string; logoURI?: string | null }>;
 };
 
@@ -4776,6 +4779,10 @@ export const UserRewardFragmentFragmentDoc = gql`
     isRewardBPT
     amount
     valueUSD
+    token {
+      address
+      symbol
+    }
     tokenList {
       address
       logoURI

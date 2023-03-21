@@ -61,6 +61,10 @@ export const UserRewardFragment = gql`
     isRewardBPT
     amount
     valueUSD
+    token {
+      address
+      symbol
+    }
     tokenList {
       address
       logoURI

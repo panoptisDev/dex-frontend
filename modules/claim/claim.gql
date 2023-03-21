@@ -51,6 +51,11 @@ fragment UserRewardFragment on GqlBaseTokenReward {
   amount
   valueUSD
 
+  token {
+    address
+    symbol
+  }
+
   tokenList {
     address
     logoURI

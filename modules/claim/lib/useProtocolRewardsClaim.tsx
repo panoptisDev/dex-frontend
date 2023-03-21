@@ -6,7 +6,7 @@ export function useProtocolRewardClaim() {
   const { userAddress } = useUserAccount();
   const networkConfig = useNetworkConfig();
 
-  const { submitAsync, ...rest } = useSubmitTransaction({
+  const { submit, ...rest } = useSubmitTransaction({
     config: {
       addressOrName: networkConfig.balancer.feeDistributor || '',
       contractInterface: ['function claimTokens(address, address[]) external'],
@@ -16,7 +16,7 @@ export function useProtocolRewardClaim() {
   });
 
   function claimProtocolRewards(tokens: string[]) {
-    return submitAsync({
+    return submit({
       args: [userAddress, tokens],
       toastText: 'Claim pending veVRTK rewards',
     });

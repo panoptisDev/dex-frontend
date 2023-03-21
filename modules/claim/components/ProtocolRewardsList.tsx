@@ -20,8 +20,8 @@ export function ProtocolRewardsList({ rewards }: Props) {
 
   useEffect(() => {
     if (claimTxState.isConfirmed) {
-      refetchAll();
       claimTxState.reset();
+      refetchAll();
     }
   }, [claimTxState]);
 
