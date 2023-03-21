@@ -22,7 +22,6 @@ import { ChevronDown } from 'react-feather';
 import { PoolUserSwapsTable } from '~/modules/pool/detail/components/transactions/PoolUserSwapsTable';
 import { usePool } from '~/modules/pool/lib/usePool';
 import { useTheme } from '@chakra-ui/react';
-import { PoolAboutThisProjectModal } from '../PoolAboutThisProjectModal';
 
 type Props = {};
 
@@ -35,7 +34,6 @@ export function PoolTransactions({ ...rest }: Props & BoxProps) {
     isPhantomStable ? 'Transactions' : 'Investments',
     ...(!isPhantomStable ? ['Swaps'] : []),
     `My ${isPhantomStable ? 'transactions' : 'investments'}`,
-    'About this project',
   ];
   const theme = useTheme();
 
@@ -99,9 +97,6 @@ export function PoolTransactions({ ...rest }: Props & BoxProps) {
           {activeTab === 1 && (isPhantomStable ? <PoolSwapsTable /> : <PoolJoinExitsTable />)}
           {activeTab === 2 && (isPhantomStable ? <PoolUserSwapsTable /> : <PoolSwapsTable />)}
           {activeTab === 3 && <PoolUserInvestmentsTable />}
-          {activeTab === 4 && (
-            <PoolAboutThisProjectModal isOpen={activeTab === 4} onClose={onModalClose} />
-          )}
         </VStack>
       </Tabs>
     </Box>
