@@ -1,10 +1,8 @@
-import { SimpleGrid, Box, GridItem, Text, Skeleton } from '@chakra-ui/react';
+import { SimpleGrid, Box, GridItem, Text } from '@chakra-ui/react';
 import NextImage from 'next/image';
 import VertekIcon from '~/assets/svg/vertektransparent.svg';
-import { useClaimsData } from './lib/useClaimsData';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ClaimTable } from './components/ClaimTable';
-import { Gauge } from '~/lib/services/staking/types';
 import { NoRewardsBox } from './components/NoRewardsBox';
 import { GaugeRewardsContainer } from './components/GaugeRewardsContainer';
 import { ProtocolRewardsList } from './components/ProtocolRewardsList';
@@ -16,10 +14,6 @@ import { BribeClaim } from './components/BribeClaim';
 import { useUserPendingRewards } from './lib/useUserRewards';
 
 export function ClaimContainer() {
-  const [gaugesWithRewards, setGaugesWithRewards] = useState<Gauge[]>([]);
-  const [hasGaugeRewards, sethasGaugeRewards] = useState<boolean>(false);
-  const [hasProtocolRewards, sethasProtocolRewards] = useState<boolean>(false);
-  const [claiming, setClaiming] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { isConnected, userAddress } = useUserAccount();
@@ -39,6 +33,7 @@ export function ClaimContainer() {
     userBribeClaims,
     stakingRewards,
     protocolRewards,
+    gaugeRewards,
     isRewardsLoading,
 
     refetchAll,
@@ -118,9 +113,13 @@ export function ClaimContainer() {
           <GridItem display="flex" flexDirection="column">
             <TableHeading text="Other Gauge Earnings" />
 
-            <Box>
+            {gaugeRewards.length ? (
+              <FadeInOutBox isVisible={true}>
+                <GaugeRewardsContainer userGaugeRewards={gaugeRewards} />
+              </FadeInOutBox>
+            ) : (
               <NoRewardsBox label="No additional staking rewards to claim" />
-            </Box>
+            )}
           </GridItem>
         </SimpleGrid>
       )}

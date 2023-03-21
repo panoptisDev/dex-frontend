@@ -1,22 +1,23 @@
 import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
-import { RewardToken } from '~/apollo/generated/graphql-codegen-generated';
+import { GqlBaseTokenReward } from '~/apollo/generated/graphql-codegen-generated';
 import TokenAvatarSet from '~/components/token/TokenAvatarSet';
-import { useGetTokens } from '~/lib/global/useToken';
+import { tokenFormatAmount } from '~/lib/services/token/token-util';
+import { numberFormatUSDValue } from '~/lib/util/number-formats';
 import { MobileLabelLeft, StatGridItemRight, MobileLabelRight } from './ClaimTableUtils';
 
 type Props = {
-  token: RewardToken;
-  claimableRewards: string;
+  reward: GqlBaseTokenReward;
 };
 
-export function GaugeRewardRow({ token, claimableRewards }: Props) {
-  const { formattedPrice } = useGetTokens();
-
+export function GaugeRewardRow({ reward }: Props) {
   return (
     <Box
-      borderColor="#4A4AF6" borderLeftWidth="1px" borderRightWidth="1px"
+      borderColor="#4A4AF6"
+      borderLeftWidth="1px"
+      borderRightWidth="1px"
       boxShadow={{ base: '0 0 5px #5BC0F8, 0 0 10px #4A4AF6', lg: 'none' }}
-      borderTopWidth="1px" borderBottomWidth="1px"
+      borderTopWidth="1px"
+      borderBottomWidth="1px"
       mt={{ base: '6', lg: '0' }}
       mb={{ base: '4', lg: '0' }}
       paddingY={{ base: '4', lg: '0' }}
@@ -44,7 +45,7 @@ export function GaugeRewardRow({ token, claimableRewards }: Props) {
       >
         <GridItem area="icons" mb={{ base: '6', lg: '0' }}>
           <Box display="flex" justifyContent={{ base: 'center', lg: 'flex-start' }}>
-            <TokenAvatarSet width={32} tokenData={[{ address: token.tokenAddress }]} />
+            <TokenAvatarSet width={32} tokenData={[{ address: reward.token.address }]} />
           </Box>
         </GridItem>
         <GridItem
@@ -57,7 +58,7 @@ export function GaugeRewardRow({ token, claimableRewards }: Props) {
             fontSize={{ base: 'xl', lg: 'md' }}
             fontWeight={{ base: 'bold', lg: 'bold' }}
           >
-            {token.symbol}
+            {reward.token.symbol}
           </Text>
         </GridItem>
         <GridItem area="shares" textAlign="left">
@@ -67,16 +68,13 @@ export function GaugeRewardRow({ token, claimableRewards }: Props) {
             fontWeight={{ base: 'bold', lg: 'normal' }}
             textAlign="left"
           >
-            {claimableRewards}
+            {tokenFormatAmount(reward.amount)}
           </Text>
         </GridItem>
         <StatGridItemRight area="value">
           <MobileLabelRight text="Value" />
           <Text fontSize={{ base: '1rem', lg: 'md' }} fontWeight={{ base: 'bold', lg: 'normal' }}>
-            {formattedPrice({
-              address: token.tokenAddress,
-              amount: claimableRewards,
-            })}
+            {numberFormatUSDValue(reward.valueUSD)}
           </Text>
         </StatGridItemRight>
       </Grid>

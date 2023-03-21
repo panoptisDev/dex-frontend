@@ -1,24 +1,30 @@
 import { Box, Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
+import { GqlUserGaugeRewardInfo } from '~/apollo/generated/graphql-codegen-generated';
 import { TokenAvatarSetInList } from '~/components/token/TokenAvatarSetInList';
-import { Gauge } from '~/lib/services/staking/types';
 import { useGaugeRewardsClaim } from '../lib/useGaugeRewardsClaim';
+import { useUserPendingRewards } from '../lib/useUserRewards';
 import { GaugeRewardRow } from './GaugeRewardRow';
 
 const MemoizedTokenAvatarSetInList = memo(TokenAvatarSetInList);
 
 type Props = {
-  gauge: Gauge;
-  onClaimSuccess: () => void;
+  userGaugeReward: GqlUserGaugeRewardInfo;
+  // onClaimSuccess: () => void;
 };
 
-export function GaugeRewardsTable({ gauge }: Props) {
-  const { doClaim, txState } = useGaugeRewardsClaim(gauge.address);
+export function GaugeRewardsTable({ userGaugeReward }: Props) {
+  const gauge = userGaugeReward.pool.staking?.gauge;
 
-  async function onGaugeClaim() {
-    console.log('Claim for gauge: ' + gauge.address);
-    await doClaim();
-  }
+  const { doGaugeRewardClaim, claimTxState } = useGaugeRewardsClaim(gauge?.gaugeAddress || '');
+  const { refetchRewards } = useUserPendingRewards();
+
+  useEffect(() => {
+    if (claimTxState.isConfirmed) {
+      claimTxState.reset();
+      refetchRewards();
+    }
+  }, [claimTxState]);
 
   return (
     <Box borderRadius="16px" mt={5}>
@@ -40,14 +46,13 @@ export function GaugeRewardsTable({ gauge }: Props) {
         >
           <GridItem>
             <Flex justifyContent="space-between">
-              <MemoizedTokenAvatarSetInList imageSize={32} width={92} tokens={gauge.pool.tokens} />
               <Text ml="1" fontWeight="bold">
-                {gauge.pool.name}
+                {userGaugeReward.pool.name}
               </Text>
             </Flex>
           </GridItem>
 
-          <GridItem>{/* <Text fontWeight="bold"></Text> */}</GridItem>
+          <GridItem></GridItem>
           <GridItem>
             <Text fontWeight="bold" textAlign="left">
               Amount
@@ -70,56 +75,16 @@ export function GaugeRewardsTable({ gauge }: Props) {
         >
           <GridItem>
             <Flex justifyContent="center" alignItems="center">
-              <MemoizedTokenAvatarSetInList imageSize={32} width={92} tokens={gauge.pool.tokens} />
               <Text ml="1" fontWeight="bold">
-                {gauge.pool.name}
+                {userGaugeReward.pool.name}
               </Text>
             </Flex>
           </GridItem>
-          <Box display="flex" justifyContent="center" mt="4">
-            {!txState.isPending ? (
-              <Button
-                display={{ base: 'flex', lg: 'none' }}
-                variant="verteklight"
-                padding="1em"
-                borderRadius="10px"
-                mt="1"
-                ml="4"
-                borderWidth="1px"
-                alignItems="center"
-                height="2em"
-                disabled={false}
-                width={{ base: '75%', lg: '125px' }}
-                onClick={onGaugeClaim}
-              >
-                Claim All
-              </Button>
-            ) : (
-              <Button
-                display={{ base: 'flex', lg: 'none' }}
-                variant="vertekdark"
-                padding="1em"
-                borderRadius="10px"
-                mt="1"
-                ml="4"
-                borderWidth="1px"
-                alignItems="center"
-                height="2em"
-                disabled={true}
-                width={{ base: '75%', lg: '125px' }}
-              >
-                Pending...
-              </Button>
-            )}
-          </Box>
         </Grid>
       </Box>
-      {gauge.rewardTokens.map((token) => (
-        <GaugeRewardRow
-          token={token}
-          key={token.tokenAddress}
-          claimableRewards={gauge.claimableRewards[token.tokenAddress]}
-        />
+
+      {userGaugeReward.rewards.map((reward) => (
+        <GaugeRewardRow key={reward.token.address} reward={reward} />
       ))}
 
       <Box mb={{ base: 'none', lg: '10' }}>
@@ -136,40 +101,22 @@ export function GaugeRewardsTable({ gauge }: Props) {
           bg={{ base: 'none', lg: 'vertek.slatepurple.900' }}
           justifyContent={{ base: 'center', lg: 'flex-end' }}
         >
-          {!txState.isPending ? (
-            <Button
-              display={{ base: 'none', lg: 'flex' }}
-              variant="verteklight"
-              padding="1em"
-              borderRadius="10px"
-              mt="1"
-              ml="4"
-              borderWidth="1px"
-              alignItems="center"
-              height="2em"
-              disabled={false}
-              width={{ base: '200px', lg: '125px' }}
-              onClick={onGaugeClaim}
-            >
-              Claim
-            </Button>
-          ) : (
-            <Button
-              display={{ base: 'none', lg: 'flex' }}
-              variant="vertekdark"
-              padding="1em"
-              borderRadius="10px"
-              mt="1"
-              ml="4"
-              borderWidth="1px"
-              alignItems="center"
-              height="2em"
-              disabled={true}
-              width={{ base: '75%', lg: '125px' }}
-            >
-              Pending...
-            </Button>
-          )}
+          <Button
+            display={{ base: 'none', lg: 'flex' }}
+            variant="verteklight"
+            padding="1em"
+            borderRadius="10px"
+            mt="1"
+            ml="4"
+            borderWidth="1px"
+            alignItems="center"
+            height="2em"
+            disabled={!userGaugeReward.rewards.length || claimTxState.isPending}
+            width={{ base: '200px', lg: '125px' }}
+            onClick={doGaugeRewardClaim}
+          >
+            Claim
+          </Button>
         </Flex>
       </Box>
     </Box>

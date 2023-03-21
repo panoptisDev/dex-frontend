@@ -3,7 +3,7 @@ import { useSubmitTransaction } from '~/lib/util/useSubmitTransaction';
 export function useGaugeRewardsClaim(gaugeAddress: string) {
   const contractInterface = ['function claim_rewards() external'];
 
-  const { submitAsync, ...txState } = useSubmitTransaction({
+  const { submit, ...claimTxState } = useSubmitTransaction({
     config: {
       addressOrName: gaugeAddress,
       contractInterface,
@@ -12,14 +12,14 @@ export function useGaugeRewardsClaim(gaugeAddress: string) {
     transactionType: 'HARVEST',
   });
 
-  async function doClaim() {
-    await submitAsync({
+  async function doGaugeRewardClaim() {
+    await submit({
       toastText: 'Claim gauge rewards',
     });
   }
 
   return {
-    doClaim,
-    txState,
+    doGaugeRewardClaim,
+    claimTxState,
   };
 }

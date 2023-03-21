@@ -613,6 +613,25 @@ export const GetUserGaugeRewards = gql`
       protocolRewards {
         ...UserRewardFragment
       }
+      gaugeRewards {
+        pool {
+          name
+          staking {
+            gauge {
+              gaugeAddress
+            }
+          }
+        }
+        rewards {
+          amount
+          valueUSD
+          token {
+            address
+            symbol
+            logoURI
+          }
+        }
+      }
     }
   }
   ${UserRewardFragment}

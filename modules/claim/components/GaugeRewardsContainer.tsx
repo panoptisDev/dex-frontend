@@ -1,22 +1,18 @@
 import { Box } from '@chakra-ui/react';
-import { Gauge } from '~/lib/services/staking/types';
+import { GqlUserGaugeRewardInfo } from '~/apollo/generated/graphql-codegen-generated';
 import { GaugeRewardsTable } from './GaugeRewardsTable';
 
 type Props = {
-  gauges: Gauge[];
-  isLoading: boolean;
-  onSuccessfulClaim: () => void;
+  userGaugeRewards: GqlUserGaugeRewardInfo[];
 };
 
-export function GaugeRewardsContainer({ gauges, onSuccessfulClaim }: Props) {
-  const gaugesWithRewards = gauges.filter((g) => g.rewardTokens.length > 0);
-
+export function GaugeRewardsContainer({ userGaugeRewards }: Props) {
   return (
     <>
-      {gaugesWithRewards.map((gauge) => {
+      {userGaugeRewards.map((reward) => {
         return (
-          <Box mb={10} key={gauge.address}>
-            <GaugeRewardsTable gauge={gauge} onClaimSuccess={onSuccessfulClaim} />
+          <Box mb={10} key={reward.pool.address}>
+            <GaugeRewardsTable userGaugeReward={reward} />
           </Box>
         );
       })}

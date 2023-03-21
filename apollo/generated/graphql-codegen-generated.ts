@@ -1907,6 +1907,28 @@ export type GetUserGaugeRewardsQuery = {
       token: { __typename: 'GqlPoolToken'; address: string; symbol: string };
       tokenList: Array<{ __typename: 'GqlToken'; address: string; logoURI?: string | null }>;
     } | null>;
+    gaugeRewards: Array<{
+      __typename: 'GqlUserGaugeRewardInfo';
+      pool: {
+        __typename: 'GqlPoolWeighted';
+        name: string;
+        staking?: {
+          __typename: 'GqlPoolStaking';
+          gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
+        } | null;
+      };
+      rewards: Array<{
+        __typename: 'GqlBaseTokenReward';
+        amount: string;
+        valueUSD: number;
+        token: {
+          __typename: 'GqlPoolToken';
+          address: string;
+          symbol: string;
+          logoURI?: string | null;
+        };
+      }>;
+    } | null>;
   };
 };
 
@@ -5829,6 +5851,25 @@ export const GetUserGaugeRewardsDocument = gql`
       }
       protocolRewards {
         ...UserRewardFragment
+      }
+      gaugeRewards {
+        pool {
+          name
+          staking {
+            gauge {
+              gaugeAddress
+            }
+          }
+        }
+        rewards {
+          amount
+          valueUSD
+          token {
+            address
+            symbol
+            logoURI
+          }
+        }
       }
     }
   }
