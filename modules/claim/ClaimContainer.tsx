@@ -105,9 +105,13 @@ export function ClaimContainer() {
           <GridItem display="flex" flexDirection="column">
             <TableHeading text="Bribe Earnings" />
 
-            <Box>
+            {userBribeClaims.length ? (
+              <FadeInOutBox isVisible={true}>
+                <BribeClaim bribeRewards={userBribeClaims} />
+              </FadeInOutBox>
+            ) : (
               <NoRewardsBox label="No bribe rewards to claim" />
-            </Box>
+            )}
           </GridItem>
 
           <GridItem display="flex" flexDirection="column">

@@ -4,6 +4,7 @@ import {
   GqlUserGaugeRewardInfo,
   useGetUserBribeClaimsLazyQuery,
   useGetUserGaugeRewardsLazyQuery,
+  UserBribeClaim,
 } from '~/apollo/generated/graphql-codegen-generated';
 import { useUserAccount } from '~/lib/user/useUserAccount';
 
@@ -70,7 +71,7 @@ function _useUserRewards() {
     }
   }, [bribeError, rewardsError]);
 
-  const userBribeClaims = bribeData?.getUserBribeClaims || [];
+  const userBribeClaims = (bribeData?.getUserBribeClaims || []) as UserBribeClaim[];
 
   const stakingRewards = (data?.userGetUserPendingGaugeRewards.stakingRewards ||
     []) as GqlBaseTokenReward[];
@@ -78,8 +79,6 @@ function _useUserRewards() {
     []) as GqlBaseTokenReward[];
   const gaugeRewards = (data?.userGetUserPendingGaugeRewards.gaugeRewards ||
     []) as GqlUserGaugeRewardInfo[];
-
-  console.log(gaugeRewards);
 
   function refetchAll() {
     refetchBribes();
