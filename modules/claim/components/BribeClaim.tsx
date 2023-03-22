@@ -193,6 +193,21 @@ export function BribeClaim({ bribeRewards }: Props) {
           >
             Claim
           </Button>
+          <Button
+            display={{ base: 'flex', lg: 'none' }}
+            variant="verteklight"
+            padding="1em"
+            borderRadius="10px"
+            mt="1"
+            borderWidth="1px"
+            alignItems="center"
+            height="2em"
+            width={{ base: '200px', lg: 'none' }}
+            isDisabled={txState.isPending}
+            onClick={doBribeClaims}
+          >
+            Claim All
+          </Button>
         </Flex>
       </Box>
     </Box>

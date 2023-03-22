@@ -83,11 +83,10 @@ export function ClaimTable({ stakingRewards }: Props) {
           borderBottomRadius="16px"
           bg={{ base: 'none', lg: 'vertek.slatepurple.900' }}
           justifyContent={{ base: 'center', lg: 'flex-end' }}
-          width={{ base: 'none', lg: '125px' }}
         >
           <Button
-            display={{ base: 'flex', lg: 'none' }}
-            variant={claimTxState.isPending ? 'vertekdark' : 'verteklight'}
+            display={{ base: 'none', lg: 'flex' }}
+            variant="verteklight"
             padding="1em"
             borderRadius="10px"
             mt="1"
@@ -96,7 +95,22 @@ export function ClaimTable({ stakingRewards }: Props) {
             alignItems="center"
             height="2em"
             disabled={!stakingRewards.length || claimTxState.isPending}
+            width={{ base: '200px', lg: '125px' }}
+            onClick={handleUserClaimAll}
+          >
+            Claim All
+          </Button>
+          <Button
+            display={{ base: 'flex', lg: 'none' }}
+            variant="verteklight"
+            padding="1em"
+            borderRadius="10px"
+            mt="1"
+            borderWidth="1px"
+            alignItems="center"
+            height="2em"
             width={{ base: '200px', lg: 'none' }}
+            disabled={!stakingRewards.length || claimTxState.isPending}
             onClick={handleUserClaimAll}
           >
             Claim All
