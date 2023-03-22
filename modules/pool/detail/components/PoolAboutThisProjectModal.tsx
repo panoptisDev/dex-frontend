@@ -6,10 +6,11 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   pool: any;
-  description?: () => ReactNode;
+  name: string;
+  description: () => ReactNode;
 };
 
-export function PoolAboutThisProjectModal({ isOpen, onClose, pool, description }: Props) {
+export function PoolAboutThisProjectModal({ isOpen, onClose, pool, name, description }: Props) {
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} size="2xl">
@@ -29,7 +30,7 @@ export function PoolAboutThisProjectModal({ isOpen, onClose, pool, description }
 
           <ModalHeader className="bg">
             <Heading size="lg" noOfLines={1}>
-              About {pool.name}
+              About {name}
             </Heading>
           </ModalHeader>
           <ModalBody className="bg" pb="2">{description()}</ModalBody>

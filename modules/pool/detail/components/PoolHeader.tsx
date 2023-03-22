@@ -21,6 +21,7 @@ import { HelpCircle } from 'react-feather';
 import { useNetworkConfig } from '~/lib/global/useNetworkConfig';
 import { AddressZero } from '@ethersproject/constants';
 import { usePool } from '~/modules/pool/lib/usePool';
+import { getProjects } from '~/modules/pool/lib/getProjects';
 import { PoolAboutThisProjectModal } from './PoolAboutThisProjectModal';
 
 function PoolHeader() {
@@ -39,20 +40,8 @@ function PoolHeader() {
   }.`;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const poolDescriptions = [
-    { id: '0xdd64e2ec144571b4320f7bfb14a56b2b2cbf37ad000200000000000000000000', description: () => {
-      return <Box>
-        <Text>The Next Evolution of DEXs on BNB Chain</Text>
-      </Box>
-    } },
-    { id: '0x64bf08fac067b25c77967affafce73760d8d0bdf000200000000000000000011', description: () => {
-      return <Box>
-        <Text>$UP is a perpetually appreciating 100% backed by BUSD asset that makes up the backbone of the UP Finance ecosystem.</Text>
-        <Text>The value of UP will never decrease and will always be redeemable for the price on the contract. In fact any contract mint and redeem only further increase the price due to the contract design mechanics. Imagine having a token as a DeFi currency to transact in, backed by one of the best stable coins within DeFi, worth more tomorrow than today and can never crash in price.</Text>
-        <Text>Join in on the $UP movement and take part in the new model primed to replace holding static stable coins. There is only one way to go and that is Always and Only $UP.</Text>
-      </Box>
-    } },
-  ];
+  const projects = getProjects();
+  const project = projects.find(e => e.id == pool.id);
   return (
     <VStack width="full" alignItems="flex-start" mb="12">
       <Text textStyle="h3" as="h3" fontWeight="bold" mr="0" display={{ base: 'block', lg: 'none' }}>
@@ -107,10 +96,10 @@ function PoolHeader() {
         </Popover>
         <Spacer />
         <Box>
-          {poolDescriptions.find(e => e.id == pool.id) && <Button variant="primary" onClick={() => { onOpen(); }}>
+          {project && <Button variant="primary" onClick={() => { onOpen(); }}>
             About this project
           </Button>}
-          <PoolAboutThisProjectModal isOpen={isOpen} onClose={onClose} pool={pool} description={poolDescriptions.find(e => e.id == pool.id)?.description} />
+          {project && <PoolAboutThisProjectModal isOpen={isOpen} onClose={onClose} pool={pool} name={project.name} description={project.description} />}
         </Box>
       </Flex>
     </VStack>
