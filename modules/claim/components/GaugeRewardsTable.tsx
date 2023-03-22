@@ -89,20 +89,20 @@ export function GaugeRewardsTable({ userGaugeReward }: Props) {
 
       <Box mb={{ base: 'none', lg: '10' }}>
         <Flex
-          display={{ base: 'none', lg: 'grid' }}
+          display={{ base: 'grid', lg: 'grid' }}
           p="3"
-          mt={0}
-          borderLeftWidth="1px"
-          borderRightWidth="1px"
-          borderBottomWidth="1px"
+          mt={{ base: '-1rem', lg: '0rem' }}
+          borderLeftWidth={{ base: '0px', lg: '1px' }}
+          borderRightWidth={{ base: '0px', lg: '1px' }}
+          borderBottomWidth={{ base: '0px', lg: '1px' }}
           borderColor="#4A4AF6"
           borderBottomRadius="16px"
-          borderTopRadius={{ base: '16px', lg: 'none' }}
           bg={{ base: 'none', lg: 'vertek.slatepurple.900' }}
           justifyContent={{ base: 'center', lg: 'flex-end' }}
+          width={{ base: 'none', lg: '125px' }}
         >
           <Button
-            display={{ base: 'none', lg: 'flex' }}
+            display={{ base: 'flex', lg: 'none' }}
             variant="verteklight"
             padding="1em"
             borderRadius="10px"
@@ -112,7 +112,7 @@ export function GaugeRewardsTable({ userGaugeReward }: Props) {
             alignItems="center"
             height="2em"
             disabled={!userGaugeReward.rewards.length || claimTxState.isPending}
-            width={{ base: '200px', lg: '125px' }}
+            width={{ base: '200px', lg: 'none' }}
             onClick={doGaugeRewardClaim}
           >
             Claim
