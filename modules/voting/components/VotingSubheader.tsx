@@ -1,17 +1,23 @@
-import { Box, Grid, GridItem, VStack, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, VStack, Text } from '@chakra-ui/react';
 import { useVotingGauges } from '../lib/useVotingGauges';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckToSlot } from '@fortawesome/free-solid-svg-icons';
+import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { faBusinessTime } from '@fortawesome/free-solid-svg-icons';
+import { faPercent } from '@fortawesome/free-solid-svg-icons';
 import { AddBribeButton } from '../bribes/AddBribeButton';
+import { numberFormatUSDValue } from '~/lib/util/number-formats';
+import { fNum2 } from '~/lib/util/useNumber';
 
 type Props = {
   unallocatedVotesFormatted: string;
 };
 
 export function VotingSubheader(props: Props) {
-  const { votingPeriodEnd } = useVotingGauges();
-
+  const { votingGauges, votingPeriodEnd } = useVotingGauges();
+  let totalBribes = 0;
+  votingGauges?.forEach((gauge) => (gauge.currentEpochBribes?.forEach((bribe: any) => (totalBribes += bribe?.valueUSD || 0))));
+  const averageVotingAPR = (0.35 / (votingGauges?.length || 0));
   return (
     <Grid
       mt={16}
@@ -19,7 +25,7 @@ export function VotingSubheader(props: Props) {
       paddingY="2"
       templateColumns={{
         base: 'repeat(1fr 1fr)',
-        lg: '4fr 2fr',
+        lg: '1fr 1fr',
       }}
       alignItems="center"
       gap={{ base: '10', lg: '20' }}
@@ -39,54 +45,100 @@ export function VotingSubheader(props: Props) {
         <AddBribeButton />
       </GridItem>
 
-      <GridItem marginRight={{ base: '0', lg: '24' }}>
-        <VStack spacing={4} alignItems={{ base: 'center', lg: 'stretch' }}>
-          <Box
-            className="verteklightpurplebox"
-            h="full"
-            w={{ base: '75%', lg: 'full' }}
-            p="12px"
-            borderRadius={{ base: '20px', lg: '12px' }}
-            alignItems="center"
-            justifyContent="center"
-            mx={{ base: 'auto', lg: 0 }}
-          >
-            <Box display="flex" flexDirection="row" alignItems="center" marginTop="2%">
-              <FontAwesomeIcon icon={faCheckToSlot} />
-              <Text fontWeight="bold" fontSize="1.0rem" ml="0.5rem">
-                My unallocated votes
-              </Text>
-            </Box>
-            <Text fontWeight="normal" fontSize="0.9rem" marginTop="2%">
-              {props.unallocatedVotesFormatted}
-            </Text>
-          </Box>
-          <Box
-            className="verteklightpurplebox"
-            h="full"
-            w={{ base: '75%', lg: 'full' }}
-            p="12px"
-            borderRadius={{ base: '20px', lg: '12px' }}
-            alignItems="center"
-            justifyContent="center"
-            mx={{ base: 'auto', lg: 0 }}
-          >
-            <Box display="flex" flexDirection="row" alignItems="center" marginTop="2%">
-              <FontAwesomeIcon icon={faBusinessTime} />
-              <Text fontWeight="bold" fontSize="1.0rem" ml="0.5rem">
-                Voting period ends
-              </Text>
-            </Box>
-            <Text fontWeight="normal" fontSize="0.9rem" marginTop="2%">
-              {votingPeriodEnd?.length && (
-                <Text>
-                  {votingPeriodEnd[0]}d : {votingPeriodEnd[1]}h : {votingPeriodEnd[2]}m :{' '}
-                  {votingPeriodEnd[3]}s
+      <GridItem marginRight={{ base: '0', lg: '0' }}>
+        <Flex gap="4">
+          <VStack spacing={4} w="full" alignItems={{ base: 'center', lg: 'stretch' }}>
+            <Box
+              className="verteklightpurplebox"
+              h="full"
+              w={{ base: '100%', lg: 'full' }}
+              p="12px"
+              borderRadius={{ base: '20px', lg: '12px' }}
+              alignItems="center"
+              justifyContent="center"
+              mx={{ base: 'auto', lg: 0 }}
+            >
+              <Box display="flex" flexDirection="row" alignItems="center" marginTop="2%">
+                <FontAwesomeIcon icon={faCoins} />
+                <Text fontWeight="bold" fontSize="1.0rem" ml="0.5rem">
+                  Total bribes this epoch
                 </Text>
-              )}
-            </Text>
-          </Box>
-        </VStack>
+              </Box>
+              <Text fontWeight="normal" fontSize="0.9rem" marginTop="2%">
+                {numberFormatUSDValue(totalBribes || 0)}
+              </Text>
+            </Box>
+            <Box
+              className="verteklightpurplebox"
+              h="full"
+              w={{ base: '100%', lg: 'full' }}
+              p="12px"
+              borderRadius={{ base: '20px', lg: '12px' }}
+              alignItems="center"
+              justifyContent="center"
+              mx={{ base: 'auto', lg: 0 }}
+            >
+              <Box display="flex" flexDirection="row" alignItems="center" marginTop="2%">
+                <FontAwesomeIcon icon={faPercent} />
+                <Text fontWeight="bold" fontSize="1.0rem" ml="0.5rem">
+                  Average voting APR
+                </Text>
+              </Box>
+              <Text fontWeight="normal" fontSize="0.9rem" marginTop="2%">
+                {fNum2(averageVotingAPR.toString(), {
+                  style: 'percent', maximumFractionDigits: 2, fixedFormat: true
+                })}
+              </Text>
+            </Box>
+          </VStack>
+          <VStack spacing={4} w="full" alignItems={{ base: 'center', lg: 'stretch' }}>
+            <Box
+              className="verteklightpurplebox"
+              h="full"
+              w={{ base: '100%', lg: 'full' }}
+              p="12px"
+              borderRadius={{ base: '20px', lg: '12px' }}
+              alignItems="center"
+              justifyContent="center"
+              mx={{ base: 'auto', lg: 0 }}
+            >
+              <Box display="flex" flexDirection="row" alignItems="center" marginTop="2%">
+                <FontAwesomeIcon icon={faCheckToSlot} />
+                <Text fontWeight="bold" fontSize="1.0rem" ml="0.5rem">
+                  My unallocated votes
+                </Text>
+              </Box>
+              <Text fontWeight="normal" fontSize="0.9rem" marginTop="2%">
+                {props.unallocatedVotesFormatted}
+              </Text>
+            </Box>
+            <Box
+              className="verteklightpurplebox"
+              h="full"
+              w={{ base: '100%', lg: 'full' }}
+              p="12px"
+              borderRadius={{ base: '20px', lg: '12px' }}
+              alignItems="center"
+              justifyContent="center"
+              mx={{ base: 'auto', lg: 0 }}
+            >
+              <Box display="flex" flexDirection="row" alignItems="center" marginTop="2%">
+                <FontAwesomeIcon icon={faBusinessTime} />
+                <Text fontWeight="bold" fontSize="1.0rem" ml="0.5rem">
+                  Voting period ends
+                </Text>
+              </Box>
+              <Text fontWeight="normal" fontSize="0.9rem" marginTop="2%">
+                {votingPeriodEnd?.length && (
+                  <Text>
+                    {votingPeriodEnd[0]}d : {votingPeriodEnd[1]}h : {votingPeriodEnd[2]}m :{' '}
+                    {votingPeriodEnd[3]}s
+                  </Text>
+                )}
+              </Text>
+            </Box>
+          </VStack>
+        </Flex>
       </GridItem>
     </Grid>
   );
