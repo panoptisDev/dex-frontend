@@ -26,21 +26,41 @@ export function GaugeListItem(props: Props) {
   });
 
   // Making assumption that total ve- liquidity is about 90% of total liquidity of VRTK-BNB pool.
-  const guessedTotalVeLiquidity = bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 0).times(0.9);
-  const totalVe = bnum(useUserVeData().currentVeBalance || 1).times(100).div(useUserVeData().percentOwned || 100)
-  const totalVeLiquidity = totalVe.times(bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 1).div(bnum(useUserVeData().lockablePool?.dynamicData.totalShares || 1)))
+  const guessedTotalVeLiquidity = bnum(
+    useUserVeData().lockablePool?.dynamicData.totalLiquidity || 0,
+  ).times(0.9);
+  const totalVe = bnum(useUserVeData().currentVeBalance || 1)
+    .times(100)
+    .div(useUserVeData().percentOwned || 100);
+  const totalVeLiquidity = totalVe.times(
+    bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 1).div(
+      bnum(useUserVeData().lockablePool?.dynamicData.totalShares || 1),
+    ),
+  );
   let bribeValue = 0;
   props.gauge.currentEpochBribes?.forEach((b) => (bribeValue += b?.valueUSD || 0));
   const gaugeVotes = scale(bnum(props.gauge.votesNextPeriod), -18);
-  const votedValue = (!totalVe.isNaN() ? totalVeLiquidity : guessedTotalVeLiquidity).times(gaugeVotes).times(100).div(35);
-  const bribeAPR = fNum2(bnum(bribeValue * 52).div(votedValue).toString(), {
-    style: 'percent',
-    // maximumFractionDigits: 2,
-  });
+  const votedValue = (!totalVe.isNaN() ? totalVeLiquidity : guessedTotalVeLiquidity)
+    .times(gaugeVotes)
+    .times(100)
+    .div(35);
+  const bribeAPR = fNum2(
+    bnum(bribeValue * 52)
+      .div(votedValue)
+      .toString(),
+    {
+      style: 'percent',
+      // maximumFractionDigits: 2,
+    },
+  );
 
   // function redirectToPool(gauge: VotingGaugeWithVotes) {
   //   window.location.href = poolURLFor(gauge.pool.id, gauge.network, gauge.pool.poolType);
   // }
+
+  const votesThisPeriod = formatVotesAsPercent(props.gauge.votes);
+  const votesNextPeriod = formatVotesAsPercent(props.gauge.votesNextPeriod);
+  const voteDifference = Number(props.gauge.votesNextPeriod) - Number(props.gauge.votes);
 
   return (
     <Grid
@@ -105,9 +125,15 @@ export function GaugeListItem(props: Props) {
       >
         <MobileLabel text="Next Period Votes" />
         <Flex justifyContent="space-between" width="35%">
-          <Text>{formatVotesAsPercent(props.gauge.votesNextPeriod)}</Text>
+          <Text color={voteDifference > 0 ? 'green' : 'red'}>
+            {formatVotesAsPercent(props.gauge.votesNextPeriod)}
+          </Text>
 
-          <VotingStatsPopover gauge={props.gauge} />
+          <VotingStatsPopover
+            voteDifference={voteDifference}
+            votesThisPeriod={votesThisPeriod}
+            votesNextPeriod={votesNextPeriod}
+          />
         </Flex>
       </GridItem>
 
