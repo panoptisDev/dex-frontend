@@ -7,7 +7,9 @@ import { faBusinessTime } from '@fortawesome/free-solid-svg-icons';
 import { faPercent } from '@fortawesome/free-solid-svg-icons';
 import { AddBribeButton } from '../bribes/AddBribeButton';
 import { numberFormatUSDValue } from '~/lib/util/number-formats';
+import { bnum, scale } from '~/lib/util/big-number.utils';
 import { fNum2 } from '~/lib/util/useNumber';
+import { useUserVeData } from '../lib/useUserVeData';
 
 type Props = {
   unallocatedVotesFormatted: string;
@@ -17,7 +19,34 @@ export function VotingSubheader(props: Props) {
   const { votingGauges, votingPeriodEnd } = useVotingGauges();
   let totalBribes = 0;
   votingGauges?.forEach((gauge) => (gauge.currentEpochBribes?.forEach((bribe: any) => (totalBribes += bribe?.valueUSD || 0))));
-  const averageVotingAPR = (0.35 / (votingGauges?.length || 0));
+
+  // Making assumption that total ve- liquidity is about 90% of total liquidity of VRTK-BNB pool.
+  const guessedTotalVeLiquidity = bnum(
+    useUserVeData().lockablePool?.dynamicData.totalLiquidity || 0,
+  ).times(0.9);
+  const totalVe = bnum(useUserVeData().currentVeBalance || 1)
+    .times(100)
+    .div(useUserVeData().percentOwned || 100);
+  const totalVeLiquidity = totalVe.times(
+    bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 1).div(
+      bnum(useUserVeData().lockablePool?.dynamicData.totalShares || 1),
+    ),
+  );
+
+  let gaugeCounter = 0;
+  let totalBribeAPR = bnum(0);
+  votingGauges?.forEach((gauge) => {
+    if (gauge.currentEpochBribes.length) {
+      gaugeCounter++;
+      let bribes = 0;
+      gauge.currentEpochBribes?.forEach((bribe: any) => (bribes += bribe?.valueUSD || 0))
+      let votedValue = (!totalVe.isNaN() ? totalVeLiquidity : guessedTotalVeLiquidity)
+        .times(scale(bnum(gauge.votesNextPeriod), -18)).times(100).div(35);
+      totalBribeAPR = totalBribeAPR.plus(bnum(bribes * 52).div(votedValue))
+    }
+  });
+  const averageBribeAPR = totalBribeAPR.div(gaugeCounter);
+
   return (
     <Grid
       mt={16}
@@ -81,12 +110,12 @@ export function VotingSubheader(props: Props) {
               <Box display="flex" flexDirection="row" alignItems="center" marginTop="2%">
                 <FontAwesomeIcon icon={faPercent} />
                 <Text fontWeight="bold" fontSize="1.0rem" ml="0.5rem">
-                  Average voting APR
+                  Average bribe APR
                 </Text>
               </Box>
               <Text fontWeight="normal" fontSize="0.9rem" marginTop="2%">
-                {fNum2(averageVotingAPR.toString(), {
-                  style: 'percent', maximumFractionDigits: 2, fixedFormat: true
+                {fNum2(averageBribeAPR.toString(), {
+                  style: 'percent', maximumFractionDigits: 0, fixedFormat: true
                 })}
               </Text>
             </Box>
