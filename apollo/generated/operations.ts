@@ -1118,6 +1118,14 @@ export const GetTradeSelectedTokenData = gql`
   }
   ${GqlTokenDynamicData}
 `;
+export const GetCurrentEpoch = gql`
+  query GetCurrentEpoch {
+    getCurrentGaugesEpoch {
+      epoch
+      date
+    }
+  }
+`;
 export const GetLiquidityGauges = gql`
   query GetLiquidityGauges($epoch: Int!) {
     getLiquidityGauges(epoch: $epoch) {

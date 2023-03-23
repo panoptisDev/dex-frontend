@@ -53,10 +53,10 @@ export function _useUserVotingData() {
   }, [veError]);
 
   useEffect(() => {
-    if (userAddress) {
+    if (isConnected && userAddress) {
       refetchUserVeData();
     }
-  }, [userAddress]);
+  }, [isConnected, userAddress]);
 
   useEffect(() => {
     if (isConnected && !isLoadingUserBalances) {
@@ -71,7 +71,7 @@ export function _useUserVotingData() {
 
   // Set UI format of user current lock time
   useEffect(() => {
-    if (isConnected && !isLoadingUserVeData && userVeLockInfo?.userGetVeLockInfo) {
+    if (isConnected && userAddress && !isLoadingUserVeData && userVeLockInfo?.userGetVeLockInfo) {
       const endDate = Number(userVeLockInfo.userGetVeLockInfo.lockEndDate);
       const hasLock = endDate > 0;
       const lockedUntilDays = !hasLock ? 0 : differenceInDays(new Date(endDate), new Date());
@@ -92,7 +92,7 @@ export function _useUserVotingData() {
       setHasExistingLock(hasLock);
       setcurrentVeBalance(userVeLockInfo?.userGetVeLockInfo.currentBalance);
     }
-  }, [userVeLockInfo, isLoadingUserVeData, isConnected]);
+  }, [userVeLockInfo, isLoadingUserVeData, isConnected, userAddress]);
 
   /**
    * ~summary Calculate expected veBAL given BPT being locked and lock time in seconds.

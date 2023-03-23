@@ -24,6 +24,17 @@ type GaugeBribe {
   valueUSD: Float!
 }
 
+type GaugeBribeInfo {
+  currentEpochBribes: [GaugeBribe]!
+  gauge: LiquidityGauge!
+  nextEpochBribes: [GaugeBribe]!
+}
+
+type GaugeEpoch {
+  date: String!
+  epoch: Int!
+}
+
 type GaugeFactory {
   id: String!
 }
@@ -1200,6 +1211,7 @@ type Mutation {
   syncGaugeBribes(blocksToScan: Int): String!
   syncGaugeData: Boolean!
   syncGaugeVotes(blocksToScan: Int): String!
+  syncGaugesEpoch: String!
   tokenDeletePrice(timestamp: Int!, tokenAddress: String!): Boolean!
   tokenDeleteTokenType(tokenAddress: String!, type: GqlTokenType!): String!
   tokenInitChartData(tokenAddress: String!): String!
@@ -1227,6 +1239,9 @@ type Query {
   contentGetNewsItems: [GqlContentNewsItem]!
   get24HourGaugeFees(hoursInPast: Int): [String]
   getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
+  getCurrentAndNextBribes(epoch: Int!): [GaugeBribeInfo]!
+  getCurrentGaugesEpoch: GaugeEpoch!
+  getGaugeEpochs: [GaugeEpoch]!
   getLastBribeSyncInfo: GaugeVoteSyncInfo!
   getLastVoteSyncInfo: GaugeVoteSyncInfo!
   getLiquidityGauges(epoch: Int!): [LiquidityGauge]!

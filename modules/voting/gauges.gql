@@ -1,3 +1,10 @@
+query GetCurrentEpoch {
+  getCurrentGaugesEpoch {
+    epoch
+    date
+  }
+}
+
 query GetLiquidityGauges($epoch: Int!) {
   getLiquidityGauges(epoch: $epoch) {
     id

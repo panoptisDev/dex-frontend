@@ -16,16 +16,17 @@ import { Loading } from '~/components/loading/Loading';
 export function GaugeList() {
   const [unallocatedVoteWeight, setUnallocatedVoteWeight] = useState<number>();
   const [activeVotingGauge, setActiveVotingGauge] = useState<VotingGaugeWithVotes | null>();
-  const [extendedLoading, setExtendedLoading] = useState<boolean>(true);
 
   const {
     isLoading: isLoadingGauges,
     votingGauges,
     unallocatedVotes,
-    refetch: refetchVotingGauges,
+    refetchGauges,
   } = useVotingGauges();
 
   const { hasExistingLock, lockEndDate, isExpired } = useUserVeData();
+
+  const loading = !votingGauges?.length;
 
   // Set users voting info
   useEffect(() => {
@@ -39,7 +40,7 @@ export function GaugeList() {
 
       setUnallocatedVoteWeight(votesRemaining);
 
-      setTimeout(() => setExtendedLoading(false), 500);
+      // setTimeout(() => setExtendedLoading(false), 500);
     } else {
       setUnallocatedVoteWeight(totalVotes);
     }
@@ -54,17 +55,17 @@ export function GaugeList() {
   }
 
   function handleModalSuccess() {
-    refetchVotingGauges();
+    refetchGauges();
     handleModalClose();
   }
 
   return (
     <>
-      {extendedLoading ? (
-        <Loading loading={extendedLoading} />
+      {loading ? (
+        <Loading loading={loading} />
       ) : (
         <>
-          <FadeInOutBox isVisible={!extendedLoading}>
+          <FadeInOutBox isVisible={!loading}>
             <VotingSubheader
               unallocatedVotesFormatted={fNum2(
                 scale(bnum(unallocatedVotes || '0'), -4).toString(),
@@ -84,7 +85,7 @@ export function GaugeList() {
             <Box>
               {votingGauges?.map((gauge) => {
                 return (
-                  <FadeInOutBox isVisible={!extendedLoading} key={gauge.address}>
+                  <FadeInOutBox isVisible={!loading} key={gauge.address}>
                     <GaugeListItem gauge={gauge} onVoteClick={setActiveGaugeVote} />
                   </FadeInOutBox>
                 );

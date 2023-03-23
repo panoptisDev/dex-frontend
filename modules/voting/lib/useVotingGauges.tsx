@@ -1,10 +1,17 @@
 import { intervalToDuration } from 'date-fns';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useGetLiquidityGaugesQuery } from '~/apollo/generated/graphql-codegen-generated';
+import {
+  LiquidityGauge,
+  useGetCurrentEpochQuery,
+  useGetLiquidityGaugesLazyQuery,
+  useGetLiquidityGaugesQuery,
+} from '~/apollo/generated/graphql-codegen-generated';
 import { gaugeControllerDecorator } from '~/lib/services/staking/gauge-controller.decorator';
 import { VotingGauge } from '~/lib/services/staking/types';
 import { useUserAccount } from '~/lib/user/useUserAccount';
-import { CURRENT_EPOCH, getVotePeriodEndTime } from '~/lib/util/epoch-utils';
+import { getVotePeriodEndTime } from '~/lib/util/epoch-utils';
+
+const GAUGE_POLLING_INTERVAL = 15000;
 
 /**
  * Gets the list of current gauges and provides a countdown timer for epoch end
@@ -15,20 +22,49 @@ export function _useGauges() {
   const [votingGauges, setVotingGauges] = useState<any[]>();
   const [unallocatedVotes, setUnallocatedVotes] = useState<number>();
 
-  const { userAddress } = useUserAccount();
+  const { userAddress, isConnected } = useUserAccount();
 
-  // Get the current gauges
-  const {
-    data: gauges,
-    loading: isLoadingGauges,
-    refetch,
-  } = useGetLiquidityGaugesQuery({
-    pollInterval: 30000,
-    notifyOnNetworkStatusChange: true,
-    variables: {
-      epoch: CURRENT_EPOCH,
-    },
+  const { loading: isLoadingEpoch, data: epochData } = useGetCurrentEpochQuery({
+    pollInterval: GAUGE_POLLING_INTERVAL,
   });
+
+  const [
+    fetchGauges,
+    {
+      loading: isLoadingGauges,
+      error: gaugeFetchError,
+      startPolling: startGaugesPolling,
+      stopPolling: stopGaugesPolling,
+      data: gaugesData,
+      refetch: refetchGauges,
+    },
+  ] = useGetLiquidityGaugesLazyQuery();
+
+  useEffect(() => {
+    if (gaugeFetchError) {
+      console.log(gaugeFetchError);
+    }
+  }, [gaugeFetchError]);
+
+  useEffect(() => {
+    if (!isLoadingEpoch && epochData?.getCurrentGaugesEpoch) {
+      fetchGauges({
+        variables: {
+          epoch: epochData.getCurrentGaugesEpoch.epoch,
+        },
+      });
+
+      startGaugesPolling(GAUGE_POLLING_INTERVAL);
+    }
+
+    return () => stopGaugesPolling();
+  }, [isLoadingEpoch, epochData]);
+
+  useEffect(() => {
+    if (gaugesData?.getLiquidityGauges) {
+      console.log(gaugesData?.getLiquidityGauges);
+    }
+  }, [gaugesData]);
 
   function setUserVotes(gauges: any[]) {
     const totalVotes = 1e4; // 10,000
@@ -40,9 +76,11 @@ export function _useGauges() {
     setUnallocatedVotes(votesRemaining);
 
     // filter out temp old gauge after user votes tally is complete
-    return gauges.filter(
-      (g) => g.pool.id !== '0x5deb10ed6a66a1e6188b7925a723b6bdfd97476500020000000000000000000a',
-    );
+    // return gauges.filter(
+    //   (g) => g.pool.id !== '0x5deb10ed6a66a1e6188b7925a723b6bdfd97476500020000000000000000000a',
+    // );
+
+    return gauges;
   }
 
   // Update voting period timer
@@ -68,11 +106,13 @@ export function _useGauges() {
   }, []);
 
   // Set gauge voting info for the list of current gauges
+  // TODO: Attach on backend
+  // Gauge "epoch info" current/next. (bribes, votes/weights)
   useEffect(() => {
-    // inefficient. Use the useCallback thingie or something
     const setGauges = async () => {
+      // TODO: Can pull user votes from backend with gauges now
       const decoratedGauges = await gaugeControllerDecorator.decorateWithVotes(
-        (gauges?.getLiquidityGauges || []) as unknown as VotingGauge[],
+        (gaugesData?.getLiquidityGauges || []) as unknown as VotingGauge[],
         userAddress,
       );
 
@@ -80,11 +120,10 @@ export function _useGauges() {
       setVotingGauges(filteredGauges);
     };
 
-    if (userAddress && !isLoadingGauges && gauges?.getLiquidityGauges) {
-      // decorate for UI and use state version in other effects
+    if (userAddress && isConnected && !isLoadingGauges && gaugesData?.getLiquidityGauges) {
       setGauges();
     }
-  }, [isLoadingGauges, gauges, userAddress]);
+  }, [isLoadingGauges, gaugesData, userAddress, isConnected]);
 
   return {
     isLoading: !votingGauges && isLoadingGauges,
@@ -92,7 +131,7 @@ export function _useGauges() {
     votingPeriodEnd,
     votingPeriodLastHour,
     unallocatedVotes,
-    refetch,
+    refetchGauges,
   };
 }
 

@@ -41,6 +41,19 @@ export interface GaugeBribe {
   valueUSD: Scalars['Float'];
 }
 
+export interface GaugeBribeInfo {
+  __typename: 'GaugeBribeInfo';
+  currentEpochBribes: Array<Maybe<GaugeBribe>>;
+  gauge: LiquidityGauge;
+  nextEpochBribes: Array<Maybe<GaugeBribe>>;
+}
+
+export interface GaugeEpoch {
+  __typename: 'GaugeEpoch';
+  date: Scalars['String'];
+  epoch: Scalars['Int'];
+}
+
 export interface GaugeFactory {
   __typename: 'GaugeFactory';
   id: Scalars['String'];
@@ -1208,6 +1221,7 @@ export interface Mutation {
   syncGaugeBribes: Scalars['String'];
   syncGaugeData: Scalars['Boolean'];
   syncGaugeVotes: Scalars['String'];
+  syncGaugesEpoch: Scalars['String'];
   tokenDeletePrice: Scalars['Boolean'];
   tokenDeleteTokenType: Scalars['String'];
   tokenInitChartData: Scalars['String'];
@@ -1282,6 +1296,9 @@ export interface Query {
   contentGetNewsItems: Array<Maybe<GqlContentNewsItem>>;
   get24HourGaugeFees?: Maybe<Array<Maybe<Scalars['String']>>>;
   getAllGaugeBribes: Array<Maybe<EpochBribeInfo>>;
+  getCurrentAndNextBribes: Array<Maybe<GaugeBribeInfo>>;
+  getCurrentGaugesEpoch: GaugeEpoch;
+  getGaugeEpochs: Array<Maybe<GaugeEpoch>>;
   getLastBribeSyncInfo: GaugeVoteSyncInfo;
   getLastVoteSyncInfo: GaugeVoteSyncInfo;
   getLiquidityGauges: Array<Maybe<LiquidityGauge>>;
@@ -1339,6 +1356,10 @@ export interface QueryGet24HourGaugeFeesArgs {
 }
 
 export interface QueryGetAllGaugeBribesArgs {
+  epoch: Scalars['Int'];
+}
+
+export interface QueryGetCurrentAndNextBribesArgs {
   epoch: Scalars['Int'];
 }
 
@@ -4673,6 +4694,13 @@ export type GqlTokenDynamicDataFragment = {
   updatedAt: string;
 };
 
+export type GetCurrentEpochQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetCurrentEpochQuery = {
+  __typename: 'Query';
+  getCurrentGaugesEpoch: { __typename: 'GaugeEpoch'; epoch: number; date: string };
+};
+
 export type GetLiquidityGaugesQueryVariables = Exact<{
   epoch: Scalars['Int'];
 }>;
@@ -7223,6 +7251,54 @@ export type GetTradeSelectedTokenDataLazyQueryHookResult = ReturnType<
 export type GetTradeSelectedTokenDataQueryResult = Apollo.QueryResult<
   GetTradeSelectedTokenDataQuery,
   GetTradeSelectedTokenDataQueryVariables
+>;
+export const GetCurrentEpochDocument = gql`
+  query GetCurrentEpoch {
+    getCurrentGaugesEpoch {
+      epoch
+      date
+    }
+  }
+`;
+
+/**
+ * __useGetCurrentEpochQuery__
+ *
+ * To run a query within a React component, call `useGetCurrentEpochQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrentEpochQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrentEpochQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCurrentEpochQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetCurrentEpochQuery, GetCurrentEpochQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetCurrentEpochQuery, GetCurrentEpochQueryVariables>(
+    GetCurrentEpochDocument,
+    options,
+  );
+}
+export function useGetCurrentEpochLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentEpochQuery, GetCurrentEpochQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetCurrentEpochQuery, GetCurrentEpochQueryVariables>(
+    GetCurrentEpochDocument,
+    options,
+  );
+}
+export type GetCurrentEpochQueryHookResult = ReturnType<typeof useGetCurrentEpochQuery>;
+export type GetCurrentEpochLazyQueryHookResult = ReturnType<typeof useGetCurrentEpochLazyQuery>;
+export type GetCurrentEpochQueryResult = Apollo.QueryResult<
+  GetCurrentEpochQuery,
+  GetCurrentEpochQueryVariables
 >;
 export const GetLiquidityGaugesDocument = gql`
   query GetLiquidityGauges($epoch: Int!) {
