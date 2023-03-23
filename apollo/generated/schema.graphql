@@ -88,6 +88,21 @@ type GaugeVote {
   weight: BigDecimal
 }
 
+type GaugeVoteInfo {
+  blockNumber: Int!
+  epochStartTime: Int!
+  gauge: LiquidityGauge!
+  txHash: String!
+  user: String!
+  weightUsed: Int!
+}
+
+type GaugeVoteSyncInfo {
+  blockNumber: Int!
+  dateTimeLocale: String!
+  dateTimeUTC: String!
+}
+
 type GqlAllFeesData {
   feeCollector: GqlFeesCollectorAmountsResult!
   gauges: GqlPendingGaugeFeeResult!
@@ -1182,7 +1197,9 @@ type Mutation {
   poolUpdateLiquidityValuesForAllPools: String!
   poolUpdateVolumeAndFeeValuesForAllPools: String!
   protocolCacheMetrics: String!
+  syncGaugeBribes(blocksToScan: Int): String!
   syncGaugeData: Boolean!
+  syncGaugeVotes(blocksToScan: Int): String!
   tokenDeletePrice(timestamp: Int!, tokenAddress: String!): Boolean!
   tokenDeleteTokenType(tokenAddress: String!, type: GqlTokenType!): String!
   tokenInitChartData(tokenAddress: String!): String!
@@ -1210,6 +1227,8 @@ type Query {
   contentGetNewsItems: [GqlContentNewsItem]!
   get24HourGaugeFees(hoursInPast: Int): [String]
   getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
+  getLastBribeSyncInfo: GaugeVoteSyncInfo!
+  getLastVoteSyncInfo: GaugeVoteSyncInfo!
   getLiquidityGauges(epoch: Int!): [LiquidityGauge]!
   getProtocolPoolData: [GqlProtocolGaugeInfo]!
   getProtocolTokenList: [String]
@@ -1218,6 +1237,7 @@ type Query {
   getSingleGaugeBribes(epoch: Int!, gauge: String!): [EpochBribeInfo]!
   getUserBribeClaims(user: String!): [UserBribeClaim]!
   getUserGaugeStakes(poolIds: [String!]!, user: String!): [LiquidityGauge]!
+  getUserGaugeVotes(epoch: Int!): [GaugeVoteInfo]!
   latestSyncedBlocks: GqlLatestSyncedBlocks!
   poolGetAllPoolsSnapshots(range: GqlPoolSnapshotDataRange!): [GqlPoolSnapshot!]!
   poolGetBatchSwaps(first: Int, skip: Int, where: GqlPoolSwapFilter): [GqlPoolBatchSwap!]!

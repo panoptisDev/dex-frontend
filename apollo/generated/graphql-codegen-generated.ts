@@ -86,6 +86,23 @@ export interface GaugeVote {
   weight?: Maybe<Scalars['BigDecimal']>;
 }
 
+export interface GaugeVoteInfo {
+  __typename: 'GaugeVoteInfo';
+  blockNumber: Scalars['Int'];
+  epochStartTime: Scalars['Int'];
+  gauge: LiquidityGauge;
+  txHash: Scalars['String'];
+  user: Scalars['String'];
+  weightUsed: Scalars['Int'];
+}
+
+export interface GaugeVoteSyncInfo {
+  __typename: 'GaugeVoteSyncInfo';
+  blockNumber: Scalars['Int'];
+  dateTimeLocale: Scalars['String'];
+  dateTimeUTC: Scalars['String'];
+}
+
 export interface GqlAllFeesData {
   __typename: 'GqlAllFeesData';
   feeCollector: GqlFeesCollectorAmountsResult;
@@ -1188,7 +1205,9 @@ export interface Mutation {
   poolUpdateLiquidityValuesForAllPools: Scalars['String'];
   poolUpdateVolumeAndFeeValuesForAllPools: Scalars['String'];
   protocolCacheMetrics: Scalars['String'];
+  syncGaugeBribes: Scalars['String'];
   syncGaugeData: Scalars['Boolean'];
+  syncGaugeVotes: Scalars['String'];
   tokenDeletePrice: Scalars['Boolean'];
   tokenDeleteTokenType: Scalars['String'];
   tokenInitChartData: Scalars['String'];
@@ -1218,6 +1237,14 @@ export interface MutationPoolSyncLatestSnapshotsForAllPoolsArgs {
 
 export interface MutationPoolSyncPoolArgs {
   poolId: Scalars['String'];
+}
+
+export interface MutationSyncGaugeBribesArgs {
+  blocksToScan?: InputMaybe<Scalars['Int']>;
+}
+
+export interface MutationSyncGaugeVotesArgs {
+  blocksToScan?: InputMaybe<Scalars['Int']>;
 }
 
 export interface MutationTokenDeletePriceArgs {
@@ -1255,6 +1282,8 @@ export interface Query {
   contentGetNewsItems: Array<Maybe<GqlContentNewsItem>>;
   get24HourGaugeFees?: Maybe<Array<Maybe<Scalars['String']>>>;
   getAllGaugeBribes: Array<Maybe<EpochBribeInfo>>;
+  getLastBribeSyncInfo: GaugeVoteSyncInfo;
+  getLastVoteSyncInfo: GaugeVoteSyncInfo;
   getLiquidityGauges: Array<Maybe<LiquidityGauge>>;
   getProtocolPoolData: Array<Maybe<GqlProtocolGaugeInfo>>;
   getProtocolTokenList?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -1263,6 +1292,7 @@ export interface Query {
   getSingleGaugeBribes: Array<Maybe<EpochBribeInfo>>;
   getUserBribeClaims: Array<Maybe<UserBribeClaim>>;
   getUserGaugeStakes: Array<Maybe<LiquidityGauge>>;
+  getUserGaugeVotes: Array<Maybe<GaugeVoteInfo>>;
   latestSyncedBlocks: GqlLatestSyncedBlocks;
   poolGetAllPoolsSnapshots: Array<GqlPoolSnapshot>;
   poolGetBatchSwaps: Array<GqlPoolBatchSwap>;
@@ -1332,6 +1362,10 @@ export interface QueryGetUserBribeClaimsArgs {
 export interface QueryGetUserGaugeStakesArgs {
   poolIds: Array<Scalars['String']>;
   user: Scalars['String'];
+}
+
+export interface QueryGetUserGaugeVotesArgs {
+  epoch: Scalars['Int'];
 }
 
 export interface QueryPoolGetAllPoolsSnapshotsArgs {
