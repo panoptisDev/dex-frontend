@@ -778,7 +778,6 @@ type GqlPoolTokenExpanded {
   isPhantomBpt: Boolean!
   name: String!
   symbol: String!
-  token: GqlToken!
   weight: String
 }
 
@@ -1241,6 +1240,8 @@ type Query {
   getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
   getCurrentAndNextBribes(epoch: Int!): [GaugeBribeInfo]!
   getCurrentGaugesEpoch: GaugeEpoch!
+  getEpochBribes(epoch: Int!): [GaugeBribe]!
+  getEpochBribesForGauge(epoch: Int!, gauge: String!): [GaugeBribe]!
   getGaugeEpochs: [GaugeEpoch]!
   getLastBribeSyncInfo: GaugeVoteSyncInfo!
   getLastVoteSyncInfo: GaugeVoteSyncInfo!

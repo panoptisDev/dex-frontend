@@ -46,12 +46,6 @@ export const UserRewardFragment = gql`
     pool {
       name
       address
-      allTokens {
-        token {
-          address
-          logoURI
-        }
-      }
       staking {
         gauge {
           gaugeAddress

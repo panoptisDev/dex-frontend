@@ -796,7 +796,6 @@ export interface GqlPoolTokenExpanded {
   isPhantomBpt: Scalars['Boolean'];
   name: Scalars['String'];
   symbol: Scalars['String'];
-  token: GqlToken;
   weight?: Maybe<Scalars['String']>;
 }
 
@@ -1298,6 +1297,8 @@ export interface Query {
   getAllGaugeBribes: Array<Maybe<EpochBribeInfo>>;
   getCurrentAndNextBribes: Array<Maybe<GaugeBribeInfo>>;
   getCurrentGaugesEpoch: GaugeEpoch;
+  getEpochBribes: Array<Maybe<GaugeBribe>>;
+  getEpochBribesForGauge: Array<Maybe<GaugeBribe>>;
   getGaugeEpochs: Array<Maybe<GaugeEpoch>>;
   getLastBribeSyncInfo: GaugeVoteSyncInfo;
   getLastVoteSyncInfo: GaugeVoteSyncInfo;
@@ -1361,6 +1362,15 @@ export interface QueryGetAllGaugeBribesArgs {
 
 export interface QueryGetCurrentAndNextBribesArgs {
   epoch: Scalars['Int'];
+}
+
+export interface QueryGetEpochBribesArgs {
+  epoch: Scalars['Int'];
+}
+
+export interface QueryGetEpochBribesForGaugeArgs {
+  epoch: Scalars['Int'];
+  gauge: Scalars['String'];
 }
 
 export interface QueryGetLiquidityGaugesArgs {
@@ -1929,10 +1939,6 @@ export type GetUserGaugeRewardsQuery = {
         __typename: 'GqlPoolWeighted';
         name: string;
         address: string;
-        allTokens: Array<{
-          __typename: 'GqlPoolTokenExpanded';
-          token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
-        }>;
         staking?: {
           __typename: 'GqlPoolStaking';
           gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
@@ -1950,10 +1956,6 @@ export type GetUserGaugeRewardsQuery = {
         __typename: 'GqlPoolWeighted';
         name: string;
         address: string;
-        allTokens: Array<{
-          __typename: 'GqlPoolTokenExpanded';
-          token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
-        }>;
         staking?: {
           __typename: 'GqlPoolStaking';
           gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
@@ -1996,10 +1998,6 @@ export type UserRewardFragmentFragment = {
     __typename: 'GqlPoolWeighted';
     name: string;
     address: string;
-    allTokens: Array<{
-      __typename: 'GqlPoolTokenExpanded';
-      token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
-    }>;
     staking?: {
       __typename: 'GqlPoolStaking';
       gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
@@ -4848,12 +4846,6 @@ export const UserRewardFragmentFragmentDoc = gql`
     pool {
       name
       address
-      allTokens {
-        token {
-          address
-          logoURI
-        }
-      }
       staking {
         gauge {
           gaugeAddress
