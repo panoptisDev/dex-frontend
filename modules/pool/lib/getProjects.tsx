@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   Box,
   Heading,
   Link,
@@ -23,6 +24,9 @@ export function getProjects() {
     } },
     { id: '0xcf61cf9654f5536b8d6c93f09a0308ff3c2650f9000200000000000000000015', name: 'Aalto Protocol', description: () => {
       return <Box>
+        <AspectRatio mb="4" ratio={16/9}>
+          <iframe src="https://www.youtube.com/embed/VWWkZHdGIjc" title="Aalto Protocol explained - The most advanced auto-staking &amp; Auto-compounding protocol" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+        </AspectRatio>
         <Text mb="2">Aalto Protocol is a decentralized capital gains system on the Binance Smart Chain that rewards users for holding the token, with the added functionality of earning yield on top of yield. Aalto Protocol aims to expand it's utility with a GameFi layer, serving as the main interaction token for a collection of games under the umbrella of Aalto Casino & Aalto Arcadium.</Text>
         <Text mb="2">The rewards consist of a sustainable fixed compound interest model combined with an auto-rebase mechanism that pays out directly to holders wallets. Additionally, investors can earn stablecoin and non-native token yields by staking their $AALTO in the Deep Blue Bank.</Text>
         <Text mb="2">The auto-rebase mechanism gives the $AALTO token automatic rebasing and compounding features, and a high Fixed and Sustainable APY of **402,252.1%**. Aalto Protocol is the sister project of <Link href="https://www.ames-defi.app/">Ames.Defi</Link> on the Binance Smart Chain.</Text>
@@ -86,9 +90,9 @@ export function getProjects() {
         <Text mb="2">Our role at Magik.Farm as a service provider allowed us to build deep relationships with numerous protocols on other chains. They're pitching in to promote and facilitate an nft game starter pack that will get its users a bit of MAGIK and FTM gas. We want to make it easy for anyone to jump in and play.</Text>
         <Text mb="2">We're looking to build multi-layered and meaningful in-game economies within a UX that just works. We want users to ultimately drive and be the beneficiaries of those economies. Our focus is primarily on game development, but long term we see potential for Magik World as a space for social hangouts, subscription based communities and 3rd party vendor storefronts for in-game and out of game assets.</Text>
         <Text mb="2">There's a vast world waiting to be built. We hope you'll help us cultivate the land.</Text>
-        <Text my="4">MAGIK: 0xD68F75b3aa54bee23e6Ac3AD4b3C28D3E6319725</Text>
-        <Text my="4">MIGHT: 0x9be0C5b42FB3540675A8d3E6b540f06734dFFbA6</Text>
-        <Text my="4">MSHARE: 0xc8ca9026ad0882133ef126824f6852567c571a4e</Text>
+        <Text my="4">MAGIK (BSC): 0xD68F75b3aa54bee23e6Ac3AD4b3C28D3E6319725</Text>
+        <Text my="4">MIGHT (BSC): 0x9be0C5b42FB3540675A8d3E6b540f06734dFFbA6</Text>
+        <Text my="4">MSHARE (BSC): 0xc8ca9026ad0882133ef126824f6852567c571a4e</Text>
         <Text>dApp: <Link href="https://magik.finance/">https://magik.finance/</Link></Text>
         <Text>Whitepaper: <Link href="https://magikdotfinance.gitbook.io/magik-v2-ecosystem-whitepaper-draft/">https://magikdotfinance.gitbook.io/magik-v2-ecosystem-whitepaper-draft/</Link></Text>
         <Text>Twitter: <Link href="https://twitter.com/magikthedog">https://twitter.com/magikthedog</Link></Text>
@@ -98,10 +102,13 @@ export function getProjects() {
     } },
     { id: '0x64bf08fac067b25c77967affafce73760d8d0bdf000200000000000000000011', name: 'UP Finance', description: () => {
       return <Box>
+        <AspectRatio mb="4" ratio={1}>
+          <iframe src="https://embed.notion.co/api/iframe?url=https%3A%2F%2Fnft.upfinance.io%2Fimages%2Fvideo.mp4&amp;key=656ac74fac4fff346b811dca7919d483" allowFullScreen></iframe>
+        </AspectRatio>
         <Text mb="2">$UP is a perpetually appreciating 100% backed by BUSD asset that makes up the backbone of the UP Finance ecosystem.</Text>
         <Text mb="2">The value of UP will never decrease and will always be redeemable for the price on the contract. In fact any contract mint and redeem only further increase the price due to the contract design mechanics. Imagine having a token as a DeFi currency to transact in, backed by one of the best stable coins within DeFi, worth more tomorrow than today and can never crash in price.</Text>
         <Text mb="2">Join in on the $UP movement and take part in the new model primed to replace holding static stable coins. There is only one way to go and that is Always and Only $UP.</Text>
-        <Text my="4">UP Token: 0x5376A83112100Ff1567b2782e0d99c6d949b5509</Text>
+        <Text my="4">UP Token (BSC): 0x5376A83112100Ff1567b2782e0d99c6d949b5509</Text>
         <Text>dApp: <Link href="https://nft.upfinance.io/">https://nft.upfinance.io/</Link></Text>
         <Text>Whitepaper: <Link href="https://docs.upfinance.io/">https://docs.upfinance.io/</Link></Text>
         <Text>Twitter: <Link href="https://twitter.com/_UpFinance">https://twitter.com/_UpFinance</Link></Text>
