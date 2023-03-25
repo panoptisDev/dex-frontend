@@ -1,14 +1,17 @@
 import {
   Box,
+  Button,
   Flex,
   HStack,
   Popover,
   PopoverContent,
   PopoverTrigger as OrigPopoverTrigger,
+  Spacer,
   Text,
   VStack,
   Wrap,
   WrapItem,
+  useDisclosure,
 } from '@chakra-ui/react';
 import numeral from 'numeral';
 import { PoolTokenPill } from '~/components/token/PoolTokenPill';
@@ -18,7 +21,8 @@ import { HelpCircle } from 'react-feather';
 import { useNetworkConfig } from '~/lib/global/useNetworkConfig';
 import { AddressZero } from '@ethersproject/constants';
 import { usePool } from '~/modules/pool/lib/usePool';
-
+import { getProjects } from '~/modules/pool/lib/getProjects';
+import { PoolAboutThisProjectModal } from './PoolAboutThisProjectModal';
 
 function PoolHeader() {
   const networkConfig = useNetworkConfig();
@@ -35,6 +39,9 @@ function PoolHeader() {
     hasBeetsOwner ? 'Vertek Liquidity Committee Multisig' : 'pool owner'
   }.`;
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const projects = getProjects();
+  const project = projects.find(e => e.id == pool.id);
   return (
     <VStack width="full" alignItems="flex-start" mb="12">
       <Text textStyle="h3" as="h3" fontWeight="bold" mr="0" display={{ base: 'block', lg: 'none' }}>
@@ -52,40 +59,49 @@ function PoolHeader() {
           </WrapItem>
         ))}
       </Wrap>
-      <Popover trigger="hover" placement="auto">
-        <PopoverTrigger>
-          <HStack
-            paddingX="4"
-            paddingY="1"
-            spacing="4"
-            fontSize="md"
-            rounded="full"
-            color="beets.base.50"
-            justifyContent="center"
-            fontWeight="semibold"
-          >
-            {!hasZeroOwner && (
-              <Flex alignItems="center">
-                {hasBeetsOwner ? (
-                  <Image src={PoolOwnerImage} width="24" height="24" alt="Pool Owner Image" />
-                ) : (
-                  <HelpCircle size="24" />
-                )}
-              </Flex>
-            )}
-            <HStack spacing="1">
-              <Text>{numeral(pool.dynamicData.swapFee).format('0.0[00]%')}</Text>
-              <Text>{swapFeeType} Fee</Text>
+      <Flex minWidth="100%" align="center">
+        <Popover trigger="hover" placement="auto">
+          <PopoverTrigger>
+            <HStack
+              paddingX="4"
+              paddingY="1"
+              spacing="4"
+              fontSize="md"
+              rounded="full"
+              color="beets.base.50"
+              justifyContent="center"
+              fontWeight="semibold"
+            >
+              {!hasZeroOwner && (
+                <Flex alignItems="center">
+                  {hasBeetsOwner ? (
+                    <Image src={PoolOwnerImage} width="24" height="24" alt="Pool Owner Image" />
+                  ) : (
+                    <HelpCircle size="24" />
+                  )}
+                </Flex>
+              )}
+              <HStack spacing="1">
+                <Text>{numeral(pool.dynamicData.swapFee).format('0.0[00]%')}</Text>
+                <Text>{swapFeeType} Fee</Text>
+              </HStack>
             </HStack>
-          </HStack>
-        </PopoverTrigger>
-        <PopoverContent w="250px" borderRadius="12px" padding="1" bgColor="black" >
-          <Box className="verteklightpurplebox" padding="4" borderRadius="12px"  
-              fontSize="md" >
-            {tooltipText1} {!hasZeroOwner && tooltipText2}
-          </Box>
-        </PopoverContent>
-      </Popover>
+          </PopoverTrigger>
+          <PopoverContent w="250px" borderRadius="12px" padding="1" bgColor="black" >
+            <Box className="verteklightpurplebox" padding="4" borderRadius="12px"
+                fontSize="md" >
+              {tooltipText1} {!hasZeroOwner && tooltipText2}
+            </Box>
+          </PopoverContent>
+        </Popover>
+        <Spacer />
+        <Box>
+          {project && <Button variant="primary" onClick={() => { onOpen(); }}>
+            About this project
+          </Button>}
+          {project && <PoolAboutThisProjectModal isOpen={isOpen} onClose={onClose} pool={pool} name={project.name} description={project.description} />}
+        </Box>
+      </Flex>
     </VStack>
   );
 }
