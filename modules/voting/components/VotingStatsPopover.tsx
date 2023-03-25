@@ -3,28 +3,20 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
   Text,
-  VStack,
   Icon,
-  HStack,
 } from '@chakra-ui/react';
 import { Info } from 'react-feather';
-import { VotingGaugeWithVotes } from '~/lib/services/staking/types';
-import { formatVotesAsPercent } from '../lib/utils';
 
 type Props = {
-  gauge: VotingGaugeWithVotes;
+  votesThisPeriod: string;
+  votesNextPeriod: string;
+  voteDifference: number;
 };
 
-export function VotingStatsPopover({ gauge }: Props) {
-  const votesThisPeriod = formatVotesAsPercent(gauge.votes);
-  const votesNextPeriod = formatVotesAsPercent(gauge.votesNextPeriod);
-  const voteDifference = Number(gauge.votesNextPeriod) - Number(gauge.votes);
-
+export function VotingStatsPopover({ votesThisPeriod, votesNextPeriod, voteDifference }: Props) {
   return (
     <Popover trigger="hover" placement="top">
       <PopoverTrigger>

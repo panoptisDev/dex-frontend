@@ -115,7 +115,22 @@ export function GaugeRewardsTable({ userGaugeReward }: Props) {
             width={{ base: '200px', lg: '125px' }}
             onClick={doGaugeRewardClaim}
           >
-            Claim
+            Claim All
+          </Button>
+          <Button
+            display={{ base: 'flex', lg: 'none' }}
+            variant="verteklight"
+            padding="1em"
+            borderRadius="10px"
+            mt="1"
+            borderWidth="1px"
+            alignItems="center"
+            height="2em"
+            width={{ base: '200px', lg: 'none' }}
+            disabled={!userGaugeReward.rewards.length || claimTxState.isPending}
+            onClick={doGaugeRewardClaim}
+          >
+            Claim All
           </Button>
         </Flex>
       </Box>

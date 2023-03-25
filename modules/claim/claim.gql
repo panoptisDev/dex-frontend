@@ -55,13 +55,6 @@ fragment UserRewardFragment on GqlBaseTokenReward {
     name
     address
 
-    allTokens {
-      token {
-        address
-        logoURI
-      }
-    }
-
     staking {
       gauge {
         gaugeAddress

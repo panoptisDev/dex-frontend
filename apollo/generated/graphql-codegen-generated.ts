@@ -41,6 +41,19 @@ export interface GaugeBribe {
   valueUSD: Scalars['Float'];
 }
 
+export interface GaugeBribeInfo {
+  __typename: 'GaugeBribeInfo';
+  currentEpochBribes: Array<Maybe<GaugeBribe>>;
+  gauge: LiquidityGauge;
+  nextEpochBribes: Array<Maybe<GaugeBribe>>;
+}
+
+export interface GaugeEpoch {
+  __typename: 'GaugeEpoch';
+  date: Scalars['String'];
+  epoch: Scalars['Int'];
+}
+
 export interface GaugeFactory {
   __typename: 'GaugeFactory';
   id: Scalars['String'];
@@ -84,6 +97,23 @@ export interface GaugeVote {
   user: User;
   /**  Weight of veBAL power user has used to vote  */
   weight?: Maybe<Scalars['BigDecimal']>;
+}
+
+export interface GaugeVoteInfo {
+  __typename: 'GaugeVoteInfo';
+  blockNumber: Scalars['Int'];
+  epochStartTime: Scalars['Int'];
+  gauge: LiquidityGauge;
+  txHash: Scalars['String'];
+  user: Scalars['String'];
+  weightUsed: Scalars['Int'];
+}
+
+export interface GaugeVoteSyncInfo {
+  __typename: 'GaugeVoteSyncInfo';
+  blockNumber: Scalars['Int'];
+  dateTimeLocale: Scalars['String'];
+  dateTimeUTC: Scalars['String'];
 }
 
 export interface GqlAllFeesData {
@@ -766,7 +796,6 @@ export interface GqlPoolTokenExpanded {
   isPhantomBpt: Scalars['Boolean'];
   name: Scalars['String'];
   symbol: Scalars['String'];
-  token: GqlToken;
   weight?: Maybe<Scalars['String']>;
 }
 
@@ -1188,7 +1217,10 @@ export interface Mutation {
   poolUpdateLiquidityValuesForAllPools: Scalars['String'];
   poolUpdateVolumeAndFeeValuesForAllPools: Scalars['String'];
   protocolCacheMetrics: Scalars['String'];
+  syncGaugeBribes: Scalars['String'];
   syncGaugeData: Scalars['Boolean'];
+  syncGaugeVotes: Scalars['String'];
+  syncGaugesEpoch: Scalars['String'];
   tokenDeletePrice: Scalars['Boolean'];
   tokenDeleteTokenType: Scalars['String'];
   tokenInitChartData: Scalars['String'];
@@ -1218,6 +1250,14 @@ export interface MutationPoolSyncLatestSnapshotsForAllPoolsArgs {
 
 export interface MutationPoolSyncPoolArgs {
   poolId: Scalars['String'];
+}
+
+export interface MutationSyncGaugeBribesArgs {
+  blocksToScan?: InputMaybe<Scalars['Int']>;
+}
+
+export interface MutationSyncGaugeVotesArgs {
+  blocksToScan?: InputMaybe<Scalars['Int']>;
 }
 
 export interface MutationTokenDeletePriceArgs {
@@ -1255,6 +1295,13 @@ export interface Query {
   contentGetNewsItems: Array<Maybe<GqlContentNewsItem>>;
   get24HourGaugeFees?: Maybe<Array<Maybe<Scalars['String']>>>;
   getAllGaugeBribes: Array<Maybe<EpochBribeInfo>>;
+  getCurrentAndNextBribes: Array<Maybe<GaugeBribeInfo>>;
+  getCurrentGaugesEpoch: GaugeEpoch;
+  getEpochBribes: Array<Maybe<GaugeBribe>>;
+  getEpochBribesForGauge: Array<Maybe<GaugeBribe>>;
+  getGaugeEpochs: Array<Maybe<GaugeEpoch>>;
+  getLastBribeSyncInfo: GaugeVoteSyncInfo;
+  getLastVoteSyncInfo: GaugeVoteSyncInfo;
   getLiquidityGauges: Array<Maybe<LiquidityGauge>>;
   getProtocolPoolData: Array<Maybe<GqlProtocolGaugeInfo>>;
   getProtocolTokenList?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -1263,6 +1310,7 @@ export interface Query {
   getSingleGaugeBribes: Array<Maybe<EpochBribeInfo>>;
   getUserBribeClaims: Array<Maybe<UserBribeClaim>>;
   getUserGaugeStakes: Array<Maybe<LiquidityGauge>>;
+  getUserGaugeVotes: Array<Maybe<GaugeVoteInfo>>;
   latestSyncedBlocks: GqlLatestSyncedBlocks;
   poolGetAllPoolsSnapshots: Array<GqlPoolSnapshot>;
   poolGetBatchSwaps: Array<GqlPoolBatchSwap>;
@@ -1312,6 +1360,19 @@ export interface QueryGetAllGaugeBribesArgs {
   epoch: Scalars['Int'];
 }
 
+export interface QueryGetCurrentAndNextBribesArgs {
+  epoch: Scalars['Int'];
+}
+
+export interface QueryGetEpochBribesArgs {
+  epoch: Scalars['Int'];
+}
+
+export interface QueryGetEpochBribesForGaugeArgs {
+  epoch: Scalars['Int'];
+  gauge: Scalars['String'];
+}
+
 export interface QueryGetLiquidityGaugesArgs {
   epoch: Scalars['Int'];
 }
@@ -1332,6 +1393,10 @@ export interface QueryGetUserBribeClaimsArgs {
 export interface QueryGetUserGaugeStakesArgs {
   poolIds: Array<Scalars['String']>;
   user: Scalars['String'];
+}
+
+export interface QueryGetUserGaugeVotesArgs {
+  epoch: Scalars['Int'];
 }
 
 export interface QueryPoolGetAllPoolsSnapshotsArgs {
@@ -1874,10 +1939,6 @@ export type GetUserGaugeRewardsQuery = {
         __typename: 'GqlPoolWeighted';
         name: string;
         address: string;
-        allTokens: Array<{
-          __typename: 'GqlPoolTokenExpanded';
-          token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
-        }>;
         staking?: {
           __typename: 'GqlPoolStaking';
           gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
@@ -1895,10 +1956,6 @@ export type GetUserGaugeRewardsQuery = {
         __typename: 'GqlPoolWeighted';
         name: string;
         address: string;
-        allTokens: Array<{
-          __typename: 'GqlPoolTokenExpanded';
-          token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
-        }>;
         staking?: {
           __typename: 'GqlPoolStaking';
           gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
@@ -1941,10 +1998,6 @@ export type UserRewardFragmentFragment = {
     __typename: 'GqlPoolWeighted';
     name: string;
     address: string;
-    allTokens: Array<{
-      __typename: 'GqlPoolTokenExpanded';
-      token: { __typename: 'GqlToken'; address: string; logoURI?: string | null };
-    }>;
     staking?: {
       __typename: 'GqlPoolStaking';
       gauge?: { __typename: 'GqlPoolStakingGauge'; gaugeAddress: string } | null;
@@ -4639,6 +4692,13 @@ export type GqlTokenDynamicDataFragment = {
   updatedAt: string;
 };
 
+export type GetCurrentEpochQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetCurrentEpochQuery = {
+  __typename: 'Query';
+  getCurrentGaugesEpoch: { __typename: 'GaugeEpoch'; epoch: number; date: string };
+};
+
 export type GetLiquidityGaugesQueryVariables = Exact<{
   epoch: Scalars['Int'];
 }>;
@@ -4786,12 +4846,6 @@ export const UserRewardFragmentFragmentDoc = gql`
     pool {
       name
       address
-      allTokens {
-        token {
-          address
-          logoURI
-        }
-      }
       staking {
         gauge {
           gaugeAddress
@@ -7189,6 +7243,54 @@ export type GetTradeSelectedTokenDataLazyQueryHookResult = ReturnType<
 export type GetTradeSelectedTokenDataQueryResult = Apollo.QueryResult<
   GetTradeSelectedTokenDataQuery,
   GetTradeSelectedTokenDataQueryVariables
+>;
+export const GetCurrentEpochDocument = gql`
+  query GetCurrentEpoch {
+    getCurrentGaugesEpoch {
+      epoch
+      date
+    }
+  }
+`;
+
+/**
+ * __useGetCurrentEpochQuery__
+ *
+ * To run a query within a React component, call `useGetCurrentEpochQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrentEpochQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrentEpochQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCurrentEpochQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetCurrentEpochQuery, GetCurrentEpochQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetCurrentEpochQuery, GetCurrentEpochQueryVariables>(
+    GetCurrentEpochDocument,
+    options,
+  );
+}
+export function useGetCurrentEpochLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentEpochQuery, GetCurrentEpochQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetCurrentEpochQuery, GetCurrentEpochQueryVariables>(
+    GetCurrentEpochDocument,
+    options,
+  );
+}
+export type GetCurrentEpochQueryHookResult = ReturnType<typeof useGetCurrentEpochQuery>;
+export type GetCurrentEpochLazyQueryHookResult = ReturnType<typeof useGetCurrentEpochLazyQuery>;
+export type GetCurrentEpochQueryResult = Apollo.QueryResult<
+  GetCurrentEpochQuery,
+  GetCurrentEpochQueryVariables
 >;
 export const GetLiquidityGaugesDocument = gql`
   query GetLiquidityGauges($epoch: Int!) {

@@ -9,6 +9,7 @@ import { useBribeClaim } from '../lib/useClaimBribes';
 import { StatGridItemRight } from './ClaimTableUtils';
 import { useClaimsData } from '../lib/useClaimsData';
 import { parseUnits } from 'ethers/lib/utils';
+import { useUserPendingRewards } from '../lib/useUserRewards';
 
 type Props = {
   bribeRewards: any[];
@@ -17,12 +18,17 @@ type Props = {
 export function BribeClaim({ bribeRewards }: Props) {
   const { getToken } = useGetTokens();
   const { userAddress } = useUserAccount();
-  const { refetchBribeRewards } = useClaimsData();
+  // const { refetchBribeRewards } = useClaimsData();
+  const { refetchBribeRewards } = useUserPendingRewards();
   const { claimBribes, txState } = useBribeClaim();
 
   useEffect(() => {
     if (txState.isFailed) {
       console.log(txState.error);
+    }
+
+    if (txState.isConfirmed) {
+      refetchBribeRewards();
     }
   }, [txState]);
 
@@ -37,7 +43,7 @@ export function BribeClaim({ bribeRewards }: Props) {
     });
   });
 
-  async function doBribeClaims() {
+  function doBribeClaims() {
     const claimer: string = userAddress || '';
     const claims: any[] = [];
     const tokens: string[] = [];
@@ -57,8 +63,7 @@ export function BribeClaim({ bribeRewards }: Props) {
       ]);
     });
 
-    await claimBribes(claimer, claims, tokens);
-    refetchBribeRewards();
+    claimBribes(claimer, claims, tokens);
   }
 
   return (
@@ -192,6 +197,21 @@ export function BribeClaim({ bribeRewards }: Props) {
             onClick={doBribeClaims}
           >
             Claim
+          </Button>
+          <Button
+            display={{ base: 'flex', lg: 'none' }}
+            variant="verteklight"
+            padding="1em"
+            borderRadius="10px"
+            mt="1"
+            borderWidth="1px"
+            alignItems="center"
+            height="2em"
+            width={{ base: '200px', lg: 'none' }}
+            isDisabled={txState.isPending}
+            onClick={doBribeClaims}
+          >
+            Claim All
           </Button>
         </Flex>
       </Box>

@@ -11,7 +11,7 @@ import { parseUnits } from 'ethers/lib/utils';
 
 export function useUserBalances(addresses: string[], additionalTokens?: TokenBase[]) {
   const { tokens: whitelistedTokens } = useGetTokens();
-  const { userAddress, isLoading: isUserAccountLoading } = useUserAccount();
+  const { userAddress, isLoading: isUserAccountLoading, isConnected } = useUserAccount();
 
   const tokens = [...whitelistedTokens, ...(additionalTokens || [])].filter((token) =>
     addresses.includes(token.address),
@@ -45,10 +45,10 @@ export function useUserBalances(addresses: string[], additionalTokens?: TokenBas
   }
 
   useEffect(() => {
-    if (userAddress) {
+    if (isConnected && userAddress) {
       refetch().catch();
     }
-  }, [userAddress]);
+  }, [isConnected, userAddress]);
 
   return {
     userBalances: data,

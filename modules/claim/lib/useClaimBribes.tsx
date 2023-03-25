@@ -5,7 +5,7 @@ import orchardAbi from '~/lib/abi/MerkleOrchard.json';
 export function useBribeClaim() {
   const networkConfig = useNetworkConfig();
 
-  const { submit, submitAsync, ...rest } = useSubmitTransaction({
+  const { submit, ...rest } = useSubmitTransaction({
     config: {
       addressOrName: networkConfig.vertek.bribeRewardClaims,
       contractInterface: orchardAbi,
@@ -14,8 +14,8 @@ export function useBribeClaim() {
     transactionType: 'HARVEST',
   });
 
-  async function claimBribes(claimer: string, structs: any[], tokens: string[]) {
-    return submitAsync({
+  function claimBribes(claimer: string, structs: any[], tokens: string[]) {
+    return submit({
       args: [claimer, structs, tokens],
       toastText: 'Claim bribe rewards',
     });
