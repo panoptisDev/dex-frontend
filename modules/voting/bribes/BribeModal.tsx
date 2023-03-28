@@ -4,13 +4,12 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  InputGroup,
+  InputRightElement,
   ModalHeader,
   ModalOverlay,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
   Select,
   Text,
 } from '@chakra-ui/react';
@@ -32,6 +31,8 @@ import { useAllowances } from '~/lib/util/useAllowances';
 import { useUserAccount } from '~/lib/user/useUserAccount';
 import { networkConfig } from '~/lib/config/network-config';
 import { BeetsTokenApprovalButton } from '~/components/button/BeetsTokenApprovalButton';
+import { useUserTokenBalances } from '~/lib/user/useUserTokenBalances';
+import { tokenGetAmountForAddress } from '~/lib/services/token/token-util';
 
 interface Props {
   isOpen: boolean;
@@ -115,6 +116,9 @@ export function BribeModal({ isOpen, onClose, poolsWithGauges }: Props) {
     }
   }
 
+  const { userBalances } = useUserTokenBalances();
+  const [bribeValue, setBribeValue] = useState('0');
+
   return (
     <Modal
       isOpen={isOpen}
@@ -178,7 +182,9 @@ export function BribeModal({ isOpen, onClose, poolsWithGauges }: Props) {
                         color="vertek.neonpurple.500"
                         variant="filled"
                         // onChange={(event) => {}}
-                      ></Select>
+                      >
+                        {selectedGauge && <option selected>{selectedGauge.pool.name}</option>}
+                      </Select>
                     </FormControl>
 
                     <FormControl>
@@ -191,23 +197,42 @@ export function BribeModal({ isOpen, onClose, poolsWithGauges }: Props) {
                         color="vertek.neonpurple.500"
                         variant="filled"
                         onChange={(event) => {}}
-                      ></Select>
+                      >
+                        {selectedToken && <option selected>{selectedToken.symbol}</option>}
+                      </Select>
                     </FormControl>
 
-                    <FormControl>
+                    {selectedToken && <Box>
                       <FormLabel>Amount</FormLabel>
-                      <NumberInput
-                        min={0}
-                        onChange={handleSelectedTokenAmount}
-                        isDisabled={!selectedToken}
-                      >
-                        <NumberInputField />
-                        <NumberInputStepper>
-                          <NumberIncrementStepper />
-                          <NumberDecrementStepper />
-                        </NumberInputStepper>
-                      </NumberInput>
-                    </FormControl>
+                      <InputGroup>
+                        <FormControl mb="1">
+                          <NumberInput
+                            min={0}
+                            onChange={handleSelectedTokenAmount}
+                            isDisabled={!selectedToken}
+                            value={bribeValue}
+                          >
+                            <NumberInputField placeholder="0"
+                              onChange={(event) => setBribeValue(event.target.value)}
+                            />
+                          </NumberInput>
+                          <FormLabel mt="1" mb="1" color="gray.100" fontWeight="bold">
+                            {parseFloat(tokenGetAmountForAddress(selectedToken.address, userBalances)).toFixed(4)} {selectedToken.symbol} available
+                          </FormLabel>
+                        </FormControl>
+                        <InputRightElement width="4.5rem">
+                        <Button
+                          variant="verteklight"
+                          borderWidth="1px"
+                          h="1.75rem"
+                          size="sm"
+                          onClick={() => {setBribeValue(tokenGetAmountForAddress(selectedToken.address, userBalances)); handleSelectedTokenAmount(tokenGetAmountForAddress(selectedToken.address, userBalances), 0)}}
+                        >
+                          Max
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
+                  </Box>}
 
                     {/* <FormControl>
                   <FormLabel>Protcol ID (optional)</FormLabel>
