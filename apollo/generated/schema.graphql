@@ -4,6 +4,12 @@ scalar BigDecimal
 
 scalar BigInt
 
+type BribeDistribution {
+  distributionId: Int!
+  merkleRoot: String!
+  txHash: String!
+}
+
 scalar Bytes
 
 scalar Date
@@ -17,11 +23,24 @@ type EpochBribeInfo {
 type GaugeBribe {
   amount: String!
   briber: String!
+  distribution: BribeDistribution
   epochStartTime: Int!
   epochWeekLabel: String!
   gauge: String!
+  id: Int!
   token: GqlToken!
   valueUSD: Float!
+}
+
+type GaugeBribeDistribution {
+  amount: String!
+  blockNumber: Int!
+  briber: String!
+  distributionId: Int!
+  merkleRoot: String!
+  token: String!
+  txHash: String!
+  votingEpochStart: Int!
 }
 
 type GaugeBribeInfo {
@@ -31,6 +50,7 @@ type GaugeBribeInfo {
 }
 
 type GaugeEpoch {
+  blockNumber: Int!
   date: String!
   epoch: Int!
 }
@@ -102,16 +122,43 @@ type GaugeVote {
 type GaugeVoteInfo {
   blockNumber: Int!
   epochStartTime: Int!
-  gauge: LiquidityGauge!
+  epochWeekLabel: String!
+  gaugeId: String
   txHash: String!
-  user: String!
+  userAddress: String!
   weightUsed: Int!
+}
+
+type GaugeVoteResult {
+  count: Int!
+  votes: [GaugeVoteInfo]!
 }
 
 type GaugeVoteSyncInfo {
   blockNumber: Int!
   dateTimeLocale: String!
   dateTimeUTC: String!
+}
+
+input GetBribesInput {
+  briber: String
+  epochStartTime: Int
+  gaugeId: String
+  id: Int
+  token: String
+}
+
+input GetDistributionsInput {
+  briber: String
+  merkleRoot: String
+  token: String
+  votingEpochStart: Int
+}
+
+input GetVotesInput {
+  epochStartTime: Int
+  gaugeId: String
+  userAddress: String
 }
 
 type GqlAllFeesData {
@@ -1043,6 +1090,7 @@ enum GqlTokenType {
 }
 
 type GqlUser {
+  address: String!
   pendingRewards: GqlUserPendingRewards!
 }
 
@@ -1207,9 +1255,10 @@ type Mutation {
   poolUpdateLiquidityValuesForAllPools: String!
   poolUpdateVolumeAndFeeValuesForAllPools: String!
   protocolCacheMetrics: String!
-  syncGaugeBribes(blocksToScan: Int): String!
+  syncBribeDistributions(distributionWeekStart: Int!, votingEpochStart: Int!): Int!
+  syncGaugeBribes(blocksToScan: Int): Int!
   syncGaugeData: Boolean!
-  syncGaugeVotes(blocksToScan: Int): String!
+  syncGaugeVotes(blocksToScan: Int, epochStartTime: Int): Int!
   syncGaugesEpoch: String!
   tokenDeletePrice(timestamp: Int!, tokenAddress: String!): Boolean!
   tokenDeleteTokenType(tokenAddress: String!, type: GqlTokenType!): String!
@@ -1217,6 +1266,7 @@ type Mutation {
   tokenReloadTokenPrices: Boolean
   tokenSyncTokenDefinitions: String!
   tokenSyncTokenDynamicData: String!
+  updateBribeDistributions(input: [UpdateBribeDistributionsInput!]!): String!
   userInitStakedBalances: String!
   userInitWalletBalancesForAllPools: String!
   userInitWalletBalancesForPool(poolId: String!): String!
@@ -1238,11 +1288,13 @@ type Query {
   contentGetNewsItems: [GqlContentNewsItem]!
   get24HourGaugeFees(hoursInPast: Int): [String]
   getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
+  getBribes(filter: GetBribesInput!): [GaugeBribe]!
   getCurrentAndNextBribes(epoch: Int!): [GaugeBribeInfo]!
   getCurrentGaugesEpoch: GaugeEpoch!
-  getEpochBribes(epoch: Int!): [GaugeBribe]!
+  getDistributions(filter: GetDistributionsInput): [GaugeBribeDistribution]!
   getEpochBribesForGauge(epoch: Int!, gauge: String!): [GaugeBribe]!
   getGaugeEpochs: [GaugeEpoch]!
+  getGaugeVotes(filter: GetVotesInput!): GaugeVoteResult!
   getLastBribeSyncInfo: GaugeVoteSyncInfo!
   getLastVoteSyncInfo: GaugeVoteSyncInfo!
   getLiquidityGauges(epoch: Int!): [LiquidityGauge]!
@@ -1253,7 +1305,6 @@ type Query {
   getSingleGaugeBribes(epoch: Int!, gauge: String!): [EpochBribeInfo]!
   getUserBribeClaims(user: String!): [UserBribeClaim]!
   getUserGaugeStakes(poolIds: [String!]!, user: String!): [LiquidityGauge]!
-  getUserGaugeVotes(epoch: Int!): [GaugeVoteInfo]!
   latestSyncedBlocks: GqlLatestSyncedBlocks!
   poolGetAllPoolsSnapshots(range: GqlPoolSnapshotDataRange!): [GqlPoolSnapshot!]!
   poolGetBatchSwaps(first: Int, skip: Int, where: GqlPoolSwapFilter): [GqlPoolBatchSwap!]!
@@ -1390,6 +1441,13 @@ type RewardToken {
    Amount of reward tokens that has been deposited into the gauge
   """
   totalDeposited: BigDecimal!
+}
+
+input UpdateBribeDistributionsInput {
+  bribeId: Int!
+  distributionId: Int!
+  merkleRoot: String!
+  txHash: String!
 }
 
 type User {
