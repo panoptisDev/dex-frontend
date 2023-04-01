@@ -1874,8 +1874,6 @@ export type GetAppGlobalPollingDataQueryVariables = Exact<{ [key: string]: never
 
 export type GetAppGlobalPollingDataQuery = {
   __typename: 'Query';
-  blocksGetBlocksPerDay: number;
-  blocksGetAverageBlockTime: number;
   beetsGetBeetsPrice: string;
   tokenGetCurrentPrices: Array<{ __typename: 'GqlTokenPrice'; price: number; address: string }>;
   protocolMetrics: {
@@ -1953,14 +1951,6 @@ export type GetProtocolDataQuery = {
     swapFee24h: string;
     swapVolume24h: string;
   };
-};
-
-export type GetBlocksPerDayQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetBlocksPerDayQuery = {
-  __typename: 'Query';
-  blocksPerDay: number;
-  avgBlockTime: number;
 };
 
 export type GetBeetsPriceQueryVariables = Exact<{ [key: string]: never }>;
@@ -5466,8 +5456,6 @@ export const GetAppGlobalPollingDataDocument = gql`
       swapFee24h
       swapVolume24h
     }
-    blocksGetBlocksPerDay
-    blocksGetAverageBlockTime
     beetsGetBeetsPrice
   }
 `;
@@ -5736,52 +5724,6 @@ export type GetProtocolDataLazyQueryHookResult = ReturnType<typeof useGetProtoco
 export type GetProtocolDataQueryResult = Apollo.QueryResult<
   GetProtocolDataQuery,
   GetProtocolDataQueryVariables
->;
-export const GetBlocksPerDayDocument = gql`
-  query GetBlocksPerDay {
-    blocksPerDay: blocksGetBlocksPerDay
-    avgBlockTime: blocksGetAverageBlockTime
-  }
-`;
-
-/**
- * __useGetBlocksPerDayQuery__
- *
- * To run a query within a React component, call `useGetBlocksPerDayQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBlocksPerDayQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetBlocksPerDayQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetBlocksPerDayQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetBlocksPerDayQuery, GetBlocksPerDayQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetBlocksPerDayQuery, GetBlocksPerDayQueryVariables>(
-    GetBlocksPerDayDocument,
-    options,
-  );
-}
-export function useGetBlocksPerDayLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetBlocksPerDayQuery, GetBlocksPerDayQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetBlocksPerDayQuery, GetBlocksPerDayQueryVariables>(
-    GetBlocksPerDayDocument,
-    options,
-  );
-}
-export type GetBlocksPerDayQueryHookResult = ReturnType<typeof useGetBlocksPerDayQuery>;
-export type GetBlocksPerDayLazyQueryHookResult = ReturnType<typeof useGetBlocksPerDayLazyQuery>;
-export type GetBlocksPerDayQueryResult = Apollo.QueryResult<
-  GetBlocksPerDayQuery,
-  GetBlocksPerDayQueryVariables
 >;
 export const GetBeetsPriceDocument = gql`
   query GetBeetsPrice {
