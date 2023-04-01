@@ -8,10 +8,7 @@ import TokenAvatar from '~/components/token/TokenAvatar';
 import { Skeleton, Tooltip } from '@chakra-ui/react';
 import { tokenFormatAmount } from '~/lib/services/token/token-util';
 import { networkConfig } from '~/lib/config/network-config';
-import {
-  useGetBlocksPerDayQuery,
-  useGetPoolBptPriceChartDataQuery,
-} from '~/apollo/generated/graphql-codegen-generated';
+import { useGetPoolBptPriceChartDataQuery } from '~/apollo/generated/graphql-codegen-generated';
 import { useGetTokens } from '~/lib/global/useToken';
 import { sumBy } from 'lodash';
 import { InfoButton } from '~/components/info-button/InfoButton';
@@ -21,7 +18,6 @@ import { getAprValues } from '~/lib/util/apr-utils';
 export default function PoolOverallStats() {
   const { pool } = usePool();
   const { priceFor } = useGetTokens();
-  const { data: blocksData } = useGetBlocksPerDayQuery({ fetchPolicy: 'cache-first' });
   const data = pool.dynamicData;
   const volumeYesterday = parseFloat(data.volume48h) - parseFloat(data.volume24h);
   const volumePercentChange = (parseFloat(data.volume24h) - volumeYesterday) / volumeYesterday;
@@ -37,8 +33,7 @@ export default function PoolOverallStats() {
       ? parseFloat(pool.dynamicData.totalLiquidity24hAgo) / totalShares24hAgo
       : 0;
   const sharePricePercentChange = (sharePrice - sharePrice24hAgo) / sharePrice24hAgo;
-  const beetsPerDay =
-    parseFloat(pool.staking?.farm?.beetsPerBlock || '0') * (blocksData?.blocksPerDay || 0);
+  const beetsPerDay = parseFloat(pool.staking?.farm?.beetsPerBlock || '0');
 
   const incentivesDailyValue =
     beetsPerDay * priceFor(networkConfig.beets.address) +

@@ -1,7 +1,4 @@
-import {
-  GqlPoolStaking,
-  useGetBlocksPerDayQuery,
-} from '~/apollo/generated/graphql-codegen-generated';
+import { GqlPoolStaking } from '~/apollo/generated/graphql-codegen-generated';
 import { Box, Text } from '@chakra-ui/layout';
 import numeral from 'numeral';
 import { numberFormatUSDValue } from '~/lib/util/number-formats';
@@ -21,7 +18,6 @@ interface Props {
 }
 
 export function PoolUserStakedStats({ poolAddress, staking, totalApr, userPoolBalanceUSD }: Props) {
-  const { data: blocksData } = useGetBlocksPerDayQuery({ fetchPolicy: 'cache-first' });
   const {
     pendingRewards,
     pendingRewardsTotalUSD,
@@ -40,8 +36,7 @@ export function PoolUserStakedStats({ poolAddress, staking, totalApr, userPoolBa
   const userShare = parseFloat(userStakedBptBalance) / parseFloat(data || '1');
   const dailyYield = totalApr / 365;
   const dailyYieldUSD = userPoolBalanceUSD * dailyYield;
-  const beetsPerDay =
-    parseFloat(staking.farm?.beetsPerBlock || '0') * (blocksData?.blocksPerDay || 0) * userShare;
+  const beetsPerDay = parseFloat(staking.farm?.beetsPerBlock || '0') * 0 * userShare;
 
   return (
     <>
