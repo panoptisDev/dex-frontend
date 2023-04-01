@@ -28,8 +28,6 @@ export function _useGauges() {
     pollInterval: GAUGE_POLLING_INTERVAL,
   });
 
-  console.log(votingGauges);
-
   const [
     fetchGauges,
     {
@@ -77,11 +75,6 @@ export function _useGauges() {
     }, totalVotes);
 
     setUnallocatedVotes(votesRemaining);
-
-    // filter out temp old gauge after user votes tally is complete
-    // return gauges.filter(
-    //   (g) => g.pool.id !== '0x5deb10ed6a66a1e6188b7925a723b6bdfd97476500020000000000000000000a',
-    // );
 
     return gauges;
   }
