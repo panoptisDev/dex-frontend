@@ -49,6 +49,15 @@ type GaugeBribeInfo {
   nextEpochBribes: [GaugeBribe]!
 }
 
+type GaugeBribeRaw {
+  amount: String!
+  briber: String!
+  epochStartTime: Int!
+  gauge: String!
+  token: String!
+  txHash: String!
+}
+
 type GaugeEpoch {
   blockNumber: Int!
   date: String!
@@ -124,6 +133,15 @@ type GaugeVoteInfo {
   epochStartTime: Int!
   epochWeekLabel: String!
   gaugeId: String
+  txHash: String!
+  userAddress: String!
+  weightUsed: Int!
+}
+
+type GaugeVoteRaw {
+  blockNumber: Int!
+  epochStartTime: Int!
+  gaugeId: String!
   txHash: String!
   userAddress: String!
   weightUsed: Int!
@@ -1256,10 +1274,12 @@ type Mutation {
   poolUpdateVolumeAndFeeValuesForAllPools: String!
   protocolCacheMetrics: String!
   syncBribeDistributions(distributionWeekStart: Int!, votingEpochStart: Int!): Int!
-  syncGaugeBribes(blocksToScan: Int): Int!
+  syncGaugeBribes(blocksToScan: Int, forEpoch: Boolean): Int!
+  syncGaugeBribesForEpoch(epoch: Int!): Int!
   syncGaugeData: Boolean!
   syncGaugeVotes(blocksToScan: Int, epochStartTime: Int): Int!
   syncGaugesEpoch: String!
+  syncVotesForEpoch(epoch: Int!): Int!
   tokenDeletePrice(timestamp: Int!, tokenAddress: String!): Boolean!
   tokenDeleteTokenType(tokenAddress: String!, type: GqlTokenType!): String!
   tokenInitChartData(tokenAddress: String!): String!
@@ -1289,6 +1309,7 @@ type Query {
   get24HourGaugeFees(hoursInPast: Int): [String]
   getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
   getBribes(filter: GetBribesInput!): [GaugeBribe]!
+  getBribesForEpoch(epoch: Int!): [GaugeBribeRaw]!
   getCurrentAndNextBribes(epoch: Int!): [GaugeBribeInfo]!
   getCurrentGaugesEpoch: GaugeEpoch!
   getDistributions(filter: GetDistributionsInput): [GaugeBribeDistribution]!

@@ -28,6 +28,8 @@ export function _useGauges() {
     pollInterval: GAUGE_POLLING_INTERVAL,
   });
 
+  console.log(votingGauges);
+
   const [
     fetchGauges,
     {
@@ -47,6 +49,7 @@ export function _useGauges() {
   }, [gaugeFetchError]);
 
   useEffect(() => {
+    console.log(epochData);
     if (!isLoadingEpoch && epochData?.getCurrentGaugesEpoch) {
       fetchGauges({
         variables: {

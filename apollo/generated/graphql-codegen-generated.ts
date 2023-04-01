@@ -69,6 +69,16 @@ export interface GaugeBribeInfo {
   nextEpochBribes: Array<Maybe<GaugeBribe>>;
 }
 
+export interface GaugeBribeRaw {
+  __typename: 'GaugeBribeRaw';
+  amount: Scalars['String'];
+  briber: Scalars['String'];
+  epochStartTime: Scalars['Int'];
+  gauge: Scalars['String'];
+  token: Scalars['String'];
+  txHash: Scalars['String'];
+}
+
 export interface GaugeEpoch {
   __typename: 'GaugeEpoch';
   blockNumber: Scalars['Int'];
@@ -127,6 +137,16 @@ export interface GaugeVoteInfo {
   epochStartTime: Scalars['Int'];
   epochWeekLabel: Scalars['String'];
   gaugeId?: Maybe<Scalars['String']>;
+  txHash: Scalars['String'];
+  userAddress: Scalars['String'];
+  weightUsed: Scalars['Int'];
+}
+
+export interface GaugeVoteRaw {
+  __typename: 'GaugeVoteRaw';
+  blockNumber: Scalars['Int'];
+  epochStartTime: Scalars['Int'];
+  gaugeId: Scalars['String'];
   txHash: Scalars['String'];
   userAddress: Scalars['String'];
   weightUsed: Scalars['Int'];
@@ -1270,9 +1290,11 @@ export interface Mutation {
   protocolCacheMetrics: Scalars['String'];
   syncBribeDistributions: Scalars['Int'];
   syncGaugeBribes: Scalars['Int'];
+  syncGaugeBribesForEpoch: Scalars['Int'];
   syncGaugeData: Scalars['Boolean'];
   syncGaugeVotes: Scalars['Int'];
   syncGaugesEpoch: Scalars['String'];
+  syncVotesForEpoch: Scalars['Int'];
   tokenDeletePrice: Scalars['Boolean'];
   tokenDeleteTokenType: Scalars['String'];
   tokenInitChartData: Scalars['String'];
@@ -1312,11 +1334,20 @@ export interface MutationSyncBribeDistributionsArgs {
 
 export interface MutationSyncGaugeBribesArgs {
   blocksToScan?: InputMaybe<Scalars['Int']>;
+  forEpoch?: InputMaybe<Scalars['Boolean']>;
+}
+
+export interface MutationSyncGaugeBribesForEpochArgs {
+  epoch: Scalars['Int'];
 }
 
 export interface MutationSyncGaugeVotesArgs {
   blocksToScan?: InputMaybe<Scalars['Int']>;
   epochStartTime?: InputMaybe<Scalars['Int']>;
+}
+
+export interface MutationSyncVotesForEpochArgs {
+  epoch: Scalars['Int'];
 }
 
 export interface MutationTokenDeletePriceArgs {
@@ -1359,6 +1390,7 @@ export interface Query {
   get24HourGaugeFees?: Maybe<Array<Maybe<Scalars['String']>>>;
   getAllGaugeBribes: Array<Maybe<EpochBribeInfo>>;
   getBribes: Array<Maybe<GaugeBribe>>;
+  getBribesForEpoch: Array<Maybe<GaugeBribeRaw>>;
   getCurrentAndNextBribes: Array<Maybe<GaugeBribeInfo>>;
   getCurrentGaugesEpoch: GaugeEpoch;
   getDistributions: Array<Maybe<GaugeBribeDistribution>>;
@@ -1426,6 +1458,10 @@ export interface QueryGetAllGaugeBribesArgs {
 
 export interface QueryGetBribesArgs {
   filter: GetBribesInput;
+}
+
+export interface QueryGetBribesForEpochArgs {
+  epoch: Scalars['Int'];
 }
 
 export interface QueryGetCurrentAndNextBribesArgs {

@@ -18,7 +18,9 @@ type Props = {
 export function VotingSubheader(props: Props) {
   const { votingGauges, votingPeriodEnd } = useVotingGauges();
   let totalBribes = 0;
-  votingGauges?.forEach((gauge) => (gauge.currentEpochBribes?.forEach((bribe: any) => (totalBribes += bribe?.valueUSD || 0))));
+  votingGauges?.forEach((gauge) =>
+    gauge.currentEpochBribes?.forEach((bribe: any) => (totalBribes += bribe?.valueUSD || 0)),
+  );
 
   // Making assumption that total ve- liquidity is about 90% of total liquidity of VRTK-BNB pool.
   const guessedTotalVeLiquidity = bnum(
@@ -39,10 +41,12 @@ export function VotingSubheader(props: Props) {
     if (gauge.currentEpochBribes.length) {
       gaugeCounter++;
       let bribes = 0;
-      gauge.currentEpochBribes?.forEach((bribe: any) => (bribes += bribe?.valueUSD || 0))
+      gauge.currentEpochBribes?.forEach((bribe: any) => (bribes += bribe?.valueUSD || 0));
       let votedValue = (!totalVe.isNaN() ? totalVeLiquidity : guessedTotalVeLiquidity)
-        .times(scale(bnum(gauge.votesNextPeriod), -18)).times(100).div(35);
-      totalBribeAPR = totalBribeAPR.plus(bnum(bribes * 52).div(votedValue))
+        .times(scale(bnum(gauge.votesNextPeriod), -18))
+        .times(100)
+        .div(35);
+      totalBribeAPR = totalBribeAPR.plus(bnum(bribes * 52).div(votedValue));
     }
   });
   const averageBribeAPR = totalBribeAPR.div(gaugeCounter);
@@ -115,7 +119,9 @@ export function VotingSubheader(props: Props) {
               </Box>
               <Text fontWeight="normal" fontSize="0.9rem" marginTop="2%">
                 {fNum2(averageBribeAPR.toString(), {
-                  style: 'percent', maximumFractionDigits: 0, fixedFormat: true
+                  style: 'percent',
+                  maximumFractionDigits: 0,
+                  fixedFormat: true,
                 })}
               </Text>
             </Box>

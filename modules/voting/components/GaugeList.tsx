@@ -26,7 +26,7 @@ export function GaugeList() {
 
   const { hasExistingLock, lockEndDate, isExpired } = useUserVeData();
 
-  const loading = !votingGauges?.length;
+  const loading = false;
 
   // Set users voting info
   useEffect(() => {
