@@ -4,6 +4,16 @@ scalar BigDecimal
 
 scalar BigInt
 
+type BribeClaimInfo {
+  briber: String!
+  claimAmount: String!
+  epochStartTime: Int!
+  gauge: String!
+  merkleProof: [String!]!
+  token: String!
+  user: String!
+}
+
 type BribeDistribution {
   distributionId: Int!
   merkleRoot: String!
@@ -32,21 +42,12 @@ type GaugeBribe {
   valueUSD: Float!
 }
 
-type GaugeBribeDistribution {
-  amount: String!
-  blockNumber: Int!
-  briber: String!
-  distributionId: Int!
-  merkleRoot: String!
-  token: String!
-  txHash: String!
-  votingEpochStart: Int!
-}
-
 type GaugeBribeInfo {
+  bribes: [GaugeBribeRaw]!
   currentEpochBribes: [GaugeBribe]!
   gauge: LiquidityGauge!
   nextEpochBribes: [GaugeBribe]!
+  votes: [GaugeVoteRaw]!
 }
 
 type GaugeBribeRaw {
@@ -54,6 +55,7 @@ type GaugeBribeRaw {
   briber: String!
   epochStartTime: Int!
   gauge: String!
+  id: Int!
   token: String!
   txHash: String!
 }
@@ -133,6 +135,7 @@ type GaugeVoteInfo {
   epochStartTime: Int!
   epochWeekLabel: String!
   gaugeId: String
+  id: Int!
   txHash: String!
   userAddress: String!
   weightUsed: Int!
@@ -142,6 +145,7 @@ type GaugeVoteRaw {
   blockNumber: Int!
   epochStartTime: Int!
   gaugeId: String!
+  id: Int!
   txHash: String!
   userAddress: String!
   weightUsed: Int!
@@ -1251,6 +1255,7 @@ type LiquidityGauge {
 type Mutation {
   cacheAverageBlockTime: String!
   doStakes: Boolean!
+  generateAllGaugesVotingEpochInfo(epoch: Int!): String!
   poolInitializeSnapshotsForPool(poolId: String!): String!
   poolLoadOnChainDataForAllPools: String!
   poolLoadOnChainDataForPoolsWithActiveUpdates: String!
@@ -1273,6 +1278,9 @@ type Mutation {
   poolUpdateLiquidityValuesForAllPools: String!
   poolUpdateVolumeAndFeeValuesForAllPools: String!
   protocolCacheMetrics: String!
+  setGaugeBribesUserData(epoch: Int!, gauge: String!): String!
+  syncAllBribesEpochs: String!
+  syncAllGaugeVotes: String!
   syncBribeDistributions(distributionWeekStart: Int!, votingEpochStart: Int!): Int!
   syncGaugeBribes(blocksToScan: Int, forEpoch: Boolean): Int!
   syncGaugeBribesForEpoch(epoch: Int!): Int!
@@ -1308,12 +1316,11 @@ type Query {
   contentGetNewsItems: [GqlContentNewsItem]!
   get24HourGaugeFees(hoursInPast: Int): [String]
   getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
+  getAllGaugesVotingInfo(epoch: Int!): String!
   getBribes(filter: GetBribesInput!): [GaugeBribe]!
   getBribesForEpoch(epoch: Int!): [GaugeBribeRaw]!
-  getCurrentAndNextBribes(epoch: Int!): [GaugeBribeInfo]!
   getCurrentGaugesEpoch: GaugeEpoch!
-  getDistributions(filter: GetDistributionsInput): [GaugeBribeDistribution]!
-  getEpochBribesForGauge(epoch: Int!, gauge: String!): [GaugeBribe]!
+  getEpochBribesForGauge(epoch: Int!, gauge: String!): GaugeBribeInfo!
   getGaugeEpochs: [GaugeEpoch]!
   getGaugeVotes(filter: GetVotesInput!): GaugeVoteResult!
   getLastBribeSyncInfo: GaugeVoteSyncInfo!
@@ -1496,12 +1503,13 @@ type User {
 type UserBribeClaim {
   amountOwed: String!
   briber: String!
-  distributionId: String!
+  claimAmount: String!
+  distributionId: String
   epochStartTime: Int!
   gauge: String!
   gaugeRecord: LiquidityGauge!
+  merkleProof: [String!]!
   pool: GqlPoolMinimal!
-  proof: [String!]!
   token: String!
   valueUSD: Float!
 }

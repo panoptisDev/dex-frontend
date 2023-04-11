@@ -579,7 +579,7 @@ export const GetUserBribeClaims = gql`
       briber
       gauge
       token
-      proof
+      merkleProof
       valueUSD
       gaugeRecord {
         symbol

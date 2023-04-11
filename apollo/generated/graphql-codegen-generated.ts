@@ -23,6 +23,17 @@ export interface Scalars {
   JSON: any;
 }
 
+export interface BribeClaimInfo {
+  __typename: 'BribeClaimInfo';
+  briber: Scalars['String'];
+  claimAmount: Scalars['String'];
+  epochStartTime: Scalars['Int'];
+  gauge: Scalars['String'];
+  merkleProof: Array<Scalars['String']>;
+  token: Scalars['String'];
+  user: Scalars['String'];
+}
+
 export interface BribeDistribution {
   __typename: 'BribeDistribution';
   distributionId: Scalars['Int'];
@@ -50,23 +61,13 @@ export interface GaugeBribe {
   valueUSD: Scalars['Float'];
 }
 
-export interface GaugeBribeDistribution {
-  __typename: 'GaugeBribeDistribution';
-  amount: Scalars['String'];
-  blockNumber: Scalars['Int'];
-  briber: Scalars['String'];
-  distributionId: Scalars['Int'];
-  merkleRoot: Scalars['String'];
-  token: Scalars['String'];
-  txHash: Scalars['String'];
-  votingEpochStart: Scalars['Int'];
-}
-
 export interface GaugeBribeInfo {
   __typename: 'GaugeBribeInfo';
+  bribes: Array<Maybe<GaugeBribeRaw>>;
   currentEpochBribes: Array<Maybe<GaugeBribe>>;
   gauge: LiquidityGauge;
   nextEpochBribes: Array<Maybe<GaugeBribe>>;
+  votes: Array<Maybe<GaugeVoteRaw>>;
 }
 
 export interface GaugeBribeRaw {
@@ -75,6 +76,7 @@ export interface GaugeBribeRaw {
   briber: Scalars['String'];
   epochStartTime: Scalars['Int'];
   gauge: Scalars['String'];
+  id: Scalars['Int'];
   token: Scalars['String'];
   txHash: Scalars['String'];
 }
@@ -137,6 +139,7 @@ export interface GaugeVoteInfo {
   epochStartTime: Scalars['Int'];
   epochWeekLabel: Scalars['String'];
   gaugeId?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
   txHash: Scalars['String'];
   userAddress: Scalars['String'];
   weightUsed: Scalars['Int'];
@@ -147,6 +150,7 @@ export interface GaugeVoteRaw {
   blockNumber: Scalars['Int'];
   epochStartTime: Scalars['Int'];
   gaugeId: Scalars['String'];
+  id: Scalars['Int'];
   txHash: Scalars['String'];
   userAddress: Scalars['String'];
   weightUsed: Scalars['Int'];
@@ -1266,6 +1270,7 @@ export interface Mutation {
   __typename: 'Mutation';
   cacheAverageBlockTime: Scalars['String'];
   doStakes: Scalars['Boolean'];
+  generateAllGaugesVotingEpochInfo: Scalars['String'];
   poolInitializeSnapshotsForPool: Scalars['String'];
   poolLoadOnChainDataForAllPools: Scalars['String'];
   poolLoadOnChainDataForPoolsWithActiveUpdates: Scalars['String'];
@@ -1288,6 +1293,9 @@ export interface Mutation {
   poolUpdateLiquidityValuesForAllPools: Scalars['String'];
   poolUpdateVolumeAndFeeValuesForAllPools: Scalars['String'];
   protocolCacheMetrics: Scalars['String'];
+  setGaugeBribesUserData: Scalars['String'];
+  syncAllBribesEpochs: Scalars['String'];
+  syncAllGaugeVotes: Scalars['String'];
   syncBribeDistributions: Scalars['Int'];
   syncGaugeBribes: Scalars['Int'];
   syncGaugeBribesForEpoch: Scalars['Int'];
@@ -1311,6 +1319,10 @@ export interface Mutation {
   userSyncChangedWalletBalancesForAllPools: Scalars['String'];
 }
 
+export interface MutationGenerateAllGaugesVotingEpochInfoArgs {
+  epoch: Scalars['Int'];
+}
+
 export interface MutationPoolInitializeSnapshotsForPoolArgs {
   poolId: Scalars['String'];
 }
@@ -1325,6 +1337,11 @@ export interface MutationPoolSyncLatestSnapshotsForAllPoolsArgs {
 
 export interface MutationPoolSyncPoolArgs {
   poolId: Scalars['String'];
+}
+
+export interface MutationSetGaugeBribesUserDataArgs {
+  epoch: Scalars['Int'];
+  gauge: Scalars['String'];
 }
 
 export interface MutationSyncBribeDistributionsArgs {
@@ -1389,12 +1406,11 @@ export interface Query {
   contentGetNewsItems: Array<Maybe<GqlContentNewsItem>>;
   get24HourGaugeFees?: Maybe<Array<Maybe<Scalars['String']>>>;
   getAllGaugeBribes: Array<Maybe<EpochBribeInfo>>;
+  getAllGaugesVotingInfo: Scalars['String'];
   getBribes: Array<Maybe<GaugeBribe>>;
   getBribesForEpoch: Array<Maybe<GaugeBribeRaw>>;
-  getCurrentAndNextBribes: Array<Maybe<GaugeBribeInfo>>;
   getCurrentGaugesEpoch: GaugeEpoch;
-  getDistributions: Array<Maybe<GaugeBribeDistribution>>;
-  getEpochBribesForGauge: Array<Maybe<GaugeBribe>>;
+  getEpochBribesForGauge: GaugeBribeInfo;
   getGaugeEpochs: Array<Maybe<GaugeEpoch>>;
   getGaugeVotes: GaugeVoteResult;
   getLastBribeSyncInfo: GaugeVoteSyncInfo;
@@ -1456,20 +1472,16 @@ export interface QueryGetAllGaugeBribesArgs {
   epoch: Scalars['Int'];
 }
 
+export interface QueryGetAllGaugesVotingInfoArgs {
+  epoch: Scalars['Int'];
+}
+
 export interface QueryGetBribesArgs {
   filter: GetBribesInput;
 }
 
 export interface QueryGetBribesForEpochArgs {
   epoch: Scalars['Int'];
-}
-
-export interface QueryGetCurrentAndNextBribesArgs {
-  epoch: Scalars['Int'];
-}
-
-export interface QueryGetDistributionsArgs {
-  filter?: InputMaybe<GetDistributionsInput>;
 }
 
 export interface QueryGetEpochBribesForGaugeArgs {
@@ -1705,12 +1717,13 @@ export interface UserBribeClaim {
   __typename: 'UserBribeClaim';
   amountOwed: Scalars['String'];
   briber: Scalars['String'];
-  distributionId: Scalars['String'];
+  claimAmount: Scalars['String'];
+  distributionId?: Maybe<Scalars['String']>;
   epochStartTime: Scalars['Int'];
   gauge: Scalars['String'];
   gaugeRecord: LiquidityGauge;
+  merkleProof: Array<Scalars['String']>;
   pool: GqlPoolMinimal;
-  proof: Array<Scalars['String']>;
   token: Scalars['String'];
   valueUSD: Scalars['Float'];
 }
@@ -2011,12 +2024,12 @@ export type GetUserBribeClaimsQuery = {
   __typename: 'Query';
   getUserBribeClaims: Array<{
     __typename: 'UserBribeClaim';
-    distributionId: string;
+    distributionId?: string | null;
     amountOwed: string;
     briber: string;
     gauge: string;
     token: string;
-    proof: Array<string>;
+    merkleProof: Array<string>;
     valueUSD: number;
     gaugeRecord: { __typename: 'LiquidityGauge'; symbol: string };
     pool: { __typename: 'GqlPoolMinimal'; name: string };
@@ -5893,7 +5906,7 @@ export const GetUserBribeClaimsDocument = gql`
       briber
       gauge
       token
-      proof
+      merkleProof
       valueUSD
       gaugeRecord {
         symbol

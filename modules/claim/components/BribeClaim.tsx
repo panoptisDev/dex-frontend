@@ -49,7 +49,7 @@ export function BribeClaim({ bribeRewards }: Props) {
     bribeRewards.forEach((bribe, idx) => {
       const distributor = bribe.briber;
       const tokenIndex = idx;
-      const merkleProof = bribe.proof;
+      const merkleProof = bribe.merkleProof;
 
       tokens.push(bribe.token);
       claims.push([

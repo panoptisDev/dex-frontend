@@ -5,7 +5,7 @@ query GetUserBribeClaims($user: String!) {
     briber
     gauge
     token
-    proof
+    merkleProof
     valueUSD
     gaugeRecord {
       symbol
