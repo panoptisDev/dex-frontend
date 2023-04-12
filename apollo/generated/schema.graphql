@@ -53,11 +53,15 @@ type GaugeBribeInfo {
 type GaugeBribeRaw {
   amount: String!
   briber: String!
+  distributionComplete: Boolean!
+  distributionId: Int
   epochStartTime: Int!
   gauge: String!
   id: Int!
-  token: String!
+  merkleRoot: String
+  tokenAddress: String!
   txHash: String!
+  user: String!
 }
 
 type GaugeEpoch {
@@ -1278,6 +1282,7 @@ type Mutation {
   poolUpdateLiquidityValuesForAllPools: String!
   poolUpdateVolumeAndFeeValuesForAllPools: String!
   protocolCacheMetrics: String!
+  setDistributionIds(input: [SetDistributionIdsInput!]!): String!
   setGaugeBribesUserData(epoch: Int!, gauge: String!): String!
   syncAllBribesEpochs: String!
   syncAllGaugeVotes: String!
@@ -1318,7 +1323,8 @@ type Query {
   getAllGaugeBribes(epoch: Int!): [EpochBribeInfo]!
   getAllGaugesVotingInfo(epoch: Int!): String!
   getBribes(filter: GetBribesInput!): [GaugeBribe]!
-  getBribesForEpoch(epoch: Int!): [GaugeBribeRaw]!
+  getBribesForEpoch(epoch: Int!): [RawBribeClaim]!
+  getBribesNeedingDistribution(epoch: Int!): [GaugeBribeRaw]!
   getCurrentGaugesEpoch: GaugeEpoch!
   getEpochBribesForGauge(epoch: Int!, gauge: String!): GaugeBribeInfo!
   getGaugeEpochs: [GaugeEpoch]!
@@ -1326,6 +1332,7 @@ type Query {
   getLastBribeSyncInfo: GaugeVoteSyncInfo!
   getLastVoteSyncInfo: GaugeVoteSyncInfo!
   getLiquidityGauges(epoch: Int!): [LiquidityGauge]!
+  getPendingDistributions(epoch: Int!): [RawBribeClaim]!
   getProtocolPoolData: [GqlProtocolGaugeInfo]!
   getProtocolTokenList: [String]
   getRewardPools(user: String): [RewardPool]!
@@ -1408,6 +1415,19 @@ type Query {
   userGetVeLockInfo: GqlUserVoteEscrowInfo!
 }
 
+type RawBribeClaim {
+  bribe: GaugeBribeRaw!
+  bribeId: Int!
+  briber: String!
+  distributionComplete: Boolean!
+  distributionId: Int
+  epochStartTime: Int!
+  gauge: String!
+  id: Int!
+  token: String!
+  user: String!
+}
+
 type RewardPool {
   amountStaked: String!
   amountStakedValue: String!
@@ -1469,6 +1489,11 @@ type RewardToken {
    Amount of reward tokens that has been deposited into the gauge
   """
   totalDeposited: BigDecimal!
+}
+
+input SetDistributionIdsInput {
+  bribeId: Int!
+  distributionId: Int!
 }
 
 input UpdateBribeDistributionsInput {

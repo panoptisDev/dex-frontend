@@ -4,8 +4,6 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverHeader,
-  PopoverArrow,
-  PopoverCloseButton,
   Box,
   Text,
   Divider,
@@ -34,14 +32,7 @@ export function GaugeRewardsInfo({ gauge }: Props) {
           <PopoverTrigger>
             <Flex width="50%" justifyContent="space-between">
               <Flex className="cursor-pointer" justifyContent="center" alignContent="center">
-                {/* <Box
-                  display="flex"
-                  p={1}
-                  borderRadius={50}
-                  border={{ sm: '0px', md: '1px solid white', lg: '1px solid white' }}
-                > */}
                 <Image src={bribes} height={25} width={25} />
-                {/* </Box> */}
               </Flex>
 
               {numberFormatUSDValue(totalValue)}
@@ -54,8 +45,6 @@ export function GaugeRewardsInfo({ gauge }: Props) {
             bgColor="vertek.slatepurple.900"
             boxShadow="0 0 12px #000"
           >
-            {/* <PopoverArrow /> */}
-            {/* <PopoverCloseButton /> */}
             <PopoverHeader bgColor="vertek.slatepurple.900">
               <Text fontSize="1.3rem"> Bribes</Text>
             </PopoverHeader>
@@ -75,7 +64,6 @@ export function GaugeRewardsInfo({ gauge }: Props) {
                           />
                           <Text>{bribe?.token.symbol}</Text>
                           <Text>{numberFormatUSDValue(bribe?.valueUSD || 0)}</Text>
-                          {/* <Text>{bribe?.epochWeekLabel}</Text> */}
                         </Flex>
                       </Box>
                     );
@@ -104,7 +92,6 @@ export function GaugeRewardsInfo({ gauge }: Props) {
                             />
                             <Text>{bribe?.token.symbol}</Text>
                             <Text>{numberFormatUSDValue(bribe?.valueUSD || 0)}</Text>
-                            {/* <Text>{bribe?.epochWeekLabel}</Text> */}
                           </Flex>
                         </Box>
                       );

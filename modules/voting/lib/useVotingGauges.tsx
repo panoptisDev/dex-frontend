@@ -1,10 +1,8 @@
 import { intervalToDuration } from 'date-fns';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import {
-  LiquidityGauge,
   useGetCurrentEpochQuery,
   useGetLiquidityGaugesLazyQuery,
-  useGetLiquidityGaugesQuery,
 } from '~/apollo/generated/graphql-codegen-generated';
 import { gaugeControllerDecorator } from '~/lib/services/staking/gauge-controller.decorator';
 import { VotingGauge } from '~/lib/services/staking/types';

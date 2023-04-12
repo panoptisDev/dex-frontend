@@ -74,11 +74,15 @@ export interface GaugeBribeRaw {
   __typename: 'GaugeBribeRaw';
   amount: Scalars['String'];
   briber: Scalars['String'];
+  distributionComplete: Scalars['Boolean'];
+  distributionId?: Maybe<Scalars['Int']>;
   epochStartTime: Scalars['Int'];
   gauge: Scalars['String'];
   id: Scalars['Int'];
-  token: Scalars['String'];
+  merkleRoot?: Maybe<Scalars['String']>;
+  tokenAddress: Scalars['String'];
   txHash: Scalars['String'];
+  user: Scalars['String'];
 }
 
 export interface GaugeEpoch {
@@ -1293,6 +1297,7 @@ export interface Mutation {
   poolUpdateLiquidityValuesForAllPools: Scalars['String'];
   poolUpdateVolumeAndFeeValuesForAllPools: Scalars['String'];
   protocolCacheMetrics: Scalars['String'];
+  setDistributionIds: Scalars['String'];
   setGaugeBribesUserData: Scalars['String'];
   syncAllBribesEpochs: Scalars['String'];
   syncAllGaugeVotes: Scalars['String'];
@@ -1337,6 +1342,10 @@ export interface MutationPoolSyncLatestSnapshotsForAllPoolsArgs {
 
 export interface MutationPoolSyncPoolArgs {
   poolId: Scalars['String'];
+}
+
+export interface MutationSetDistributionIdsArgs {
+  input: Array<SetDistributionIdsInput>;
 }
 
 export interface MutationSetGaugeBribesUserDataArgs {
@@ -1408,7 +1417,8 @@ export interface Query {
   getAllGaugeBribes: Array<Maybe<EpochBribeInfo>>;
   getAllGaugesVotingInfo: Scalars['String'];
   getBribes: Array<Maybe<GaugeBribe>>;
-  getBribesForEpoch: Array<Maybe<GaugeBribeRaw>>;
+  getBribesForEpoch: Array<Maybe<RawBribeClaim>>;
+  getBribesNeedingDistribution: Array<Maybe<GaugeBribeRaw>>;
   getCurrentGaugesEpoch: GaugeEpoch;
   getEpochBribesForGauge: GaugeBribeInfo;
   getGaugeEpochs: Array<Maybe<GaugeEpoch>>;
@@ -1416,6 +1426,7 @@ export interface Query {
   getLastBribeSyncInfo: GaugeVoteSyncInfo;
   getLastVoteSyncInfo: GaugeVoteSyncInfo;
   getLiquidityGauges: Array<Maybe<LiquidityGauge>>;
+  getPendingDistributions: Array<Maybe<RawBribeClaim>>;
   getProtocolPoolData: Array<Maybe<GqlProtocolGaugeInfo>>;
   getProtocolTokenList?: Maybe<Array<Maybe<Scalars['String']>>>;
   getRewardPools: Array<Maybe<RewardPool>>;
@@ -1484,6 +1495,10 @@ export interface QueryGetBribesForEpochArgs {
   epoch: Scalars['Int'];
 }
 
+export interface QueryGetBribesNeedingDistributionArgs {
+  epoch: Scalars['Int'];
+}
+
 export interface QueryGetEpochBribesForGaugeArgs {
   epoch: Scalars['Int'];
   gauge: Scalars['String'];
@@ -1494,6 +1509,10 @@ export interface QueryGetGaugeVotesArgs {
 }
 
 export interface QueryGetLiquidityGaugesArgs {
+  epoch: Scalars['Int'];
+}
+
+export interface QueryGetPendingDistributionsArgs {
   epoch: Scalars['Int'];
 }
 
@@ -1644,6 +1663,20 @@ export interface QueryUserGetUserPendingGaugeRewardsArgs {
   user?: InputMaybe<Scalars['String']>;
 }
 
+export interface RawBribeClaim {
+  __typename: 'RawBribeClaim';
+  bribe: GaugeBribeRaw;
+  bribeId: Scalars['Int'];
+  briber: Scalars['String'];
+  distributionComplete: Scalars['Boolean'];
+  distributionId?: Maybe<Scalars['Int']>;
+  epochStartTime: Scalars['Int'];
+  gauge: Scalars['String'];
+  id: Scalars['Int'];
+  token: Scalars['String'];
+  user: Scalars['String'];
+}
+
 export interface RewardPool {
   __typename: 'RewardPool';
   amountStaked: Scalars['String'];
@@ -1692,6 +1725,11 @@ export interface RewardToken {
   tokenAddress: Scalars['String'];
   /**  Amount of reward tokens that has been deposited into the gauge  */
   totalDeposited: Scalars['BigDecimal'];
+}
+
+export interface SetDistributionIdsInput {
+  bribeId: Scalars['Int'];
+  distributionId: Scalars['Int'];
 }
 
 export interface UpdateBribeDistributionsInput {
