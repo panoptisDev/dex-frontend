@@ -92,7 +92,7 @@ function PoolCompositionTable({ columns, data, hasNestedTokens }: PoolCompositio
     setHiddenColumns([]);
   }, [data]);
 
-  function parseCell(cell: Cell<TableDataTemplate>) {
+  function parseCell(cell: Cell<any>) {
     // hide the 'collapse all' button when there are NO tokens in the pool have nested tokens
     if (cell.column.id === Columns.Expander && !hasNestedTokens) {
       cell.column.toggleHidden(true);

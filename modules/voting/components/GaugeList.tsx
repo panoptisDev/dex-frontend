@@ -23,7 +23,6 @@ export function GaugeList() {
     unallocatedVotes,
     refetchGauges,
   } = useVotingGauges();
-
   const { hasExistingLock, lockEndDate, isExpired } = useUserVeData();
 
   const loading = !votingGauges?.length;
@@ -39,8 +38,6 @@ export function GaugeList() {
       }, totalVotes);
 
       setUnallocatedVoteWeight(votesRemaining);
-
-      // setTimeout(() => setExtendedLoading(false), 500);
     } else {
       setUnallocatedVoteWeight(totalVotes);
     }

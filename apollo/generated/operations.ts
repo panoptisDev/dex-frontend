@@ -1112,9 +1112,23 @@ export const GetCurrentEpoch = gql`
     }
   }
 `;
+export const GetCurrentAndNextEpochBribes = gql`
+  query GetCurrentAndNextEpochBribes {
+    getCurrentAndNextEpochBribes {
+      gauge
+      currentEpochBribes {
+        ...GaugeBribeFragment
+      }
+      nextEpochBribes {
+        ...GaugeBribeFragment
+      }
+    }
+  }
+  ${GaugeBribeFragment}
+`;
 export const GetLiquidityGauges = gql`
-  query GetLiquidityGauges($epoch: Int!) {
-    getLiquidityGauges(epoch: $epoch) {
+  query GetLiquidityGauges {
+    getLiquidityGauges {
       id
       address
       symbol
@@ -1145,15 +1159,8 @@ export const GetLiquidityGauges = gql`
           symbol
         }
       }
-      currentEpochBribes {
-        ...GaugeBribeFragment
-      }
-      nextEpochBribes {
-        ...GaugeBribeFragment
-      }
     }
   }
-  ${GaugeBribeFragment}
 `;
 export const GetUserStakes = gql`
   query GetUserStakes($user: String!, $poolIds: [String!]!) {

@@ -41,6 +41,12 @@ export interface BribeDistribution {
   txHash: Scalars['String'];
 }
 
+export interface CurrentAndNextEpochBribes {
+  __typename: 'CurrentAndNextEpochBribes';
+  currentEpochBribes: Array<Maybe<GaugeBribe>>;
+  nextEpochBribes: Array<Maybe<GaugeBribe>>;
+}
+
 export interface EpochBribeInfo {
   __typename: 'EpochBribeInfo';
   currentEpochBribes: Array<Maybe<GaugeBribe>>;
@@ -63,11 +69,9 @@ export interface GaugeBribe {
 
 export interface GaugeBribeInfo {
   __typename: 'GaugeBribeInfo';
-  bribes: Array<Maybe<GaugeBribeRaw>>;
   currentEpochBribes: Array<Maybe<GaugeBribe>>;
-  gauge: LiquidityGauge;
+  gauge: Scalars['String'];
   nextEpochBribes: Array<Maybe<GaugeBribe>>;
-  votes: Array<Maybe<GaugeVoteRaw>>;
 }
 
 export interface GaugeBribeRaw {
@@ -1419,6 +1423,7 @@ export interface Query {
   getBribes: Array<Maybe<GaugeBribe>>;
   getBribesForEpoch: Array<Maybe<RawBribeClaim>>;
   getBribesNeedingDistribution: Array<Maybe<GaugeBribeRaw>>;
+  getCurrentAndNextEpochBribes: Array<Maybe<GaugeBribeInfo>>;
   getCurrentGaugesEpoch: GaugeEpoch;
   getEpochBribesForGauge: GaugeBribeInfo;
   getGaugeEpochs: Array<Maybe<GaugeEpoch>>;
@@ -1506,10 +1511,6 @@ export interface QueryGetEpochBribesForGaugeArgs {
 
 export interface QueryGetGaugeVotesArgs {
   filter: GetVotesInput;
-}
-
-export interface QueryGetLiquidityGaugesArgs {
-  epoch: Scalars['Int'];
 }
 
 export interface QueryGetPendingDistributionsArgs {
@@ -4851,9 +4852,37 @@ export type GetCurrentEpochQuery = {
   getCurrentGaugesEpoch: { __typename: 'GaugeEpoch'; epoch: number; date: string };
 };
 
-export type GetLiquidityGaugesQueryVariables = Exact<{
-  epoch: Scalars['Int'];
-}>;
+export type GetCurrentAndNextEpochBribesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetCurrentAndNextEpochBribesQuery = {
+  __typename: 'Query';
+  getCurrentAndNextEpochBribes: Array<{
+    __typename: 'GaugeBribeInfo';
+    gauge: string;
+    currentEpochBribes: Array<{
+      __typename: 'GaugeBribe';
+      briber: string;
+      gauge: string;
+      amount: string;
+      epochStartTime: number;
+      valueUSD: number;
+      epochWeekLabel: string;
+      token: { __typename: 'GqlToken'; address: string; symbol: string; logoURI?: string | null };
+    } | null>;
+    nextEpochBribes: Array<{
+      __typename: 'GaugeBribe';
+      briber: string;
+      gauge: string;
+      amount: string;
+      epochStartTime: number;
+      valueUSD: number;
+      epochWeekLabel: string;
+      token: { __typename: 'GqlToken'; address: string; symbol: string; logoURI?: string | null };
+    } | null>;
+  } | null>;
+};
+
+export type GetLiquidityGaugesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetLiquidityGaugesQuery = {
   __typename: 'Query';
@@ -4890,26 +4919,6 @@ export type GetLiquidityGaugesQuery = {
         symbol: string;
       }>;
     };
-    currentEpochBribes: Array<{
-      __typename: 'GaugeBribe';
-      briber: string;
-      gauge: string;
-      amount: string;
-      epochStartTime: number;
-      valueUSD: number;
-      epochWeekLabel: string;
-      token: { __typename: 'GqlToken'; address: string; symbol: string; logoURI?: string | null };
-    } | null>;
-    nextEpochBribes: Array<{
-      __typename: 'GaugeBribe';
-      briber: string;
-      gauge: string;
-      amount: string;
-      epochStartTime: number;
-      valueUSD: number;
-      epochWeekLabel: string;
-      token: { __typename: 'GqlToken'; address: string; symbol: string; logoURI?: string | null };
-    } | null>;
   } | null>;
 };
 
@@ -7396,9 +7405,73 @@ export type GetCurrentEpochQueryResult = Apollo.QueryResult<
   GetCurrentEpochQuery,
   GetCurrentEpochQueryVariables
 >;
+export const GetCurrentAndNextEpochBribesDocument = gql`
+  query GetCurrentAndNextEpochBribes {
+    getCurrentAndNextEpochBribes {
+      gauge
+      currentEpochBribes {
+        ...GaugeBribeFragment
+      }
+      nextEpochBribes {
+        ...GaugeBribeFragment
+      }
+    }
+  }
+  ${GaugeBribeFragmentFragmentDoc}
+`;
+
+/**
+ * __useGetCurrentAndNextEpochBribesQuery__
+ *
+ * To run a query within a React component, call `useGetCurrentAndNextEpochBribesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrentAndNextEpochBribesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrentAndNextEpochBribesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCurrentAndNextEpochBribesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetCurrentAndNextEpochBribesQuery,
+    GetCurrentAndNextEpochBribesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetCurrentAndNextEpochBribesQuery,
+    GetCurrentAndNextEpochBribesQueryVariables
+  >(GetCurrentAndNextEpochBribesDocument, options);
+}
+export function useGetCurrentAndNextEpochBribesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetCurrentAndNextEpochBribesQuery,
+    GetCurrentAndNextEpochBribesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetCurrentAndNextEpochBribesQuery,
+    GetCurrentAndNextEpochBribesQueryVariables
+  >(GetCurrentAndNextEpochBribesDocument, options);
+}
+export type GetCurrentAndNextEpochBribesQueryHookResult = ReturnType<
+  typeof useGetCurrentAndNextEpochBribesQuery
+>;
+export type GetCurrentAndNextEpochBribesLazyQueryHookResult = ReturnType<
+  typeof useGetCurrentAndNextEpochBribesLazyQuery
+>;
+export type GetCurrentAndNextEpochBribesQueryResult = Apollo.QueryResult<
+  GetCurrentAndNextEpochBribesQuery,
+  GetCurrentAndNextEpochBribesQueryVariables
+>;
 export const GetLiquidityGaugesDocument = gql`
-  query GetLiquidityGauges($epoch: Int!) {
-    getLiquidityGauges(epoch: $epoch) {
+  query GetLiquidityGauges {
+    getLiquidityGauges {
       id
       address
       symbol
@@ -7429,15 +7502,8 @@ export const GetLiquidityGaugesDocument = gql`
           symbol
         }
       }
-      currentEpochBribes {
-        ...GaugeBribeFragment
-      }
-      nextEpochBribes {
-        ...GaugeBribeFragment
-      }
     }
   }
-  ${GaugeBribeFragmentFragmentDoc}
 `;
 
 /**
@@ -7452,12 +7518,11 @@ export const GetLiquidityGaugesDocument = gql`
  * @example
  * const { data, loading, error } = useGetLiquidityGaugesQuery({
  *   variables: {
- *      epoch: // value for 'epoch'
  *   },
  * });
  */
 export function useGetLiquidityGaugesQuery(
-  baseOptions: Apollo.QueryHookOptions<GetLiquidityGaugesQuery, GetLiquidityGaugesQueryVariables>,
+  baseOptions?: Apollo.QueryHookOptions<GetLiquidityGaugesQuery, GetLiquidityGaugesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<GetLiquidityGaugesQuery, GetLiquidityGaugesQueryVariables>(

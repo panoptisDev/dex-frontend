@@ -7,15 +7,13 @@ import { useTrade } from '~/modules/trade/lib/useTrade';
 import { BatchSwapSorRoute } from '~/components/batch-swap/BatchSwapSorRoute';
 import { BatchSwapList } from '~/components/batch-swap/BatchSwapList';
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
-import 'animate.css'; 
-
+import 'animate.css';
 
 export function TradeContainer() {
   const { tokenOut, tokenIn } = useTradeData();
-  const { swapInfo, loadingSwaps, isNativeAssetUnwrap, isNativeAssetWrap } = useTrade();
+  const { swapInfo, isNativeAssetUnwrap, isNativeAssetWrap } = useTrade();
   const showRouting =
     !isNativeAssetUnwrap && !isNativeAssetWrap && swapInfo && swapInfo.swaps.length > 0;
-  // const hasNoRoute = !loadingSwaps && (!swapInfo || swapInfo.swaps.length === 0);
 
   return (
     <Box>
@@ -30,21 +28,24 @@ export function TradeContainer() {
         pb="20"
         //pt="8"
       >
-        <GridItem area="swap" 
-        className=" animate__slower 
+        <GridItem
+          area="swap"
+          className=" animate__slower 
         animate__animated animate__fadeInLeft
         animate__delay-0s 
-        animate__duration-5s" >
-          <TradeInterfaceContainer 
- />
+        animate__duration-5s"
+        >
+          <TradeInterfaceContainer />
         </GridItem>
 
         {/* start of the chart and routing info  */}
-        <GridItem area="chart-route" paddingX="2"
-         className=" animate__slower 
+        <GridItem
+          area="chart-route"
+          paddingX="2"
+          className=" animate__slower 
          animate__animated animate__fadeInRight
          animate__delay-0s 
-         animate__duration-5s" 
+         animate__duration-5s"
         >
           <Box
             bgColor="vertek.slate.900"

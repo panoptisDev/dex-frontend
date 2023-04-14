@@ -3,7 +3,6 @@ import {
   LiquidityGauge,
   useGetLiquidityGaugesQuery,
 } from '~/apollo/generated/graphql-codegen-generated';
-import { CURRENT_EPOCH } from '~/lib/util/epoch-utils';
 
 export function useGetGaugesQuery() {
   const [gauges, setGauges] = useState<LiquidityGauge[]>([]);
@@ -15,9 +14,6 @@ export function useGetGaugesQuery() {
     refetch: refetchGauges,
   } = useGetLiquidityGaugesQuery({
     pollInterval: 15000,
-    variables: {
-      epoch: CURRENT_EPOCH,
-    },
   });
 
   useEffect(() => {

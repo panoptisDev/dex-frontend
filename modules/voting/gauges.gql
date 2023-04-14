@@ -5,8 +5,21 @@ query GetCurrentEpoch {
   }
 }
 
-query GetLiquidityGauges($epoch: Int!) {
-  getLiquidityGauges(epoch: $epoch) {
+query GetCurrentAndNextEpochBribes {
+  getCurrentAndNextEpochBribes {
+    gauge
+    currentEpochBribes {
+      ...GaugeBribeFragment
+    }
+
+    nextEpochBribes {
+      ...GaugeBribeFragment
+    }
+  }
+}
+
+query GetLiquidityGauges {
+  getLiquidityGauges {
     id
     address
     symbol
@@ -39,14 +52,6 @@ query GetLiquidityGauges($epoch: Int!) {
         logoURI
         symbol
       }
-    }
-
-    currentEpochBribes {
-      ...GaugeBribeFragment
-    }
-
-    nextEpochBribes {
-      ...GaugeBribeFragment
     }
   }
 }

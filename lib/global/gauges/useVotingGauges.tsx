@@ -2,9 +2,8 @@ import { intervalToDuration, nextThursday } from 'date-fns';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useGetLiquidityGaugesQuery } from '~/apollo/generated/graphql-codegen-generated';
 import { gaugeControllerDecorator } from '~/lib/services/staking/gauge-controller.decorator';
-import { VotingGauge, VotingGaugeWithVotes } from '~/lib/services/staking/types';
+import { VotingGauge } from '~/lib/services/staking/types';
 import { useUserAccount } from '~/lib/user/useUserAccount';
-import { CURRENT_EPOCH } from '~/lib/util/epoch-utils';
 
 export function _useGauges() {
   const [votingPeriodEnd, setVotingPeriodEnd] = useState<number[]>();
@@ -22,9 +21,6 @@ export function _useGauges() {
   } = useGetLiquidityGaugesQuery({
     pollInterval: 30000,
     notifyOnNetworkStatusChange: true,
-    variables: {
-      epoch: CURRENT_EPOCH,
-    },
   });
 
   useEffect(() => {

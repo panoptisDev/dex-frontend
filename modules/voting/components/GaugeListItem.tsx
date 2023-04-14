@@ -10,6 +10,7 @@ import { GaugeRewardsInfo } from './GaugeRewardsInfo';
 import { formatVotesAsPercent } from '../lib/utils';
 import { useUserVeData } from '../lib/useUserVeData';
 import { VotingStatsPopover } from './VotingStatsPopover';
+import { useGetGaugeBribes } from '../lib/useGetGaugeBribes';
 
 const MemoizedTokenAvatarSetInList = memo(TokenAvatarSetInList);
 
@@ -18,8 +19,13 @@ type Props = {
   gauge: VotingGaugeWithVotes;
 };
 
-export function GaugeListItem(props: Props) {
-  const normalizedVotes = scale(new BigNumber(props.gauge.userVotes), -4);
+export function GaugeListItem({ gauge, onVoteClick }: Props) {
+  const { getGaugeBribes } = useGetGaugeBribes();
+
+  const bribeInfo = getGaugeBribes(gauge.address);
+  const currentEpochBribes = bribeInfo.currentEpochBribes;
+
+  const normalizedVotes = scale(new BigNumber(gauge.userVotes), -4);
   const userVotes = fNum2(normalizedVotes.toString(), {
     style: 'percent',
     maximumFractionDigits: 2,
@@ -29,21 +35,27 @@ export function GaugeListItem(props: Props) {
   const guessedTotalVeLiquidity = bnum(
     useUserVeData().lockablePool?.dynamicData.totalLiquidity || 0,
   ).times(0.9);
+
   const totalVe = bnum(useUserVeData().currentVeBalance || 1)
     .times(100)
     .div(useUserVeData().percentOwned || 100);
+
   const totalVeLiquidity = totalVe.times(
     bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 1).div(
       bnum(useUserVeData().lockablePool?.dynamicData.totalShares || 1),
     ),
   );
+
   let bribeValue = 0;
-  props.gauge.currentEpochBribes?.forEach((b) => (bribeValue += b?.valueUSD || 0));
-  const gaugeVotes = scale(bnum(props.gauge.votesNextPeriod), -18);
+
+  currentEpochBribes.forEach((b) => (bribeValue += b?.valueUSD || 0));
+
+  const gaugeVotes = scale(bnum(gauge.votesNextPeriod), -18);
   const votedValue = (!totalVe.isNaN() ? totalVeLiquidity : guessedTotalVeLiquidity)
     .times(gaugeVotes)
     .times(100)
     .div(35);
+
   const bribeAPR = fNum2(
     bnum(bribeValue * 52)
       .div(votedValue)
@@ -54,13 +66,9 @@ export function GaugeListItem(props: Props) {
     },
   );
 
-  // function redirectToPool(gauge: VotingGaugeWithVotes) {
-  //   window.location.href = poolURLFor(gauge.pool.id, gauge.network, gauge.pool.poolType);
-  // }
-
-  const votesThisPeriod = formatVotesAsPercent(props.gauge.votes);
-  const votesNextPeriod = formatVotesAsPercent(props.gauge.votesNextPeriod);
-  const voteDifference = Number(props.gauge.votesNextPeriod) - Number(props.gauge.votes);
+  const votesThisPeriod = formatVotesAsPercent(gauge.votes);
+  const votesNextPeriod = formatVotesAsPercent(gauge.votesNextPeriod);
+  const voteDifference = Number(gauge.votesNextPeriod) - Number(gauge.votes);
 
   return (
     <Grid
@@ -90,7 +98,7 @@ export function GaugeListItem(props: Props) {
         alignItems="center"
         justifyContent={{ base: 'center', lg: 'flex-start' }}
       >
-        <MemoizedTokenAvatarSetInList imageSize={28} width={92} tokens={props.gauge.pool.tokens} />
+        <MemoizedTokenAvatarSetInList imageSize={28} width={92} tokens={gauge.pool.tokens} />
       </GridItem>
 
       <GridItem
@@ -101,7 +109,7 @@ export function GaugeListItem(props: Props) {
         justifyContent={{ base: 'center', lg: 'flex-start' }}
         fontSize="1.2rem"
       >
-        {props.gauge.pool.name}
+        {gauge.pool.name}
       </GridItem>
 
       <GridItem
@@ -126,7 +134,7 @@ export function GaugeListItem(props: Props) {
         <MobileLabel text="Next Period Votes" />
         <Flex justifyContent="space-between" width="35%">
           <Text color={voteDifference > 0 ? 'green' : 'red'}>
-            {formatVotesAsPercent(props.gauge.votesNextPeriod)}
+            {formatVotesAsPercent(gauge.votesNextPeriod)}
           </Text>
 
           <VotingStatsPopover
@@ -156,7 +164,7 @@ export function GaugeListItem(props: Props) {
         justifyContent={{ base: 'center', lg: 'center' }}
         // textAlign="center"
       >
-        <GaugeRewardsInfo gauge={props.gauge} />
+        <GaugeRewardsInfo bribeInfo={bribeInfo} />
       </GridItem>
 
       <GridItem
@@ -169,7 +177,7 @@ export function GaugeListItem(props: Props) {
         <Button
           variant="stayblack"
           width={{ base: '90%', lg: '130px' }}
-          onClick={() => props.onVoteClick(props.gauge)}
+          onClick={() => onVoteClick(gauge)}
         >
           Vote
         </Button>

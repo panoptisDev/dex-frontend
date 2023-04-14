@@ -518,10 +518,7 @@ function scaleTokenAmountDownFrom18Decimals(
   return oldBnum(scaledAmount.toString());
 }
 
-export function poolGetPoolTokenForPossiblyNestedTokenOut(
-  pool: GqlPoolWeighted | GqlPoolPhantomStable | GqlPoolPhantomStableNested | GqlPoolLinearNested,
-  tokenOutAddress: string,
-) {
+export function poolGetPoolTokenForPossiblyNestedTokenOut(pool: any, tokenOutAddress: string) {
   return pool.tokens.find((poolToken) => {
     if (poolToken.address === tokenOutAddress) {
       return true;

@@ -22,6 +22,11 @@ type BribeDistribution {
 
 scalar Bytes
 
+type CurrentAndNextEpochBribes {
+  currentEpochBribes: [GaugeBribe]!
+  nextEpochBribes: [GaugeBribe]!
+}
+
 scalar Date
 
 type EpochBribeInfo {
@@ -43,11 +48,9 @@ type GaugeBribe {
 }
 
 type GaugeBribeInfo {
-  bribes: [GaugeBribeRaw]!
   currentEpochBribes: [GaugeBribe]!
-  gauge: LiquidityGauge!
+  gauge: String!
   nextEpochBribes: [GaugeBribe]!
-  votes: [GaugeVoteRaw]!
 }
 
 type GaugeBribeRaw {
@@ -1325,13 +1328,14 @@ type Query {
   getBribes(filter: GetBribesInput!): [GaugeBribe]!
   getBribesForEpoch(epoch: Int!): [RawBribeClaim]!
   getBribesNeedingDistribution(epoch: Int!): [GaugeBribeRaw]!
+  getCurrentAndNextEpochBribes: [GaugeBribeInfo]!
   getCurrentGaugesEpoch: GaugeEpoch!
   getEpochBribesForGauge(epoch: Int!, gauge: String!): GaugeBribeInfo!
   getGaugeEpochs: [GaugeEpoch]!
   getGaugeVotes(filter: GetVotesInput!): GaugeVoteResult!
   getLastBribeSyncInfo: GaugeVoteSyncInfo!
   getLastVoteSyncInfo: GaugeVoteSyncInfo!
-  getLiquidityGauges(epoch: Int!): [LiquidityGauge]!
+  getLiquidityGauges: [LiquidityGauge]!
   getPendingDistributions(epoch: Int!): [RawBribeClaim]!
   getProtocolPoolData: [GqlProtocolGaugeInfo]!
   getProtocolTokenList: [String]

@@ -10,20 +10,21 @@ import {
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import bribes from './moneybag.svg';
-import { LiquidityGauge } from '~/apollo/generated/graphql-codegen-generated';
 import TokenAvatarSet from '~/components/token/TokenAvatarSet';
 import { numberFormatUSDValue } from '~/lib/util/number-formats';
 
 type Props = {
-  gauge: LiquidityGauge;
+  bribeInfo: any;
 };
 
-export function GaugeRewardsInfo({ gauge }: Props) {
-  const hasBribes = gauge.currentEpochBribes.length || gauge.nextEpochBribes.length;
+export function GaugeRewardsInfo({ bribeInfo }: Props) {
+  const currentEpochBribes = bribeInfo.currentEpochBribes || [];
+  const nextEpochBribes = bribeInfo.nextEpochBribes || [];
+  const hasBribes = currentEpochBribes.length || nextEpochBribes.length;
 
   let totalValue = 0;
-  gauge.currentEpochBribes?.forEach((b) => (totalValue += b?.valueUSD || 0));
-  gauge.nextEpochBribes?.forEach((b) => (totalValue += b?.valueUSD || 0));
+  currentEpochBribes?.forEach((b) => (totalValue += b?.valueUSD || 0));
+  nextEpochBribes?.forEach((b) => (totalValue += b?.valueUSD || 0));
 
   return (
     <>
@@ -52,9 +53,9 @@ export function GaugeRewardsInfo({ gauge }: Props) {
               <Text mt={2} fontWeight={500} textAlign="center" fontSize="1.1rem">
                 Current Epoch Bribes
               </Text>
-              {gauge.currentEpochBribes.length ? (
+              {currentEpochBribes.length ? (
                 <Flex direction="column">
-                  {gauge.currentEpochBribes?.map((bribe, i) => {
+                  {currentEpochBribes?.map((bribe, i) => {
                     return (
                       <Box key={i}>
                         <Flex alignItems="center" gap={2} p={3}>
@@ -79,10 +80,10 @@ export function GaugeRewardsInfo({ gauge }: Props) {
               <Text mt={4} fontWeight={500} textAlign="center" fontSize="1.1rem">
                 Next Epoch Bribes
               </Text>
-              {gauge.nextEpochBribes.length ? (
+              {nextEpochBribes.length ? (
                 <Flex direction="column" mt={4}>
                   <Flex direction="column">
-                    {gauge.nextEpochBribes?.map((bribe, i) => {
+                    {nextEpochBribes?.map((bribe, i) => {
                       return (
                         <Box key={i}>
                           <Flex alignItems="center" gap={2} p={3}>

@@ -45,25 +45,13 @@ export function _useGauges() {
   }, [gaugeFetchError]);
 
   useEffect(() => {
-    console.log(epochData);
     if (!isLoadingEpoch && epochData?.getCurrentGaugesEpoch) {
-      fetchGauges({
-        variables: {
-          epoch: epochData.getCurrentGaugesEpoch.epoch,
-        },
-      });
-
+      fetchGauges();
       startGaugesPolling(GAUGE_POLLING_INTERVAL);
     }
 
     return () => stopGaugesPolling();
   }, [isLoadingEpoch, epochData]);
-
-  useEffect(() => {
-    if (gaugesData?.getLiquidityGauges) {
-      console.log(gaugesData?.getLiquidityGauges);
-    }
-  }, [gaugesData]);
 
   function setUserVotes(gauges: any[]) {
     const totalVotes = 1e4; // 10,000

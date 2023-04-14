@@ -10,6 +10,7 @@ import { numberFormatUSDValue } from '~/lib/util/number-formats';
 import { bnum, scale } from '~/lib/util/big-number.utils';
 import { fNum2 } from '~/lib/util/useNumber';
 import { useUserVeData } from '../lib/useUserVeData';
+import { useGetGaugeBribes } from '../lib/useGetGaugeBribes';
 
 type Props = {
   unallocatedVotesFormatted: string;
@@ -17,18 +18,23 @@ type Props = {
 
 export function VotingSubheader(props: Props) {
   const { votingGauges, votingPeriodEnd } = useVotingGauges();
+  const { getGaugeBribes } = useGetGaugeBribes();
+
   let totalBribes = 0;
-  votingGauges?.forEach((gauge) =>
-    gauge.currentEpochBribes?.forEach((bribe: any) => (totalBribes += bribe?.valueUSD || 0)),
-  );
+  votingGauges?.forEach((gauge) => {
+    const bribeInfo = getGaugeBribes(gauge.address);
+    bribeInfo.currentEpochBribes?.forEach((bribe: any) => (totalBribes += bribe?.valueUSD || 0));
+  });
 
   // Making assumption that total ve- liquidity is about 90% of total liquidity of VRTK-BNB pool.
   const guessedTotalVeLiquidity = bnum(
     useUserVeData().lockablePool?.dynamicData.totalLiquidity || 0,
   ).times(0.9);
+
   const totalVe = bnum(useUserVeData().currentVeBalance || 1)
     .times(100)
     .div(useUserVeData().percentOwned || 100);
+
   const totalVeLiquidity = totalVe.times(
     bnum(useUserVeData().lockablePool?.dynamicData.totalLiquidity || 1).div(
       bnum(useUserVeData().lockablePool?.dynamicData.totalShares || 1),
@@ -38,17 +44,23 @@ export function VotingSubheader(props: Props) {
   let gaugeCounter = 0;
   let totalBribeAPR = bnum(0);
   votingGauges?.forEach((gauge) => {
-    if (gauge.currentEpochBribes.length) {
+    const bribeInfo = getGaugeBribes(gauge.address);
+
+    if (bribeInfo.currentEpochBribes.length) {
       gaugeCounter++;
       let bribes = 0;
+
       gauge.currentEpochBribes?.forEach((bribe: any) => (bribes += bribe?.valueUSD || 0));
+
       let votedValue = (!totalVe.isNaN() ? totalVeLiquidity : guessedTotalVeLiquidity)
         .times(scale(bnum(gauge.votesNextPeriod), -18))
         .times(100)
         .div(35);
+
       totalBribeAPR = totalBribeAPR.plus(bnum(bribes * 52).div(votedValue));
     }
   });
+
   const averageBribeAPR = totalBribeAPR.div(gaugeCounter);
 
   return (
