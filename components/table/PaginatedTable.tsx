@@ -109,9 +109,9 @@ export function PaginatedTable({
                       onPageSizeChange && onPageSizeChange(parseInt(event.target.value));
                     }}
                   >
-                    <option className="table" value="20">
+                    {/* <option className="table" value="20">
                       20
-                    </option>
+                    </option> */}
                     <option className="table" value="50">
                       50
                     </option>

@@ -16,7 +16,7 @@ interface PoolsQueryVariables extends GetPoolsQueryVariables {
 }
 
 export const DEFAULT_POOL_LIST_QUERY_VARS: PoolsQueryVariables = {
-  first: 20,
+  first: 50,
   skip: 0,
   orderBy: 'totalLiquidity',
   orderDirection: 'desc',
