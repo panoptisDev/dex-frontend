@@ -40,6 +40,9 @@ fragment GqlPoolMinimal on GqlPoolMinimal {
   name
   symbol
   createTime
+  categories {
+    category
+  }
   dynamicData {
     totalLiquidity
     totalLiquidity24hAgo

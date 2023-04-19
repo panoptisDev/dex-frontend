@@ -270,6 +270,9 @@ export const GqlPoolMinimal = gql`
     name
     symbol
     createTime
+    categories {
+      category
+    }
     dynamicData {
       totalLiquidity
       totalLiquidity24hAgo

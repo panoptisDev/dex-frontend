@@ -341,6 +341,10 @@ type GqlPoolBatchSwapSwap {
   valueUSD: Float!
 }
 
+type GqlPoolCategory {
+  category: GqlPoolFilterCategory
+}
+
 type GqlPoolDynamicData {
   apr: GqlPoolApr!
   fees24h: BigDecimal!
@@ -421,6 +425,7 @@ input GqlPoolFilter {
 
 enum GqlPoolFilterCategory {
   BLACK_LISTED
+  COMMUNITY
   INCENTIVIZED
 }
 
@@ -595,6 +600,7 @@ type GqlPoolMetaStable implements GqlPoolBase {
 type GqlPoolMinimal {
   address: Bytes!
   allTokens: [GqlPoolTokenExpanded!]!
+  categories: [GqlPoolCategory]
   createTime: Int!
   decimals: Int!
   displayTokens: [GqlPoolTokenDisplay!]!

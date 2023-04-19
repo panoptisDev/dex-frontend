@@ -1,6 +1,7 @@
 import { makeVar, useReactiveVar } from '@apollo/client';
 import {
   GetPoolsQueryVariables,
+  GqlPoolFilterCategory,
   GqlPoolOrderBy,
   GqlPoolOrderDirection,
   useGetPoolFiltersQuery,
@@ -21,7 +22,7 @@ export const DEFAULT_POOL_LIST_QUERY_VARS: PoolsQueryVariables = {
   orderBy: 'totalLiquidity',
   orderDirection: 'desc',
   where: {
-    categoryIn: ['INCENTIVIZED'],
+    categoryIn: ['INCENTIVIZED', 'COMMUNITY'],
     poolTypeIn: ['WEIGHTED', 'STABLE', 'PHANTOM_STABLE', 'META_STABLE'],
   },
   textSearch: null,
@@ -48,6 +49,10 @@ export function _usePoolList() {
     notifyOnNetworkStatusChange: true,
     variables: state,
   });
+
+  if (error) {
+    console.log(error);
+  }
 
   const { data: poolFilters } = useGetPoolFiltersQuery();
 
@@ -112,7 +117,7 @@ export function _usePoolList() {
     showFiltersVar(!showFiltersVar());
   }
 
-  async function setPoolIds(poolIds: string[]) {
+  async function setPoolIds(poolIds: string[], categoryIn: GqlPoolFilterCategory[] = null) {
     const state = poolListStateVar();
 
     if (!eq(poolIds, state.where?.idIn)) {
@@ -121,7 +126,7 @@ export function _usePoolList() {
         where: {
           ...state.where,
           idIn: poolIds,
-          categoryIn: null,
+          categoryIn,
           categoryNotIn: null,
         },
         first: 100,

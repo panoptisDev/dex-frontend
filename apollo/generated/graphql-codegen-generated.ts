@@ -360,6 +360,11 @@ export interface GqlPoolBatchSwapSwap {
   valueUSD: Scalars['Float'];
 }
 
+export interface GqlPoolCategory {
+  __typename: 'GqlPoolCategory';
+  category?: Maybe<GqlPoolFilterCategory>;
+}
+
 export interface GqlPoolDynamicData {
   __typename: 'GqlPoolDynamicData';
   apr: GqlPoolApr;
@@ -441,7 +446,7 @@ export interface GqlPoolFilter {
   tokensNotIn?: InputMaybe<Array<Scalars['String']>>;
 }
 
-export type GqlPoolFilterCategory = 'BLACK_LISTED' | 'INCENTIVIZED';
+export type GqlPoolFilterCategory = 'BLACK_LISTED' | 'COMMUNITY' | 'INCENTIVIZED';
 
 export interface GqlPoolFilterDefinition {
   __typename: 'GqlPoolFilterDefinition';
@@ -623,6 +628,7 @@ export interface GqlPoolMinimal {
   __typename: 'GqlPoolMinimal';
   address: Scalars['Bytes'];
   allTokens: Array<GqlPoolTokenExpanded>;
+  categories?: Maybe<Array<Maybe<GqlPoolCategory>>>;
   createTime: Scalars['Int'];
   decimals: Scalars['Int'];
   displayTokens: Array<GqlPoolTokenDisplay>;
@@ -4375,6 +4381,10 @@ export type GetPoolsQuery = {
     name: string;
     symbol: string;
     createTime: number;
+    categories?: Array<{
+      __typename: 'GqlPoolCategory';
+      category?: GqlPoolFilterCategory | null;
+    } | null> | null;
     dynamicData: {
       __typename: 'GqlPoolDynamicData';
       totalLiquidity: string;
@@ -4455,6 +4465,10 @@ export type GqlPoolMinimalFragment = {
   name: string;
   symbol: string;
   createTime: number;
+  categories?: Array<{
+    __typename: 'GqlPoolCategory';
+    category?: GqlPoolFilterCategory | null;
+  } | null> | null;
   dynamicData: {
     __typename: 'GqlPoolDynamicData';
     totalLiquidity: string;
@@ -5231,6 +5245,9 @@ export const GqlPoolMinimalFragmentDoc = gql`
     name
     symbol
     createTime
+    categories {
+      category
+    }
     dynamicData {
       totalLiquidity
       totalLiquidity24hAgo
