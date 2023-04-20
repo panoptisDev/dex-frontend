@@ -31,6 +31,8 @@ function PoolList() {
   const { userPoolIds, usdBalanceForPool, hasBptInWalletForPool } = useUserData();
   const userPoolIdsStr = userPoolIds.join();
 
+  console.log(userPoolIds);
+
   useEffect(() => {
     if (showMyInvestments) {
       setPoolIds(userPoolIds).catch();

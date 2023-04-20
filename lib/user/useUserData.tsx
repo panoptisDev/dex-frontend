@@ -79,7 +79,11 @@ export function _useUserData() {
     portfolioValueUSD,
     poolBalances,
     staking,
-    userPoolIds: [...poolBalances.map((balance) => balance.poolId)],
+    userPoolIds: [
+      ...poolBalances
+        .filter((p) => parseFloat(p.totalBalance) > 0)
+        .map((balance) => balance.poolId),
+    ],
     boostForPool,
     bptBalanceForPool,
     usdBalanceForPool,

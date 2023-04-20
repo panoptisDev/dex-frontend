@@ -600,7 +600,7 @@ type GqlPoolMetaStable implements GqlPoolBase {
 type GqlPoolMinimal {
   address: Bytes!
   allTokens: [GqlPoolTokenExpanded!]!
-  categories: [GqlPoolCategory]
+  categories: [GqlPoolCategory]!
   createTime: Int!
   decimals: Int!
   displayTokens: [GqlPoolTokenDisplay!]!

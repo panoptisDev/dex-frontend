@@ -628,7 +628,7 @@ export interface GqlPoolMinimal {
   __typename: 'GqlPoolMinimal';
   address: Scalars['Bytes'];
   allTokens: Array<GqlPoolTokenExpanded>;
-  categories?: Maybe<Array<Maybe<GqlPoolCategory>>>;
+  categories: Array<Maybe<GqlPoolCategory>>;
   createTime: Scalars['Int'];
   decimals: Scalars['Int'];
   displayTokens: Array<GqlPoolTokenDisplay>;
@@ -4381,10 +4381,10 @@ export type GetPoolsQuery = {
     name: string;
     symbol: string;
     createTime: number;
-    categories?: Array<{
+    categories: Array<{
       __typename: 'GqlPoolCategory';
       category?: GqlPoolFilterCategory | null;
-    } | null> | null;
+    } | null>;
     dynamicData: {
       __typename: 'GqlPoolDynamicData';
       totalLiquidity: string;
@@ -4465,10 +4465,10 @@ export type GqlPoolMinimalFragment = {
   name: string;
   symbol: string;
   createTime: number;
-  categories?: Array<{
+  categories: Array<{
     __typename: 'GqlPoolCategory';
     category?: GqlPoolFilterCategory | null;
-  } | null> | null;
+  } | null>;
   dynamicData: {
     __typename: 'GqlPoolDynamicData';
     totalLiquidity: string;
